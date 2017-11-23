@@ -89,7 +89,6 @@ public class TilePiece : MonoBehaviour {
         lockUp = lockDown = false;
         if (!boardObj.Collapse(i,j, targetI, targetJ))  // collapse
         {
-            //StartCoroutine(WaitAndMoveOriginal());
             boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
         } else
         {
@@ -101,10 +100,6 @@ public class TilePiece : MonoBehaviour {
 
     public void OnMouseDrag()
     {
-        //if (previousMousePosition != Input.mousePosition)
-        //{
-        //    if (Mathf.Abs(Input.mousePosition.x - previousMousePosition.x) >= Mathf.Abs(Input.mousePosition.y - previousMousePosition.y))
-        //    {
         if (!boardObj.Locked)
         {
             if (!lockMoveAxisY && !lockRight && Input.mousePosition.x < previousMousePosition.x && j != 0)
@@ -123,9 +118,6 @@ public class TilePiece : MonoBehaviour {
                 targetJ = j + 1;
                 boardObj.SwitchPositions(i, j, targetI, targetJ);
             }
-            //}
-            //else
-            //{
             if (!lockMoveAxisX && !lockUp && Input.mousePosition.y < previousMousePosition.y && i != 0)
             {
                 lockMoveAxisY = true;
@@ -143,25 +135,6 @@ public class TilePiece : MonoBehaviour {
                 boardObj.SwitchPositions(i, j, targetI, targetJ);
             }
         }
-
-            //}
-            //transform.position = transform.position = new Vector3(transform.position.x + deltaX, transform.position.y + deltaY, 0.0f);
-        //}
         previousMousePosition = Input.mousePosition;
     }
-
-    //IEnumerator WaitAndMoveOriginal()
-    //{
-    //    //yield return new WaitForSeconds(delayTime);
-    //    float startTime = Time.time;
-    //    while (Time.time - startTime <= 1)
-    //    {           
-    //        Vector3 newPosition = new Vector3(originalX, originalY, 0.0f);
-    //        Vector3 originalPosition = new Vector3(targetJ * Board.tileSize.x - Board.boardSize.x / 2.0f + Board.tileSize.x / 2.0f + (Board.boardSize.x - Board.tileSize.x * Board.maxCols) / 2.0f, targetI * Board.tileSize.y - Board.boardSize.y / 2.0f + Board.tileSize.y / 2.0f + 1.0f, 0.0f);
-
-    //        transform.position = Vector3.Lerp(transform.position, newPosition, Time.time - startTime);
-    //        board[targetI, targetJ].transform.position = Vector3.Lerp(board[targetI, targetJ].transform.position, originalPosition, Time.time - startTime);
-    //        yield return null;
-    //    }
-    //}
 }
