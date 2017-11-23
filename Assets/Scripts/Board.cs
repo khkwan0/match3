@@ -62,15 +62,33 @@ public class Board : MonoBehaviour {
                     ),
                     Quaternion.identity
                 );
+                board[i, j].SetActive(false);
                 board[i, j].GetComponent<TilePiece>().Value = idx; ;
                 board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
             }
         }
         if (GetHint(out hintI, out hintJ)) {
             Debug.Log("Hint: Row " + hintI + ", Col " + hintJ);
+            ShowTiles();
         } else
         {
-            Debug.Log("Reshuffle");
+            Reshuffle();
+        }
+    }
+
+    private void Reshuffle()
+    {
+        Debug.Log("Reshuffle");
+    }
+
+    private void ShowTiles()
+    {
+        for (int i = 0; i < maxRows; i++)
+        {
+            for (int j = 0; j< maxCols; j++)
+            {
+                board[i, j].SetActive(true);
+            }
         }
     }
 

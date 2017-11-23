@@ -18,12 +18,26 @@ public class TilePiece : MonoBehaviour {
     [SerializeField]
     private int targetI, targetJ;
 
+    private int layers;
+    private bool moveable;
+
     private void Start()
     {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
         board = boardObj.GetBoard();
     }
     
+    public int Layers
+    {
+        get { return layers; }
+        set { layers = value; }
+    }
+
+    public bool Moveable
+    {
+        get { return moveable; }
+        set { moveable = value; }
+    }
     public int Value
     {
         get { return value; }
