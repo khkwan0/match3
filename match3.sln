@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "match3", "match3.csproj", "{DEC51D50-D607-B064-6BCB-AAD1CB0E2389}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DEC51D50-D607-B064-6BCB-AAD1CB0E2389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEC51D50-D607-B064-6BCB-AAD1CB0E2389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEC51D50-D607-B064-6BCB-AAD1CB0E2389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEC51D50-D607-B064-6BCB-AAD1CB0E2389}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
