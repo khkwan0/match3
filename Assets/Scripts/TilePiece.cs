@@ -21,10 +21,19 @@ public class TilePiece : MonoBehaviour {
     private int layers;
     private bool moveable;
 
+    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow };
+    private _TileType tileType;
+
     private void Start()
     {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
         board = boardObj.GetBoard();
+    }
+
+    public _TileType TileType
+    {
+        get { return tileType; }
+        set { tileType = value; }
     }
     
     public int Layers
@@ -85,7 +94,10 @@ public class TilePiece : MonoBehaviour {
         if (boardObj.Locked)
         {
             StartCoroutine(SpinWait());
-        }           
+        } else
+        {
+            CollapseOrRevert();
+        }        
     }
 
     IEnumerator SpinWait()

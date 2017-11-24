@@ -146,7 +146,16 @@ MonoBehaviour:
   - {fileID: 1255487421677990, guid: d2fc8734e50162e4688fbced5aeec37d, type: 2}
   - {fileID: 1191573404201132, guid: 38d6b165b158fb6478bc2f059248a92b, type: 2}
   - {fileID: 1239147525806924, guid: f123130bd84dd224ab2b8d0adb886b2d, type: 2}
+  powerTilesVertical:
+  - {fileID: 1839099881489734, guid: e545468e645f3b44c94c7f1ad719e2ae, type: 2}
+  - {fileID: 1120809117750482, guid: af2e2052f2c0488499ca4f20c3a4b3a2, type: 2}
+  - {fileID: 1001746396414562, guid: f8a0dac715a17874facb9863a7c66c09, type: 2}
+  - {fileID: 1750636168643350, guid: 7f621f4d39917214db8f1302764b9ea3, type: 2}
+  - {fileID: 1228879245807686, guid: e2caa0c4f96de6844874f9ceb35eea7a, type: 2}
+  - {fileID: 1042692715305886, guid: 5fdd3d9b3b64d4e438f5b5da0217a4d5, type: 2}
+  powerTilesHorizontal: []
   cam: {fileID: 889423779}
+  locked: 0
 --- !u!4 &624154912
 Transform:
   m_ObjectHideFlags: 0

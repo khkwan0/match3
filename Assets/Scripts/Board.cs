@@ -8,6 +8,8 @@ public class Board : MonoBehaviour {
     public static int maxCols = 8;
 
     public List<GameObject> tiles = new List<GameObject>();
+    public List<GameObject> powerTilesVertical = new List<GameObject>();
+    public List<GameObject> powerTilesHorizontal = new List<GameObject>();
     private GameObject[,] board;
     public static Vector2 tileSize;
     public static Vector2 boardSize;
@@ -63,8 +65,9 @@ public class Board : MonoBehaviour {
                     Quaternion.identity
                 );
                 board[i, j].SetActive(false);
-                board[i, j].GetComponent<TilePiece>().Value = idx; ;
+                board[i, j].GetComponent<TilePiece>().Value = idx;
                 board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+                board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
             }
         }
         if (GetHint(out hintI, out hintJ)) {
@@ -315,7 +318,7 @@ public class Board : MonoBehaviour {
                 count = GetContiguousCountHorizontal(i, j, out row, out lowestCol);
                 if (count >= 3)
                 {
-                    CollapseHorizontal(row, lowestCol, count);
+                    CollapseHorizontal(row, lowestCol, count, i, j);
                     falling += count;
                     collapseFoundH = true;
                 }
@@ -345,14 +348,14 @@ public class Board : MonoBehaviour {
         count = GetContiguousCountHorizontal(i, j, out row, out lowestCol);
         if (count >= 3)
         {
-            CollapseHorizontal(row, lowestCol, count);
+            CollapseHorizontal(row, lowestCol, count, row, j);
             falling += count;
             collapseFound = true;
         }
         count = GetContiguousCountHorizontal(targetI, targetJ, out row, out lowestCol);
         if (count >= 3)
         {
-            CollapseHorizontal(row, lowestCol, count);
+            CollapseHorizontal(row, lowestCol, count, targetI, j);
             falling += count;
             collapseFound = true;
         }
@@ -489,24 +492,66 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void CollapseHorizontal(int row, int lowestCol, int count)
+    private void CollapseHorizontal(int row, int lowestCol, int count, int originalI, int originalJ)
     {
+        int originalValue = -100;  // unknown
+        TilePiece._TileType tileType = board[originalI, originalJ].GetComponent<TilePiece>().TileType;
+
         for (int col = lowestCol; col < lowestCol + count; col++)
         {
+            if (originalValue < 0)
+            {
+                originalValue = board[row, col].GetComponent<TilePiece>().Value;
+            }
             Destroy(board[row, col]);
+        }
+        if (count == 4)
+        {
+            // spawn a vertical blast tile
+            Vector3 position = new Vector3(
+                    originalJ * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
+                    originalI * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
+                    0.0f
+                );
+            Debug.Log(row + " " + originalJ);
+            board[row, originalJ] = GameObject.Instantiate(powerTilesVertical[originalValue], position, Quaternion.identity);
+            Debug.Log(board[row, originalJ]);
+            board[row, originalJ].GetComponent<TilePiece>().Value = originalValue;
+            board[row, originalJ].GetComponent<TilePiece>().SetLocation(row, originalJ);
+            board[row, originalJ].GetComponent<TilePiece>().TileType = TilePiece._TileType.VerticalBlast;
         }
         for (int col = lowestCol; col < lowestCol + count; col++)
         {
-            for (int i = row; i < maxCols - 1; i++)
+            for (int i = row; i < maxRows - 1; i++)
             {
-                board[i, col] = board[i + 1, col];
-                board[i, col].GetComponent<TilePiece>().I = i;
-                StartCoroutine(Fall(i, col));
+                if (count < 4)
+                {
+                    board[i, col] = board[i + 1, col];
+                    board[i, col].GetComponent<TilePiece>().I = i;
+                    StartCoroutine(Fall(i, col));
+                } else
+                {
+                    if (col != originalJ)
+                    {
+                        board[i, col] = board[i + 1, col];
+                        board[i, col].GetComponent<TilePiece>().I = i;
+                        StartCoroutine(Fall(i, col));
+                    }
+                }
             }
         }
         for (int col = lowestCol; col< lowestCol + count; col++)
         {
-            SpawnTile(maxRows - 1, col);
+            if (count < 4)
+            {
+                SpawnTile(maxRows - 1, col);
+            } else
+            {
+                if (col != originalJ)
+                {
+                    SpawnTile(maxRows - 1, col);
+                }
+            }
         }
         //for (int x = j; x < j + count; x++)
         //{
