@@ -153,7 +153,15 @@ MonoBehaviour:
   - {fileID: 1750636168643350, guid: 7f621f4d39917214db8f1302764b9ea3, type: 2}
   - {fileID: 1228879245807686, guid: e2caa0c4f96de6844874f9ceb35eea7a, type: 2}
   - {fileID: 1042692715305886, guid: 5fdd3d9b3b64d4e438f5b5da0217a4d5, type: 2}
-  powerTilesHorizontal: []
+  powerTilesHorizontal:
+  - {fileID: 1205980487349334, guid: 5df7e78c4f636b94bb9acbb5ae8b83e0, type: 2}
+  - {fileID: 1662351005070972, guid: 63f16bcf75d1c8b4182da793b8ceadd3, type: 2}
+  - {fileID: 1648170660340034, guid: b0a87eae863dda04e936bddfb3dedb9f, type: 2}
+  - {fileID: 1271091280763652, guid: 02244fb188291b04db5c2f4db57047ac, type: 2}
+  - {fileID: 1253267686795100, guid: fc0cd5a394529554a918c7f85ef3aacb, type: 2}
+  - {fileID: 1350445965692558, guid: bf219c0f89f3ccc40acdd7de4a11daaa, type: 2}
+  rainbowTile: {fileID: 1862638571403850, guid: 34186f11cdc011d4ea155c097df8258d,
+    type: 2}
   cam: {fileID: 889423779}
   locked: 0
 --- !u!4 &624154912
