@@ -159,10 +159,10 @@ public class Board : MonoBehaviour {
             switchedHorCount = CheckHorizontal(switchedI, switchedJ, out switchedLowestCol);
             switchedVertCount = CheckVertical(switchedI, switchedJ, out switchedLowestRow);
         }
-        CollapseB(horCount, vertCount, i, j, lowestCol, lowestRow);
+        Collapse(horCount, vertCount, i, j, lowestCol, lowestRow);
         if (!isCascade)
         {
-            CollapseB(switchedHorCount, switchedVertCount, switchedI, switchedJ, switchedLowestCol, switchedLowestRow);
+            Collapse(switchedHorCount, switchedVertCount, switchedI, switchedJ, switchedLowestCol, switchedLowestRow);
         }
         if (horCount >= 3 || vertCount >= 3 || switchedVertCount >=3 || switchedHorCount >= 3)
         {
@@ -171,7 +171,7 @@ public class Board : MonoBehaviour {
         return matches;
     }
 
-    private void CollapseB(int horCount, int vertCount, int i, int j, int lowestCol, int lowestRow)
+    private void Collapse(int horCount, int vertCount, int i, int j, int lowestCol, int lowestRow)
     {
         if (horCount>2 && vertCount > 2)
         {
@@ -188,6 +188,7 @@ public class Board : MonoBehaviour {
             }
         }        
     }
+
     private int CheckHorizontal(int i, int j, out int lowestCol)
     {
         int count = 1;
@@ -435,43 +436,6 @@ public class Board : MonoBehaviour {
         }
     }
 
-    public bool Collapse(int i, int j, int targetI, int targetJ)
-    {
-        bool collapseFound = false;
-        int count = 0;
-        int lowestCol, lowestRow;
-        int row, col;
-
-        count = GetContiguousCountHorizontal(i, j, out row, out lowestCol);
-        if (count >= 3)
-        {
-            CollapseHorizontal(row, lowestCol, count, row, j);
-            //falling += count;
-            collapseFound = true;
-        }
-        count = GetContiguousCountHorizontal(targetI, targetJ, out row, out lowestCol);
-        if (count >= 3)
-        {
-            CollapseHorizontal(row, lowestCol, count, targetI, j);
-            //falling += count;
-            collapseFound = true;
-        }
-        count = GetContiguousCountVertical(i, j, out col, out lowestRow);
-        if (count >= 3)
-        {
-            CollapseVertical(lowestRow, col, count, i, col);
-            collapseFound = true;
-            //falling += count;
-        }
-        count = GetContiguousCountVertical(targetI, targetJ, out col, out lowestRow);
-        if (count >= 3)
-        {
-            CollapseVertical(lowestRow, col, count, i, targetJ);
-            collapseFound = true;
-            //falling += count;
-        }
-        return collapseFound;
-    }
 
     private int GetContiguousCountHorizontal(int i, int j, out int row, out int lowestCol)
     {
