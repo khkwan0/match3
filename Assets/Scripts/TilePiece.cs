@@ -28,6 +28,7 @@ public class TilePiece : MonoBehaviour {
     {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
         board = boardObj.GetBoard();
+        targetI = targetJ = -1;
     }
 
     public _TileType TileType
@@ -96,7 +97,11 @@ public class TilePiece : MonoBehaviour {
             StartCoroutine(SpinWait());
         } else
         {
-            CollapseOrRevert();
+            if (targetI >= 0 && targetJ >= 0)
+            {
+                CollapseOrRevert();
+                targetI = targetJ = -1;
+            }
         }        
     }
 
@@ -113,7 +118,7 @@ public class TilePiece : MonoBehaviour {
     {
         lockLeft = lockRight = false;
         lockUp = lockDown = false;
-        if (!boardObj.Collapse(i,j, targetI, targetJ))  // collapse
+        if (!boardObj.GetMatches(i,j, targetI, targetJ, false))  // collapse
         {
             boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
         } else
