@@ -25,13 +25,23 @@ public class TilePiece : MonoBehaviour {
     private _TileType tileType;
 
     public float swipeThreshhold = 0.15f;
+
+    private bool destroyed;
+
     private void Start()
     {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
         board = boardObj.GetBoard();
         targetI = targetJ = -1;
+        destroyed = false;
     }
 
+    public bool Destroyed
+    {
+        get { return destroyed; }
+        set { destroyed = value; }
+    }
+           
     public _TileType TileType
     {
         get { return tileType; }
@@ -49,6 +59,7 @@ public class TilePiece : MonoBehaviour {
         get { return moveable; }
         set { moveable = value; }
     }
+
     public int Value
     {
         get { return value; }
