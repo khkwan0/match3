@@ -7,7 +7,7 @@ public class TilePiece : MonoBehaviour {
     private int value;
     [SerializeField]
     private int i, j;
-    private Vector3 previousMousePosition = new Vector3();
+    private Vector3 previousMousePosition;
 
     private Board boardObj;
     private GameObject[,] board;
@@ -24,6 +24,7 @@ public class TilePiece : MonoBehaviour {
     public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow };
     private _TileType tileType;
 
+    public float swipeThreshhold = 0.15f;
     private void Start()
     {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
@@ -133,39 +134,60 @@ public class TilePiece : MonoBehaviour {
     {
         if (!boardObj.Locked)
         {
-            if (!lockMoveAxisY && !lockRight && Input.mousePosition.x < previousMousePosition.x && j != 0)
+            bool moveHor = false;
+            bool moveVert = false;
+            //Debug.Log("deltax" + (Input.mousePosition.x - previousMousePosition.x) + "," + (Input.mousePosition.y - previousMousePosition.y));
+            float deltaX = Input.mousePosition.x - previousMousePosition.x;
+            float deltaY = Input.mousePosition.y - previousMousePosition.y;
+            if (Mathf.Abs(deltaX) > Mathf.Abs(deltaY))
             {
-                lockMoveAxisX = true;
-                lockLeft = true;
-                targetI = i;
-                targetJ = j - 1;
-                boardObj.SwitchPositions(i, j, targetI, targetJ);
+                moveHor = true;
             }
-            if (!lockMoveAxisY && !lockLeft && Input.mousePosition.x > previousMousePosition.x && j != Board.maxCols - 1)
-            {
-                lockMoveAxisX = true;
-                lockRight = true;
-                targetI = i;
-                targetJ = j + 1;
-                boardObj.SwitchPositions(i, j, targetI, targetJ);
+            if (Mathf.Abs(deltaY) > Mathf.Abs(deltaX))
+            {             
+                moveVert = true;
             }
-            if (!lockMoveAxisX && !lockUp && Input.mousePosition.y < previousMousePosition.y && i != 0)
+            if (moveHor)
             {
-                lockMoveAxisY = true;
-                lockDown = true;
-                targetI = i - 1;
-                targetJ = j;
-                boardObj.SwitchPositions(i, j, targetI, targetJ);
+                if (!lockMoveAxisY && !lockRight && deltaX < 0.0f && j != 0)
+                {
+                    lockMoveAxisX = true;
+                    lockLeft = true;
+                    targetI = i;
+                    targetJ = j - 1;
+                    boardObj.SwitchPositions(i, j, targetI, targetJ);
+                }
+                else
+                {
+                    if (!lockMoveAxisY && !lockLeft && j != Board.maxCols - 1)
+                    {
+                        lockMoveAxisX = true;
+                        lockRight = true;
+                        targetI = i;
+                        targetJ = j + 1;
+                        boardObj.SwitchPositions(i, j, targetI, targetJ);
+                    }
+                }
             }
-            if (!lockMoveAxisX && !lockDown && Input.mousePosition.y > previousMousePosition.y && i != Board.maxRows - 1)
+            if (moveVert)
             {
-                lockMoveAxisY = true;
-                lockUp = true;
-                targetI = i + 1;
-                targetJ = j;
-                boardObj.SwitchPositions(i, j, targetI, targetJ);
+                if (!lockMoveAxisX && !lockUp && deltaY < 0.0f && i != 0)
+                {
+                    lockMoveAxisY = true;
+                    lockDown = true;
+                    targetI = i - 1;
+                    targetJ = j;
+                    boardObj.SwitchPositions(i, j, targetI, targetJ);
+                }
+                if (!lockMoveAxisX && !lockDown && deltaY > 0.0f && i != Board.maxRows - 1)
+                {
+                    lockMoveAxisY = true;
+                    lockUp = true;
+                    targetI = i + 1;
+                    targetJ = j;
+                    boardObj.SwitchPositions(i, j, targetI, targetJ);
+                }
             }
         }
-        previousMousePosition = Input.mousePosition;
     }
 }
