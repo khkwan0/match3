@@ -171,6 +171,8 @@ MonoBehaviour:
     type: 2}
   cam: {fileID: 889423779}
   locked: 0
+  canvas: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f, type: 2}
+  scoreAmt: 10
 --- !u!4 &624154912
 Transform:
   m_ObjectHideFlags: 0

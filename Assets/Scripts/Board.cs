@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour {
 
@@ -22,13 +23,23 @@ public class Board : MonoBehaviour {
     private bool locked = false;
 
     private int falling;
+    public GameObject canvas;
+    private GameObject GUI;
 
-	void Awake () {
+    private Text score;
+    private Text moves;
+    private int numMoves;
+    private int numScore;
+
+    public int scoreAmt = 10;
+
+    void Awake () {
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
         board = new GameObject[maxRows, maxCols];
         boardSize = new Vector2(cam.aspect * 2f * cam.orthographicSize, 2f * cam.orthographicSize);
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
+        GUI = GameObject.Instantiate(canvas);
 	}
 
     public bool Locked
@@ -48,6 +59,16 @@ public class Board : MonoBehaviour {
         int hintI;
         int hintJ;
 
+
+        numMoves = 50;
+        numScore = 0;
+
+        score = GUI.transform.GetChild(1).GetComponent<Text>();
+        score.text = numScore.ToString();
+
+        moves = GUI.transform.GetChild(3).GetComponent<Text>();
+        moves.text = numMoves.ToString();             
+        
         hintI = hintJ = -1;
         for (int i = 0; i < maxRows; i++)
         {
@@ -149,14 +170,29 @@ public class Board : MonoBehaviour {
         bool matches = false;
         bool switchedMatches = false;
 
-        matches = CheckIJ(i, j, isCascade);
-        if (!isCascade)
+        if (!isCascade && 
+            (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow ||
+            board[switchedI, switchedJ].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow))
         {
-            switchedMatches = CheckIJ(switchedI, switchedJ, isCascade);
+            HandleRainbowMatch(i, j, switchedI, switchedJ);
+            matches = true;
         }
-        if (matches || switchedMatches)
+        else
         {
-            FinalizeAndFill();
+            matches = CheckIJ(i, j, isCascade);
+            if (!isCascade)
+            {
+                switchedMatches = CheckIJ(switchedI, switchedJ, isCascade);
+            }
+            if (matches || switchedMatches)
+            {
+                FinalizeAndFill();
+                if (!isCascade)
+                {
+                    numMoves--;
+                    moves.text = numMoves.ToString();
+                }
+            }
         }
         return matches || switchedMatches;
     }
@@ -215,6 +251,95 @@ public class Board : MonoBehaviour {
             return false;
         }
         return true;
+    }
+
+    private void HandleRainbowMatch(int i, int j, int si, int sj)
+    {
+        if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow)
+        {
+            // two rainbows collided destroy all
+            DestroyAllTiles();
+        }
+        else 
+        if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.Regular)
+        {
+            // one rainbow and one regular
+            int value = board[si, sj].GetComponent<TilePiece>().Value;
+            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[i, j].GetComponent<TilePiece>().Destroyed = true;
+            DestroyAllTiles(value);
+        }
+        else
+        if (board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Regular)
+        {
+            int value = board[i, j].GetComponent<TilePiece>().Value;
+            board[si, sj].GetComponent<TilePiece>().Destroyed = true;
+            board[si, sj].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            DestroyAllTiles(value);
+        }
+        else
+        if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.VerticalBlast)
+        {
+            int value = board[si, sj].GetComponent<TilePiece>().Value;
+            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[i, j].GetComponent<TilePiece>().Destroyed = true;
+            ConvertTiles(value, TilePiece._TileType.VerticalBlast);
+            DestroyAllTiles(value);
+        }
+        else 
+        if (board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.VerticalBlast)
+        {
+            int value = board[i, j].GetComponent<TilePiece>().Value;
+            board[si, sj].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[si, sj].GetComponent<TilePiece>().Destroyed = true;
+            ConvertTiles(value, TilePiece._TileType.VerticalBlast);
+            DestroyAllTiles(value);
+        }
+        else
+        if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.HorizontalBlast)
+        {
+            int value = board[si, sj].GetComponent<TilePiece>().Value;
+            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[i, j].GetComponent<TilePiece>().Destroyed = true;
+            ConvertTiles(value, TilePiece._TileType.HorizontalBlast);
+            DestroyAllTiles(value);
+        }
+        else
+        if (board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.HorizontalBlast)
+        {
+            int value = board[si, sj].GetComponent<TilePiece>().Value;
+            board[si, sj].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[si, sj].GetComponent<TilePiece>().Destroyed = true;
+            ConvertTiles(value, TilePiece._TileType.HorizontalBlast);
+            DestroyAllTiles(value);
+        }
+        else
+        if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.CrossBlast)
+        {
+            int value = board[si, sj].GetComponent<TilePiece>().Value;
+            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[i, j].GetComponent<TilePiece>().Destroyed = true;
+            ConvertTiles(value, TilePiece._TileType.CrossBlast);
+            DestroyAllTiles(value);
+        }
+        else
+        if (board[si, sj].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow &&
+            board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.CrossBlast)
+        {
+            int value = board[si, sj].GetComponent<TilePiece>().Value;
+            board[si, sj].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[si, sj].GetComponent<TilePiece>().Destroyed = true;
+            ConvertTiles(value, TilePiece._TileType.CrossBlast);
+            DestroyAllTiles(value);
+        }
     }
 
     private void HandleFiveMatch(int i, int j, bool horizontal)
@@ -658,6 +783,47 @@ public class Board : MonoBehaviour {
         locked = false;
     }
 
+    private void DestroyAllTiles()
+    {
+        for (int row = 0; row < maxRows; row++)
+        {
+            for (int col = 0; col < maxCols; col++)
+            {
+                board[row, col].GetComponent<TilePiece>().Destroyed = true;
+            }
+        }
+        FinalizeAndFill();
+    }
+
+    private void DestroyAllTiles(int value)
+    {
+        for (int row = 0; row < maxRows; row++)
+        {
+            for (int col = 0; col < maxCols; col++)
+            {
+                if (board[row, col].GetComponent<TilePiece>().Value == value)
+                {
+                    MarkDestroy(row, col);
+                }
+            }
+        }
+        FinalizeAndFill();
+    }
+
+    private void ConvertTiles(int value, TilePiece._TileType tileType)
+    {
+        for (int row = 0; row < maxRows; row++)
+        {
+            for (int col = 0; col < maxCols; col++)
+            {
+                if (board[row, col].GetComponent<TilePiece>().TileType == TilePiece._TileType.Regular)
+                {
+                    board[row, col].GetComponent<TilePiece>().TileType = tileType;
+                }
+            }
+        }
+    }
+
     private void MarkDestroy(int i, int j)
     {
         if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.HorizontalBlast)
@@ -798,6 +964,7 @@ public class Board : MonoBehaviour {
             {
                 if (board[row, col].GetComponent<TilePiece>().Destroyed)
                 {
+                    IncrementScore(scoreAmt);
                     Destroy(board[row, col]);
                     SpawnTile(row, col);
                 }
@@ -862,6 +1029,12 @@ public class Board : MonoBehaviour {
         board[i, j].GetComponent<TilePiece>().Value = tiles.Count;
         board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Rainbow;
         board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+    }
+
+    private void IncrementScore(int amt)
+    {
+        numScore += amt;
+        score.text = numScore.ToString();
     }
 
     IEnumerator Fall(int i, int j)
