@@ -18,8 +18,6 @@ public class Board : MonoBehaviour {
     public static Vector2 tileSize;
     public static Vector2 boardSize;
 
-    public Camera cam;
-
     [SerializeField]
     private bool locked = false;
 
@@ -30,6 +28,7 @@ public class Board : MonoBehaviour {
 
     private TextMeshProUGUI score;
     private TextMeshProUGUI moves;
+    private TextMeshProUGUI missionText;
     private int numMoves;
     private int numScore;
 
@@ -43,14 +42,30 @@ public class Board : MonoBehaviour {
     private float hintTimer;
 
     int hintI, hintJ;
-    void Awake () {
-        Application.targetFrameRate = 60;
-        QualitySettings.vSyncCount = 0;
-        board = new GameObject[maxRows, maxCols];
-        boardSize = new Vector2(cam.aspect * 2f * cam.orthographicSize, 2f * cam.orthographicSize);
+
+    private GameData gameData;
+    private int level;
+    private int scoreMultiplier;
+
+    private int cascadeCount;
+
+    private void OnEnable()
+    {
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
         GUI = GameObject.Instantiate(canvas);
-	}
+        cascadeCount = 0;
+        scoreMultiplier = cascadeCount + 1;
+    }
+
+    public void SetBoardSize(Vector2 _size)
+    {
+        boardSize = _size;
+    }
+
+    public void SetGameData(GameData gd)
+    {
+        gameData = gd;
+    }
 
     public bool Locked
     {
@@ -64,16 +79,28 @@ public class Board : MonoBehaviour {
         set { falling = value; }
     }
 
-    void Start()
+    public void StartLevel(int level)
     {
-        numMoves = 50;
+        numMoves = gameData.levelData[level].numMoves;
         numScore = 0;
-      
+
+        this.level = gameData.levelData[level].level;
+        maxRows = gameData.levelData[level].rows;
+        maxCols = gameData.levelData[level].cols;
+
+        board = new GameObject[maxRows, maxCols];
+
         score = GUI.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         score.text = numScore.ToString();
 
         moves = GUI.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
         moves.text = numMoves.ToString();
+
+        if (gameData.levelData[level].mission == 0)
+        {
+            missionText = GUI.transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+            missionText.text = "Get " + gameData.levelData[level].missionGoal + " in " + numMoves + " moves or less.";
+        }
 
         hintTimerOn = false;
         hintI = hintJ = -1;
@@ -113,7 +140,7 @@ public class Board : MonoBehaviour {
     private void Reshuffle()
     {
         Debug.Log("Reshuffle");
-        Start();
+        StartLevel(level);
     }
 
     IEnumerator MoveTimer(float delay)
@@ -212,8 +239,46 @@ public class Board : MonoBehaviour {
             Fill();
             numMoves--;
             UpdateMoves(numMoves);
+            Cascade();
+            cascadeCount = 0;
+            scoreMultiplier = cascadeCount + 1;
+            if (CheckWinCondition())
+            {
+                Debug.Log("WIN - advance to next level");
+            }
+            if (CheckLoseCondition())
+            {
+                Debug.Log("LOSE");
+            }
         }                   
         return matches;            
+    }
+
+    private bool CheckWinCondition()
+    {
+        bool win = false;
+        
+        if (gameData.levelData[level].mission == 0)
+        {
+            if (numScore >= gameData.levelData[level].missionGoal)
+            {
+                win = true;
+            }
+        }
+        return win;
+    }
+
+    private bool CheckLoseCondition()
+    {
+        bool lose = false;
+        if (gameData.levelData[level].mission == 0)
+        {
+            if (numScore < gameData.levelData[level].missionGoal)
+            {
+                lose = true;
+            }
+        }
+        return lose;
     }
 
     private bool CheckIJ(int i, int j)
@@ -877,6 +942,8 @@ public class Board : MonoBehaviour {
         }
         if (match)
         {
+            cascadeCount++;
+            scoreMultiplier = cascadeCount + 1;
             FinalizeBoard();
             Fill();
             Cascade();
@@ -1174,8 +1241,9 @@ public class Board : MonoBehaviour {
 
     private void IncrementScore(int amt)
     {
-        numScore += amt;
-        score.text = numScore.ToString();
+        //Debug.Log(amt * scoreMultiplier);
+        numScore += amt * scoreMultiplier;
+        score.text = numScore.ToString();        
     }
 
     private void UpdateMoves(int _moves)

@@ -1,0 +1,22 @@
+{
+    "levelData": [
+        {
+            "level" : 0,
+            "rows": 8,
+            "cols": 8,
+            "numTileValues": 5,
+            "numMoves": 20,
+            "mission": 0,
+            "missionGoal": 2000
+        },
+        {
+            "level": 1,
+            "rows": 8,
+            "cols": 6,
+            "numTileValues": 4,
+            "numMoves": 50,
+            "mission": 0,
+            "missionGoal": 10000
+        }    
+    ]
+}
