@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Board : MonoBehaviour {
 
@@ -22,17 +23,26 @@ public class Board : MonoBehaviour {
     [SerializeField]
     private bool locked = false;
 
+    [SerializeField]
     private int falling;
     public GameObject canvas;
     private GameObject GUI;
 
-    private Text score;
-    private Text moves;
+    private TextMeshProUGUI score;
+    private TextMeshProUGUI moves;
     private int numMoves;
     private int numScore;
 
     public int scoreAmt = 10;
 
+    public float HintTimeout = 3.0f;
+    [SerializeField]
+    private bool hintTimerOn;
+
+    [SerializeField]
+    private float hintTimer;
+
+    int hintI, hintJ;
     void Awake () {
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
@@ -56,19 +66,16 @@ public class Board : MonoBehaviour {
 
     void Start()
     {
-        int hintI;
-        int hintJ;
-
-
         numMoves = 50;
         numScore = 0;
-
-        score = GUI.transform.GetChild(1).GetComponent<Text>();
+      
+        score = GUI.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         score.text = numScore.ToString();
 
-        moves = GUI.transform.GetChild(3).GetComponent<Text>();
-        moves.text = numMoves.ToString();             
-        
+        moves = GUI.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        moves.text = numMoves.ToString();
+
+        hintTimerOn = false;
         hintI = hintJ = -1;
         for (int i = 0; i < maxRows; i++)
         {
@@ -93,9 +100,10 @@ public class Board : MonoBehaviour {
                 board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
             }
         }
-        if (GetHint(out hintI, out hintJ)) {
+        if (GetHint()) {
             Debug.Log("Hint: Row " + hintI + ", Col " + hintJ);
             ShowTiles();
+            StartCoroutine(MoveTimer(HintTimeout + 5.0f));
         } else
         {
             Reshuffle();
@@ -106,6 +114,22 @@ public class Board : MonoBehaviour {
     {
         Debug.Log("Reshuffle");
         Start();
+    }
+
+    IEnumerator MoveTimer(float delay)
+    {
+        float startTime = Time.time;
+        hintTimer = 0.0f;
+        while ((Time.time - startTime < delay) && !hintTimerOn)
+        {
+            hintTimer = Time.time - startTime;
+            yield return null;
+        }
+        if (!hintTimerOn)
+        {
+            Debug.Log("Show hint");
+        }
+        hintTimerOn = false;
     }
 
     private void ShowTiles()
@@ -141,7 +165,7 @@ public class Board : MonoBehaviour {
     private bool IsContiguousVertical(int i, int j, int value)
     {
         if (i > 1)
-        {
+        { 
             if (board[i - 1, j].GetComponent<TilePiece>().Value != value && board[i - 2, j].GetComponent<TilePiece>().Value != value)
             {
                 return false;
@@ -165,39 +189,32 @@ public class Board : MonoBehaviour {
         return board;
     }
 
-    public bool GetMatches(int i, int j, int switchedI, int switchedJ, bool isCascade)
+    public bool FoundSwitchMatch(int i, int j, int switchedI, int switchedJ)
     {
         bool matches = false;
-        bool switchedMatches = false;
+        TilePiece._TileType tileType, switchedTileType;
 
-        if (!isCascade && 
-            (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow ||
-            board[switchedI, switchedJ].GetComponent<TilePiece>().TileType == TilePiece._TileType.Rainbow))
+        tileType = board[i, j].GetComponent<TilePiece>().TileType;
+        switchedTileType = board[switchedI, switchedJ].GetComponent<TilePiece>().TileType;
+
+        if (tileType == TilePiece._TileType.Rainbow || switchedTileType == TilePiece._TileType.Rainbow)
         {
             HandleRainbowMatch(i, j, switchedI, switchedJ);
             matches = true;
-        }
-        else
+        } else
         {
-            matches = CheckIJ(i, j, isCascade);
-            if (!isCascade)
-            {
-                switchedMatches = CheckIJ(switchedI, switchedJ, isCascade);
-            }
-            if (matches || switchedMatches)
-            {
-                FinalizeAndFill();
-                if (!isCascade)
-                {
-                    numMoves--;
-                    moves.text = numMoves.ToString();
-                }
-            }
+            matches = CheckIJ(i, j);
+            matches |= CheckIJ(switchedI, switchedJ);
         }
-        return matches || switchedMatches;
+        if (matches)
+        {
+            FinalizeBoard();
+            Fill();
+        }                   
+        return matches;            
     }
 
-    private bool CheckIJ(int i, int j, bool isCascade)
+    private bool CheckIJ(int i, int j)
     {
         int lowestRow, lowestCol;
         int crossLowestRow, crossLowestCol;
@@ -210,20 +227,16 @@ public class Board : MonoBehaviour {
         {
             if (horCount >= 5)
             {
-                HandleFiveMatch(i, j, true);
+                HandleFiveMatch(i, j, true, lowestCol);
             }
             else
             {
-                HandleFiveMatch(i, j, false);
+                HandleFiveMatch(i, j, false, lowestRow);
             }
         }
-        else if (!isCascade && CheckCross(i, j, out crossLowestRow, out crossLowestCol))
+        else if (CheckCross(i, j, out crossLowestRow, out crossLowestCol))
         {
             HandleCrossMatch(i, j, crossLowestRow, crossLowestCol);
-        }
-        else if (isCascade && CheckCascadeCross2())
-        {
-
         }
         else if (horCount == 4 || vertCount == 4)
         {
@@ -246,9 +259,52 @@ public class Board : MonoBehaviour {
             {
                 HandleThreeMatch(i, j, lowestRow, false);
             }
-        } else
+        }
+        else
         {
             return false;
+        }
+        return true;
+    }
+
+    private bool CheckIJCascade(int i, int j) { 
+        if (HandledCascadeCross(i, j))
+        {
+            Debug.Log("Cascade Cross");
+        }
+        else
+        {
+            int lowestRow, lowestCol;
+            int horCount, vertCount;
+            horCount = CheckHorizontal(i, j, out lowestCol);
+            vertCount = CheckVertical(i, j, out lowestRow);
+
+            if (horCount == 4 || vertCount == 4)
+            {
+                if (horCount == 4)
+                {
+                    HandleFourMatch(i, j, lowestCol, true);
+                }
+                else
+                {
+                    HandleFourMatch(i, j, lowestRow, false);
+                }
+            }
+            else if (horCount == 3 || vertCount == 3)
+            {
+                if (horCount == 3)
+                {
+                    HandleThreeMatch(i, j, lowestCol, true);
+                }
+                else
+                {
+                    HandleThreeMatch(i, j, lowestRow, false);
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -342,9 +398,26 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void HandleFiveMatch(int i, int j, bool horizontal)
+    private void HandleFiveMatch(int i, int j, bool horizontal,int lowest)
     {
-        int value = board[i, j].GetComponent<TilePiece>().Value;
+        // if a use initiated a switch, the only way the user
+        // can achieve five rows is by switching in the middle of 5.
+        // however, if it is due to a cascade, the i and j parameters will always be the
+        // the lowest row or lowest col.  we need to adjust the i, j to be the middle
+        if (horizontal)
+        {
+             if (j != lowest + 2)
+            {
+                j = lowest + 2;
+            }
+        } else
+        {
+            if (i != lowest + 2)
+            {
+                i = lowest + 2;
+            }
+        }
+        //int value = board[i, j].GetComponent<TilePiece>().Value;
         Destroy(board[i, j]);
         SpawnRainbowTile(i, j);
         if (horizontal)
@@ -353,7 +426,8 @@ public class Board : MonoBehaviour {
             MarkDestroy(i, j - 1);
             MarkDestroy(i, j + 2);
             MarkDestroy(i, j + 1);
-        } else  // it's vertical
+        }
+        else  // it's vertical
         {
             MarkDestroy(i + 2, j);
             MarkDestroy(i + 1, j);
@@ -387,23 +461,49 @@ public class Board : MonoBehaviour {
     private void HandleFourMatch(int i, int j, int lowest, bool horizontal)
     {
         int value = board[i, j].GetComponent<TilePiece>().Value;
-        Destroy(board[i, j]);
-        if (horizontal)
+        bool isRegular = false;
+
+        if (board[i, j].GetComponent<TilePiece>().TileType == TilePiece._TileType.Regular)
         {
-            SpawnVerticalBlastTile(i, j, value);
-            for (int col = lowest; col < lowest + 4; col++)
+            isRegular = true;
+        }
+        if (isRegular)
+        {
+            Destroy(board[i, j]);
+            if (horizontal)
             {
-                if (col != j)
+                SpawnVerticalBlastTile(i, j, value);
+                for (int col = lowest; col < lowest + 4; col++)
                 {
-                    MarkDestroy(i, col);
+                    if (col != j)
+                    {
+                        MarkDestroy(i, col);
+                    }
+                }
+            }
+            else
+            {
+                SpawnVerticalBlastTile(i, j, value);
+                for (int row = lowest; row < lowest + 4; row++)
+                {
+                    if (row != i)
+                    {
+                        MarkDestroy(row, j);
+                    }
                 }
             }
         } else
         {
-            SpawnVerticalBlastTile(i, j, value);
-            for (int row = lowest; row < lowest + 4; row++)
+            if (horizontal)
             {
-                if (row != i)
+                for (int col = lowest; col < lowest + 4; col++)
+                {
+                    MarkDestroy(i, col);
+                }
+            }
+            else
+            {
+                for (int row = lowest; row < lowest + 4; row++)
                 {
                     MarkDestroy(row, j);
                 }
@@ -433,81 +533,86 @@ public class Board : MonoBehaviour {
         bool found = false;
 
         crossLowestRow = crossLowestCol = -1;
-        if (CheckHorizontal(i, j, out crossLowestCol) == 3 && CheckVertical(i, j, out crossLowestRow) == 3)
+        if (CheckHorizontal(i, j, out crossLowestCol) >= 3 && CheckVertical(i, j, out crossLowestRow) >= 3)
         {
             found = true;
         }
         return found;
     }
 
-    private bool CheckCascadeCross2()
+    private bool HandledCascadeCross(int i, int j)
     {
         bool found = false;
-
-        return found;
-    }
-    private bool CheckCascadeCross(int i, int j, out int finalI, out int finalJ, out int horCount, out int vertCount, out int lowestRow, out int lowestCol)
-    {
-        bool foundCross = false;
-        horCount = 0;
-        vertCount = 0;
-        lowestRow = lowestCol = -1;
-        finalI = finalJ = -1;
-
-        // check right
-        if (j < maxCols - 3) {
-            if (board[i,j].GetComponent<TilePiece>().Value == board[i, j + 1].GetComponent<TilePiece>().Value &&
-                board[i,j].GetComponent<TilePiece>().Value == board[i, j + 2].GetComponent<TilePiece>().Value)
+        if (j < maxCols - 2)
+        {
+            if (i < maxRows - 2 && GetValueIJ(i, j) == GetValueIJ(i, j + 1) && GetValueIJ(i, j) == GetValueIJ(i, j + 2))
             {
-                lowestCol = j;
-                finalI = i;
-                for (int col = j; col < j + 3 && ! foundCross; col++)
+                int value = GetValueIJ(i, j);
+                // potential for cross match with horiztonal base
+                for (int col = j; col < j + 3 && !found; col++)
                 {
-                    if (i < maxRows - 2)
-                    {  // check 2 up
-                        if (board[i, col].GetComponent<TilePiece>().Value == board[i + 1, col].GetComponent<TilePiece>().Value &&
-                            board[i, col].GetComponent<TilePiece>().Value == board[i + 2, col].GetComponent<TilePiece>().Value)
-                        {
-                            foundCross = true;
-                            lowestRow = i;
-                            finalJ = col;
-                        }
-                    }
-                    if (!foundCross && i > 1)
-                    { // check 2 down
-                        if (board[i, col].GetComponent<TilePiece>().Value == board[i - 1, col].GetComponent<TilePiece>().Value &&
-                            board[i, col].GetComponent<TilePiece>().Value == board[i - 2, col].GetComponent<TilePiece>().Value
-                            )
-                        {
-                            foundCross = true;
-                            lowestRow = i - 2;
-                            finalJ = col;
-                        }
-                    }
-                    if (!foundCross && i < maxRows - 1 && i > 0)
+                    if (GetValueIJ(i, j) == GetValueIJ(i + 1, col) && GetValueIJ(i, j) == GetValueIJ(i + 2, col))
                     {
-                        if (board[col, i].GetComponent<TilePiece>().Value == board[col, i + 1].GetComponent<TilePiece>().Value &&
-                            board[col, i].GetComponent<TilePiece>().Value == board[col, i - 1].GetComponent<TilePiece>().Value
-                            )
-                        {
-                            foundCross = true;
-                            lowestRow = i - 1;
-                            finalJ = col;
-                        }
+                        found = true;
+                        MarkDestroy(i, j);
+                        MarkDestroy(i, j + 1);
+                        MarkDestroy(i, j + 2);
+                        MarkDestroy(i + 1, col);
+                        MarkDestroy(i + 2, col);
+                        Destroy(board[i, col]);
+                        SpawnCrossBlastTile(i, col, value);
                     }
                 }
             }
         }
-        if (foundCross)
+        if (i < maxRows - 2)
         {
-            horCount = vertCount = 3;
+            if (GetValueIJ(i, j) == GetValueIJ(i + 1, j) && GetValueIJ(i, j) == GetValueIJ(i + 2, j))
+            {
+                int value = GetValueIJ(i, j);
+                for (int row = i + 1; row < i + 3 && !found; row++)
+                {
+                    if (j > 1 && GetValueIJ(i, j) == GetValueIJ(row, j - 1) && GetValueIJ(i, j) == GetValueIJ(row, j - 2)) 
+                    {
+                        found = true;
+                        MarkDestroy(i, j);
+                        MarkDestroy(i + 1, j);
+                        MarkDestroy(i + 2, j);
+                        MarkDestroy(row, j - 1);
+                        MarkDestroy(row, j - 2);
+                        Destroy(board[row, j]);
+                        SpawnCrossBlastTile(row, j, value);
+                    } else if (j < maxCols - 2 && GetValueIJ(i, j) == GetValueIJ(row, j + 1) && GetValueIJ(i, j) == GetValueIJ(row, j + 2))
+                    {
+                        found = true;
+                        MarkDestroy(i, j);
+                        MarkDestroy(i + 1, j);
+                        MarkDestroy(i + 2, j);
+                        MarkDestroy(row, j + 1);
+                        MarkDestroy(row, j + 2);
+                        Destroy(board[row, j]);
+                        SpawnCrossBlastTile(row, j, value);
+                    } else if (j > 0 && j < maxCols - 1 && GetValueIJ(i, j) == GetValueIJ(row, j - 1) && GetValueIJ(i, j) == GetValueIJ(row, j + 1))
+                    {
+                        MarkDestroy(i, j);
+                        MarkDestroy(i + 1, j);
+                        MarkDestroy(i + 2, j);
+                        MarkDestroy(row, j - 1);
+                        MarkDestroy(row, j + 1);
+                        Destroy(board[row, j]);
+                        SpawnCrossBlastTile(row, j, value);
+                        found = true;
+                    }
+                }
+            }
         }
-        return foundCross;
-    }
+        return found;
+    }   
 
     private int CheckHorizontal(int i, int j, out int lowestCol)
     {
         int count = 1;
+
         count += CheckLeft(i, j);
         lowestCol = j - count + 1;
         count += CheckRight(i, j);
@@ -537,12 +642,12 @@ public class Board : MonoBehaviour {
     }
 
     private int CheckVertical(int i, int j, out int lowestRow)
-    {
+    { 
         int count = 1;
 
         count += CheckDown(i, j);
         lowestRow = i - count + 1;
-        count += CheckUp(i, j);      
+        count += CheckUp(i, j);
         return count;
     }
 
@@ -572,9 +677,10 @@ public class Board : MonoBehaviour {
     // if found 2 contiguous matching tiles, then check one end to see if there are any surrounding tiles
     // that would match with the 2 already contiguous tiles.  If not, check the other end.  If still not then
     // move on to the next contiguous matching tiles (2 and only 2).
-    public bool GetHint(out int i, out int j)
+    public bool GetHint()
     {
         bool found = false;
+        int i, j;
         i = j = -1;
         for (int row = 0; row < maxRows - 2 && !found; row++)
         {
@@ -720,6 +826,8 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+        hintI = i;
+        hintJ = j;
         return found;
     }
 
@@ -730,25 +838,48 @@ public class Board : MonoBehaviour {
 
     IEnumerator SpinLockOnFalling()
     {
+        // wait for pieces to stop fallling
         while (falling > 0)
         {
             yield return null;
         }
-        yield return new WaitForSeconds(1.0f);
-        bool match;
+        yield return new WaitForSeconds(0.5f);
+        bool match = false;
+        int lowest = -1;
 
-        match = false;
-
-        for (int i = 0; i < maxRows && !match; i++)
+        // first scan for 5 matches across entire board
+        for (int i = 0; i < maxRows; i++)
         {
-            for (int j = 0; j < maxCols && !match; j++)
+            for (int j = 0; j < maxCols; j++)
             {
-                match = GetMatches(i, j, -1, -1, true);
-                if (match)
+                if (CheckHorizontal(i, j, out lowest) >= 5)
                 {
-                    Cascade();
+                    HandleFiveMatch(i, j, true, lowest);
+                    match = true;
+                } else if (CheckVertical(i, j, out lowest) >= 5)
+                {
+                    HandleFiveMatch(i, j, false, lowest);
+                    match = true;
                 }
             }
+        }
+        
+        // now check for the rest
+        for (int i = 0; i < maxRows; i++)
+        {
+            for (int j = 0; j < maxCols; j++)
+            {
+                match |= CheckIJCascade(i, j);
+            }
+        }
+        if (match)
+        {
+            FinalizeBoard();
+            Fill();
+            Cascade();
+        } else
+        {
+            StartCoroutine(MoveTimer(HintTimeout));
         }
     }
 
@@ -792,7 +923,8 @@ public class Board : MonoBehaviour {
                 board[row, col].GetComponent<TilePiece>().Destroyed = true;
             }
         }
-        FinalizeAndFill();
+        FinalizeBoard();
+        Fill();
     }
 
     private void DestroyAllTiles(int value)
@@ -807,7 +939,8 @@ public class Board : MonoBehaviour {
                 }
             }
         }
-        FinalizeAndFill();
+        FinalizeBoard();
+        Fill();
     }
 
     private void ConvertTiles(int value, TilePiece._TileType tileType)
@@ -911,9 +1044,9 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void FinalizeAndFill()
+    public void FinalizeBoard()
     {
-        // finalize
+        // finalize - reorganize row or col, basically shift tile positions down so they fall to a new resting spot
         for (int col = 0; col < maxCols; col++)
         {
             for (int row = 0; row < maxRows; row++)
@@ -945,8 +1078,8 @@ public class Board : MonoBehaviour {
                                 case TilePiece._TileType.CrossBlast: toSpawn = powerTilesCross[board[i, col].GetComponent<TilePiece>().Value]; break;
                                 case TilePiece._TileType.Rainbow: toSpawn = rainbowTile; break;
                                 default: toSpawn = tiles[board[i, col].GetComponent<TilePiece>().Value]; break;
-                            }               
-                            board[row, col] = GameObject.Instantiate(toSpawn, GetScreenCoordinates(i, col), Quaternion.identity);                            
+                            }
+                            board[row, col] = GameObject.Instantiate(toSpawn, GetScreenCoordinates(i, col), Quaternion.identity);
                             board[row, col].GetComponent<TilePiece>().Value = board[i, col].GetComponent<TilePiece>().Value;
                             board[row, col].GetComponent<TilePiece>().SetLocation(row, col);
                             board[row, col].GetComponent<TilePiece>().TileType = board[i, col].GetComponent<TilePiece>().TileType;
@@ -958,6 +1091,10 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void Fill() { 
+        // destroy and spawn tiles
         for (int col = 0; col < maxCols; col++)
         {
             for (int row = 0; row < maxRows; row++)
@@ -996,6 +1133,7 @@ public class Board : MonoBehaviour {
         board[row, col].GetComponent<TilePiece>().Value = idx;
         board[row, col].GetComponent<TilePiece>().SetLocation(row, col);
         board[row, col].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+        falling++;
         StartCoroutine(Fall(row, col));
     }
 
@@ -1037,10 +1175,15 @@ public class Board : MonoBehaviour {
         score.text = numScore.ToString();
     }
 
+    private int GetValueIJ(int i, int j)
+    {
+        return board[i, j].GetComponent<TilePiece>().Value;
+    }
+
     IEnumerator Fall(int i, int j)
     {
         float startTime = Time.time;
-        while (Time.time - startTime <= 1.0f) 
+        while (Time.time - startTime <= 0.5f) 
         {
             Vector3 newPosition = new Vector3(board[i, j].transform.position.x, i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f, 0.0f);
             board[i, j].transform.position = Vector3.Lerp(board[i, j].transform.position, newPosition, Time.time - startTime);
@@ -1049,4 +1192,3 @@ public class Board : MonoBehaviour {
         falling--;
     }
 }
-

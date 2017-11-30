@@ -28,6 +28,8 @@ public class TilePiece : MonoBehaviour {
 
     private bool destroyed;
 
+    private bool movedOne = false;
+
     private void Start()
     {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
@@ -130,13 +132,15 @@ public class TilePiece : MonoBehaviour {
     {
         lockLeft = lockRight = false;
         lockUp = lockDown = false;
-        if (!boardObj.GetMatches(i,j, targetI, targetJ, false))  // collapse
-        {
-            boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
-        } else
+        if (boardObj.FoundSwitchMatch(i,j, targetI, targetJ))  // collapse
         {
             boardObj.Cascade();
         }
+        else
+        {
+            boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
+        }
+        movedOne = false;
         lockMoveAxisX = false;
         lockMoveAxisY = false;
     }
@@ -164,9 +168,14 @@ public class TilePiece : MonoBehaviour {
                 {
                     lockMoveAxisX = true;
                     lockLeft = true;
-                    targetI = i;
-                    targetJ = j - 1;
-                    boardObj.SwitchPositions(i, j, targetI, targetJ);
+
+                    if (!movedOne)
+                    {
+                        targetI = i;
+                        targetJ = j - 1;
+                        boardObj.SwitchPositions(i, j, targetI, targetJ);
+                        movedOne = true;
+                    }
                 }
                 else
                 {
@@ -174,9 +183,13 @@ public class TilePiece : MonoBehaviour {
                     {
                         lockMoveAxisX = true;
                         lockRight = true;
-                        targetI = i;
-                        targetJ = j + 1;
-                        boardObj.SwitchPositions(i, j, targetI, targetJ);
+                        if (!movedOne)
+                        {
+                            targetI = i;
+                            targetJ = j + 1;
+                            boardObj.SwitchPositions(i, j, targetI, targetJ);
+                            movedOne = true;
+                        }
                     }
                 }
             }
@@ -186,17 +199,25 @@ public class TilePiece : MonoBehaviour {
                 {
                     lockMoveAxisY = true;
                     lockDown = true;
-                    targetI = i - 1;
-                    targetJ = j;
-                    boardObj.SwitchPositions(i, j, targetI, targetJ);
+                    if (!movedOne)
+                    {
+                        targetI = i - 1;
+                        targetJ = j;
+                        boardObj.SwitchPositions(i, j, targetI, targetJ);
+                        movedOne = true;
+                    }
                 }
                 if (!lockMoveAxisX && !lockDown && deltaY > 0.0f && i != Board.maxRows - 1)
                 {
                     lockMoveAxisY = true;
                     lockUp = true;
-                    targetI = i + 1;
-                    targetJ = j;
-                    boardObj.SwitchPositions(i, j, targetI, targetJ);
+                    if (!movedOne)
+                    {
+                        targetI = i + 1;
+                        targetJ = j;
+                        boardObj.SwitchPositions(i, j, targetI, targetJ);
+                        movedOne = true;
+                    }
                 }
             }
         }
