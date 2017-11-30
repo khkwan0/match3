@@ -134,9 +134,9 @@ public class TilePiece : MonoBehaviour {
         lockUp = lockDown = false;
         if (boardObj.FoundSwitchMatch(i,j, targetI, targetJ))  // collapse
         {
-            boardObj.Cascade();
-        }
-        else
+             boardObj.Cascade();
+
+        } else
         {
             boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
         }

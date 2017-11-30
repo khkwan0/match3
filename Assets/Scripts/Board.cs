@@ -127,7 +127,7 @@ public class Board : MonoBehaviour {
         }
         if (!hintTimerOn)
         {
-            Debug.Log("Show hint");
+         //   Debug.Log("Show hint");
         }
         hintTimerOn = false;
     }
@@ -210,6 +210,8 @@ public class Board : MonoBehaviour {
         {
             FinalizeBoard();
             Fill();
+            numMoves--;
+            UpdateMoves(numMoves);
         }                   
         return matches;            
     }
@@ -267,7 +269,8 @@ public class Board : MonoBehaviour {
         return true;
     }
 
-    private bool CheckIJCascade(int i, int j) { 
+    private bool CheckIJCascade(int i, int j) {
+        //Debug.Log("Cascade (i,j): (" + i + "," + j + ")");
         if (HandledCascadeCross(i, j))
         {
             Debug.Log("Cascade Cross");
@@ -545,13 +548,13 @@ public class Board : MonoBehaviour {
         bool found = false;
         if (j < maxCols - 2)
         {
-            if (i < maxRows - 2 && GetValueIJ(i, j) == GetValueIJ(i, j + 1) && GetValueIJ(i, j) == GetValueIJ(i, j + 2))
+            if (i < maxRows - 2 && GetValueIJ(i, j) == GetValueIJ(i, j + 1) && GetValueIJ(i, j) == GetValueIJ(i, j + 2) && !board[i, j + 1].GetComponent<TilePiece>().Destroyed)
             {
                 int value = GetValueIJ(i, j);
                 // potential for cross match with horiztonal base
                 for (int col = j; col < j + 3 && !found; col++)
                 {
-                    if (GetValueIJ(i, j) == GetValueIJ(i + 1, col) && GetValueIJ(i, j) == GetValueIJ(i + 2, col))
+                    if (GetValueIJ(i, j) == GetValueIJ(i + 1, col) && GetValueIJ(i, j) == GetValueIJ(i + 2, col) && !board[i + 1, j].GetComponent<TilePiece>().Destroyed && !board[i + 2, j].GetComponent<TilePiece>().Destroyed)
                     {
                         found = true;
                         MarkDestroy(i, j);
@@ -622,7 +625,7 @@ public class Board : MonoBehaviour {
     private int CheckLeft(int i, int j)
     {
         int count = 0;
-        while (j > 0 && board[i, j - 1].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value)
+        while (j > 0 && board[i, j - 1].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value && !board[i, j - 1].GetComponent<TilePiece>().Destroyed)
         {
             count++;
             j--;
@@ -633,7 +636,7 @@ public class Board : MonoBehaviour {
     private int CheckRight(int i, int j)
     {
         int count = 0;
-        while (j < maxCols - 1 && board[i, j + 1].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value)
+        while (j < maxCols - 1 && board[i, j + 1].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value && !board[i, j].GetComponent<TilePiece>().Destroyed)
         {
             count++;
             j++;
@@ -654,7 +657,7 @@ public class Board : MonoBehaviour {
     private int CheckUp(int i, int j)
     {
         int count = 0;
-        while (i < maxRows - 1 && board[i + 1, j].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value)
+        while (i < maxRows - 1 && board[i + 1, j].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value && !board[i + 1, j].GetComponent<TilePiece>().Destroyed)
         {
             count++;
             i++;
@@ -665,7 +668,7 @@ public class Board : MonoBehaviour {
     private int CheckDown(int i, int j)
     {
         int count = 0;
-        while (i > 0 && board[i - 1, j].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value)
+        while (i > 0 && board[i - 1, j].GetComponent<TilePiece>().Value == board[i, j].GetComponent<TilePiece>().Value && !board[i - 1, j].GetComponent<TilePiece>().Destroyed)
         {
             count++;
             i--;
@@ -1175,6 +1178,11 @@ public class Board : MonoBehaviour {
         score.text = numScore.ToString();
     }
 
+    private void UpdateMoves(int _moves)
+    {
+        moves.text = _moves.ToString();
+    }
+
     private int GetValueIJ(int i, int j)
     {
         return board[i, j].GetComponent<TilePiece>().Value;
@@ -1183,6 +1191,7 @@ public class Board : MonoBehaviour {
     IEnumerator Fall(int i, int j)
     {
         float startTime = Time.time;
+        locked = true;
         while (Time.time - startTime <= 0.5f) 
         {
             Vector3 newPosition = new Vector3(board[i, j].transform.position.x, i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f, 0.0f);
@@ -1190,5 +1199,9 @@ public class Board : MonoBehaviour {
             yield return 1;
         }
         falling--;
+        if (falling == 0)
+        {
+            locked = false;
+        }
     }
 }
