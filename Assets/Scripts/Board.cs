@@ -25,6 +25,7 @@ public class Board : MonoBehaviour {
     private int falling;
     public GameObject canvas;
     private GameObject GUI;
+    private ScoreBarFillController filler;
 
     private TextMeshProUGUI score;
     private TextMeshProUGUI moves;
@@ -49,6 +50,8 @@ public class Board : MonoBehaviour {
 
     private int cascadeCount;
 
+    private float fillAmount;
+    private int maxFillScore;
     private void OnEnable()
     {
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
@@ -90,17 +93,21 @@ public class Board : MonoBehaviour {
 
         board = new GameObject[maxRows, maxCols];
 
-        score = GUI.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        score = GUI.transform.Find("ScoreBar").Find("Score").GetComponent<TextMeshProUGUI>();
         score.text = numScore.ToString();
 
-        moves = GUI.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        moves = GUI.transform.Find("Moves").GetComponent<TextMeshProUGUI>();
         moves.text = numMoves.ToString();
 
+        filler = GUI.transform.Find("ScoreBar").Find("Mask").Find("Filler").GetComponent<ScoreBarFillController>();
         if (gameData.levelData[level].mission == 0)
         {
-            missionText = GUI.transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+            missionText = GUI.transform.Find("Mission").GetComponent<TextMeshProUGUI>();
             missionText.text = "Get " + gameData.levelData[level].missionGoal + " in " + numMoves + " moves or less.";
         }
+
+        maxFillScore = gameData.levelData[level].maxFillPoints;
+        fillAmount = 0.0f;
 
         hintTimerOn = false;
         hintI = hintJ = -1;
@@ -245,8 +252,7 @@ public class Board : MonoBehaviour {
             if (CheckWinCondition())
             {
                 Debug.Log("WIN - advance to next level");
-            }
-            if (CheckLoseCondition())
+            } else if (CheckLoseCondition())
             {
                 Debug.Log("LOSE");
             }
@@ -273,7 +279,7 @@ public class Board : MonoBehaviour {
         bool lose = false;
         if (gameData.levelData[level].mission == 0)
         {
-            if (numScore < gameData.levelData[level].missionGoal)
+            if (numScore < gameData.levelData[level].missionGoal && numMoves == 0)
             {
                 lose = true;
             }
@@ -1243,7 +1249,9 @@ public class Board : MonoBehaviour {
     {
         //Debug.Log(amt * scoreMultiplier);
         numScore += amt * scoreMultiplier;
-        score.text = numScore.ToString();        
+        score.text = numScore.ToString();
+        fillAmount = 1.0f * numScore / maxFillScore;
+        filler.SetFill(fillAmount);
     }
 
     private void UpdateMoves(int _moves)

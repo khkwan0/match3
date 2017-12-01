@@ -241,6 +241,7 @@
     <Compile Include="Assets\Scripts\LevelData.cs" />
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\PlayerDataController.cs" />
+    <Compile Include="Assets\Scripts\ScoreBarFillController.cs" />
     <Compile Include="Assets\Scripts\TilePiece.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01_UGUI.cs" />
