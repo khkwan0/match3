@@ -987,8 +987,12 @@ public class Board : MonoBehaviour {
             scoreMultiplier = cascadeCount + 1;
             FinalizeBoard();
             Fill();
+            Cascade();
         }
-        StartCoroutine(FinalizeUnmoveable());
+        else
+        {
+            StartCoroutine(FinalizeUnmoveable());
+        }
     }
 
     public void SwitchPositions(int ai, int aj, int bi, int bj)
@@ -1207,7 +1211,8 @@ public class Board : MonoBehaviour {
 
     IEnumerator FinalizeUnmoveable()
     {
-        while(falling > 0)
+        bool match = false;
+        while (falling > 0)
         {
             yield return null;
         }
@@ -1230,7 +1235,7 @@ public class Board : MonoBehaviour {
             }
             if (destroyedRow >= 0 && unmoveableRow >= 0) {
                 int i = destroyedRow;
-                Debug.Log(i + "," + col);
+                match = true;
                 while (i < unmoveableRow)
                 {
                     LeftRightNeither leftRightNeither = ChooseLeftRightNeither(unmoveableRow, col);
@@ -1276,7 +1281,10 @@ public class Board : MonoBehaviour {
                 }
             }
         }
-        Cascade();
+        if (match)
+        {
+            Cascade();
+        }
     }
 
     public void Fill() { 
