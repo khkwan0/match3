@@ -6,6 +6,8 @@ using TMPro;
 
 public class Board : MonoBehaviour {
 
+    public enum LeftRightNeither { Left, Right, Neither };
+
     public static int maxRows = 8;
     public static int maxCols = 8;
 
@@ -15,6 +17,7 @@ public class Board : MonoBehaviour {
     public List<GameObject> powerTilesCross = new List<GameObject>();
     public GameObject rainbowTile;
     private GameObject[,] board;
+    public GameObject steelTile;
     public static Vector2 tileSize;
     public static Vector2 boardSize;
 
@@ -52,13 +55,8 @@ public class Board : MonoBehaviour {
 
     private float fillAmount;
     private int maxFillScore;
-    private void OnEnable()
-    {
-        tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
-        GUI = GameObject.Instantiate(canvas);
-        cascadeCount = 0;
-        scoreMultiplier = cascadeCount + 1;
-    }
+
+    private List<BoardSpec> boardSpec;
 
     public void SetBoardSize(Vector2 _size)
     {
@@ -84,10 +82,16 @@ public class Board : MonoBehaviour {
 
     public void StartLevel(int level)
     {
+
+        tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
+        GUI = GameObject.Instantiate(canvas);
+        cascadeCount = 0;
+        scoreMultiplier = cascadeCount + 1;
+
         numMoves = gameData.levelData[level].numMoves;
         numScore = 0;
 
-        this.level = gameData.levelData[level].level;
+        this.level = gameData.levelData[level].level;;
         maxRows = gameData.levelData[level].rows;
         maxCols = gameData.levelData[level].cols;
 
@@ -100,38 +104,69 @@ public class Board : MonoBehaviour {
         moves.text = numMoves.ToString();
 
         filler = GUI.transform.Find("ScoreBar").Find("Mask").Find("Filler").GetComponent<ScoreBarFillController>();
-        if (gameData.levelData[level].mission == 0)
+        if (gameData.levelData[level].mission.type == 0)
         {
             missionText = GUI.transform.Find("Mission").GetComponent<TextMeshProUGUI>();
-            missionText.text = "Get " + gameData.levelData[level].missionGoal + " in " + numMoves + " moves or less.";
+            missionText.text = "Get " + gameData.levelData[level].mission.missionGoals.score + " in " + numMoves + " moves or less.";
+            maxFillScore = gameData.levelData[level].mission.missionGoals.maxFillPoints;
         }
 
-        maxFillScore = gameData.levelData[level].maxFillPoints;
+
         fillAmount = 0.0f;
 
         hintTimerOn = false;
         hintI = hintJ = -1;
+        boardSpec = gameData.levelData[level].boardSpec;
         for (int i = 0; i < maxRows; i++)
         {
             for (int j = 0; j < maxCols; j++)
             {
-                int idx = (int)Mathf.FloorToInt(Random.Range(0f, tiles.Count - 1));
-                while (IsContiguousHorizontal(i, j, idx) || IsContiguousVertical(i, j, idx)) {
-                    idx = (int)Mathf.FloorToInt(Random.Range(0f, tiles.Count - 1));
+                bool specFound = false;
+                for (int k = 0; k < boardSpec.Count && !specFound; k++)
+                { 
+                    if (boardSpec[k].row == i && boardSpec[k].col == j)
+                    {
+                        specFound = true;
+                        if (boardSpec[k].indestructable == 1 && boardSpec[k].moveable == 0)
+                        {
+                            board[i, j] = GameObject.Instantiate(
+                                steelTile,
+                                new Vector3(
+                                    j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
+                                    i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
+                                    0.0f
+                                ),
+                                Quaternion.identity
+                            );
+                            board[i, j].SetActive(false);
+                            board[i, j].GetComponent<TilePiece>().Value = -1;
+                            board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+                            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Indestructable;
+                            board[i, j].GetComponent<TilePiece>().Moveable = false;
+                        }
+                    }               
                 }
-                board[i, j] = GameObject.Instantiate(
-                    tiles[idx],
-                    new Vector3(
-                        j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
-                        i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
-                        0.0f
-                    ),
-                    Quaternion.identity
-                );
-                board[i, j].SetActive(false);
-                board[i, j].GetComponent<TilePiece>().Value = idx;
-                board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
-                board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+                if (!specFound)
+                {
+                    int idx = (int)Mathf.FloorToInt(Random.Range(0f, tiles.Count - 1));
+                    while (IsContiguousHorizontal(i, j, idx) || IsContiguousVertical(i, j, idx))
+                    {
+                        idx = (int)Mathf.FloorToInt(Random.Range(0f, tiles.Count - 1));
+                    }
+                    board[i, j] = GameObject.Instantiate(
+                        tiles[idx],
+                        new Vector3(
+                            j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
+                            i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
+                            0.0f
+                        ),
+                        Quaternion.identity
+                    );
+                    board[i, j].SetActive(false);
+                    board[i, j].GetComponent<TilePiece>().Value = idx;
+                    board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+                    board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+                }
             }
         }
         if (GetHint()) {
@@ -242,11 +277,11 @@ public class Board : MonoBehaviour {
         }
         if (matches)
         {
+
             FinalizeBoard();
             Fill();
             numMoves--;
             UpdateMoves(numMoves);
-            Cascade();
             cascadeCount = 0;
             scoreMultiplier = cascadeCount + 1;
             if (CheckWinCondition())
@@ -264,9 +299,9 @@ public class Board : MonoBehaviour {
     {
         bool win = false;
         
-        if (gameData.levelData[level].mission == 0)
+        if (gameData.levelData[level].mission.type == 0)
         {
-            if (numScore >= gameData.levelData[level].missionGoal)
+            if (numScore >= gameData.levelData[level].mission.missionGoals.score)
             {
                 win = true;
             }
@@ -277,9 +312,9 @@ public class Board : MonoBehaviour {
     private bool CheckLoseCondition()
     {
         bool lose = false;
-        if (gameData.levelData[level].mission == 0)
+        if (gameData.levelData[level].mission.type == 0)
         {
-            if (numScore < gameData.levelData[level].missionGoal && numMoves == 0)
+            if (numScore < gameData.levelData[level].mission.missionGoals.score && numMoves <= 0)
             {
                 lose = true;
             }
@@ -952,11 +987,8 @@ public class Board : MonoBehaviour {
             scoreMultiplier = cascadeCount + 1;
             FinalizeBoard();
             Fill();
-            Cascade();
-        } else
-        {
-            StartCoroutine(MoveTimer(HintTimeout));
         }
+        StartCoroutine(FinalizeUnmoveable());
     }
 
     public void SwitchPositions(int ai, int aj, int bi, int bj)
@@ -971,8 +1003,7 @@ public class Board : MonoBehaviour {
     IEnumerator SwitchPositionsLerp(int ai, int aj, int bi, int bj, Vector3 newPositionA, Vector3 newPositionB)
     {
         float startTime = Time.time;
-        GameObject temp;
-
+        GameObject temp;        
         while (Time.time - startTime <= 0.5f)
         {
             board[bi, bj].transform.position = Vector3.Lerp(board[bi, bj].transform.position, newPositionB, Time.time - startTime);
@@ -996,7 +1027,10 @@ public class Board : MonoBehaviour {
         {
             for (int col = 0; col < maxCols; col++)
             {
-                board[row, col].GetComponent<TilePiece>().Destroyed = true;
+                if (board[row, col].GetComponent<TilePiece>().TileType != TilePiece._TileType.Indestructable)
+                {
+                    board[row, col].GetComponent<TilePiece>().Destroyed = true;
+                }
             }
         }
         FinalizeBoard();
@@ -1108,7 +1142,10 @@ public class Board : MonoBehaviour {
     {
         for (int j = 0; j < maxCols; j++)
         {
-            MarkDestroy(row, j);
+            if (board[row, j].GetComponent<TilePiece>().TileType != TilePiece._TileType.Indestructable)
+            {
+                MarkDestroy(row, j);
+            }
         }
     }
 
@@ -1116,7 +1153,10 @@ public class Board : MonoBehaviour {
     {
         for (int i = 0; i< maxRows; i++)
         {
-            MarkDestroy(i, col);
+            if (board[i, col].GetComponent<TilePiece>().TileType != TilePiece._TileType.Indestructable)
+            {
+                MarkDestroy(i, col);
+            }
         }
     }
 
@@ -1129,6 +1169,7 @@ public class Board : MonoBehaviour {
             {
                 if (board[row, col].GetComponent<TilePiece>().Destroyed)
                 {
+                    board[row, col].SetActive(false);
                     if (row < maxRows - 1)
                     {
                         int i = row + 1;
@@ -1140,33 +1181,102 @@ public class Board : MonoBehaviour {
                                 i++;
                             } else
                             {
-                                found = true;
+                                found = true;                                    
                             }
                         }
                         if (found)
                         {
-                            Destroy(board[row, col]);
-                            GameObject toSpawn;
-                            switch (board[i, col].GetComponent<TilePiece>().TileType)
+                            if (board[i, col].GetComponent<TilePiece>().Moveable)
                             {
-                                case TilePiece._TileType.HorizontalBlast: toSpawn = powerTilesHorizontal[board[i, col].GetComponent<TilePiece>().Value]; break;
-                                case TilePiece._TileType.VerticalBlast: toSpawn = powerTilesVertical[board[i, col].GetComponent<TilePiece>().Value]; break;
-                                case TilePiece._TileType.CrossBlast: toSpawn = powerTilesCross[board[i, col].GetComponent<TilePiece>().Value]; break;
-                                case TilePiece._TileType.Rainbow: toSpawn = rainbowTile; break;
-                                default: toSpawn = tiles[board[i, col].GetComponent<TilePiece>().Value]; break;
+                                Destroy(board[row, col]);
+                                board[row, col] = CloneAndSpawn(i, col, row, col);
+                                board[i, col].GetComponent<TilePiece>().Destroyed = true;
+                                falling++;
+                                StartCoroutine(Fall(row, col));
                             }
-                            board[row, col] = GameObject.Instantiate(toSpawn, GetScreenCoordinates(i, col), Quaternion.identity);
-                            board[row, col].GetComponent<TilePiece>().Value = board[i, col].GetComponent<TilePiece>().Value;
-                            board[row, col].GetComponent<TilePiece>().SetLocation(row, col);
-                            board[row, col].GetComponent<TilePiece>().TileType = board[i, col].GetComponent<TilePiece>().TileType;
-                            board[i, col].GetComponent<TilePiece>().Destroyed = true;
-                            falling++;
-                            StartCoroutine(Fall(row, col));
+                            else
+                            {
+                                board[row, col].GetComponent<TilePiece>().DelayFill = true;
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    IEnumerator FinalizeUnmoveable()
+    {
+        while(falling > 0)
+        {
+            yield return null;
+        }
+        for (int col = 0; col < maxCols; col++)
+        {
+            int row = 0;
+            int destroyedRow = -1;
+            int unmoveableRow = -1;
+            while (row < maxRows && (destroyedRow < 0 || unmoveableRow < 0)) {
+                //Debug.Log(row+","+col+" " +board[row, col].GetComponent<TilePiece>().Destroyed);
+                if (board[row, col].GetComponent<TilePiece>().Destroyed && destroyedRow < 0)
+                {
+                    destroyedRow = row;
+                }
+                if (board[row, col].GetComponent<TilePiece>().Moveable == false)
+                {
+                    unmoveableRow = row;
+                }
+                row++;
+            }
+            if (destroyedRow >= 0 && unmoveableRow >= 0) {
+                int i = destroyedRow;
+                Debug.Log(i + "," + col);
+                while (i < unmoveableRow)
+                {
+                    LeftRightNeither leftRightNeither = ChooseLeftRightNeither(unmoveableRow, col);
+                    Debug.Log(leftRightNeither);
+                    if (leftRightNeither != LeftRightNeither.Neither)
+                    { 
+                        if (leftRightNeither == LeftRightNeither.Left)
+                        {
+                            Debug.Log("val left " + board[unmoveableRow, col - 1].GetComponent<TilePiece>().Value);
+                            board[unmoveableRow, col - 1].SetActive(false);
+                            board[i, col] = CloneAndSpawn(unmoveableRow, col - 1, i, col);
+                            falling++;
+                            StartCoroutine(Fall(i, col));
+                            for (int k = unmoveableRow; k < maxRows - 1; k++)
+                            {
+                                board[k + 1, col - 1].SetActive(false);
+                                board[k, col - 1] = CloneAndSpawn(k + 1, col - 1, k, col - 1);
+                                falling++;
+                                StartCoroutine(Fall(k, col - 1));
+                            }
+                            MarkDestroy(maxRows - 1, col - 1);
+                            Fill();
+                        }
+                        else
+                        {
+                            Debug.Log("val righ " + board[unmoveableRow, col + 1].GetComponent<TilePiece>().Value);
+                            board[unmoveableRow, col + 1].SetActive(false);
+                            board[i, col] = CloneAndSpawn(unmoveableRow, col + 1, i, col);
+                            falling++;
+                            StartCoroutine(Fall(i, col));
+                            for (int k = unmoveableRow; k < maxRows - 1; k++)
+                            {
+                                board[k + 1, col + 1].SetActive(false);
+                                board[k, col + 1] = CloneAndSpawn(k + 1, col + 1, k, col + 1);
+                                falling++;
+                                StartCoroutine(Fall(k, col + 1));
+                            }
+                            MarkDestroy(maxRows - 1, col + 1);
+                            Fill();
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+        Cascade();
     }
 
     public void Fill() { 
@@ -1175,7 +1285,7 @@ public class Board : MonoBehaviour {
         {
             for (int row = 0; row < maxRows; row++)
             {
-                if (board[row, col].GetComponent<TilePiece>().Destroyed)
+                if (board[row, col].GetComponent<TilePiece>().Destroyed && !board[row, col].GetComponent<TilePiece>().DelayFill)
                 {
                     IncrementScore(scoreAmt);
                     Destroy(board[row, col]);
@@ -1183,6 +1293,70 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+    }
+
+    private LeftRightNeither ChooseLeftRightNeither(int i, int j) {
+        LeftRightNeither leftRightNeither = LeftRightNeither.Neither;
+
+        Debug.Log("LeftrightNeith input " + i + "," + j);
+        if (j == 0)
+        {
+            if (board[i, j + 1].GetComponent<TilePiece>().Moveable)
+            {
+                leftRightNeither = LeftRightNeither.Right;
+            }
+        }
+        else if (j == maxCols - 1)
+        {
+            if (board[i, j - 1].GetComponent<TilePiece>().Moveable)
+            {
+                leftRightNeither = LeftRightNeither.Left;
+            }
+        }
+        else
+        {
+            if (board[i, j - 1].GetComponent<TilePiece>().Moveable && !board[i, j + 1].GetComponent<TilePiece>().Moveable)
+            {
+                leftRightNeither = LeftRightNeither.Left;
+            }
+            if (!board[i, j - 1].GetComponent<TilePiece>().Moveable && board[i, j + 1].GetComponent<TilePiece>().Moveable)
+            {
+                leftRightNeither = LeftRightNeither.Right;
+            }
+            if (leftRightNeither == LeftRightNeither.Neither)
+            {
+                int left = Mathf.FloorToInt(Random.Range(0, 1.99f));
+                if (left == 0)
+                {
+                    leftRightNeither = LeftRightNeither.Left;
+                }
+                else
+                {
+                    leftRightNeither = LeftRightNeither.Right;
+                }
+            }
+        }
+        return leftRightNeither;
+    }
+
+    private GameObject CloneAndSpawn(int originalI, int originalJ, int spawnI, int spawnJ)
+    {
+        GameObject tile;
+        GameObject toSpawn;
+
+        switch (board[originalI, originalJ].GetComponent<TilePiece>().TileType)
+        {
+            case TilePiece._TileType.HorizontalBlast: toSpawn = powerTilesHorizontal[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
+            case TilePiece._TileType.VerticalBlast: toSpawn = powerTilesVertical[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
+            case TilePiece._TileType.CrossBlast: toSpawn = powerTilesCross[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
+            case TilePiece._TileType.Rainbow: toSpawn = rainbowTile; break;
+            default: toSpawn = tiles[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
+        }
+        tile = GameObject.Instantiate(toSpawn, GetScreenCoordinates(originalI, originalJ), Quaternion.identity);
+        tile.GetComponent<TilePiece>().Value = board[originalI, originalJ].GetComponent<TilePiece>().Value;
+        tile.GetComponent<TilePiece>().SetLocation(spawnI, spawnJ);
+        tile.GetComponent<TilePiece>().TileType = board[originalI, originalJ].GetComponent<TilePiece>().TileType;
+        return tile;
     }
 
     private Vector3 GetScreenCoordinates(int i, int j)
@@ -1270,7 +1444,7 @@ public class Board : MonoBehaviour {
         locked = true;
         while (Time.time - startTime <= 0.5f) 
         {
-            Vector3 newPosition = new Vector3(board[i, j].transform.position.x, i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f, 0.0f);
+            Vector3 newPosition = GetScreenCoordinates(i, j);
             board[i, j].transform.position = Vector3.Lerp(board[i, j].transform.position, newPosition, Time.time - startTime);
             yield return 1;
         }

@@ -15,7 +15,6 @@ public class PlayerDataController : MonoBehaviour {
         {
             string dataAsJson = File.ReadAllText(filePath);
             playerData = JsonUtility.FromJson<PlayerData>(dataAsJson);
-            Debug.Log(dataAsJson);
         }
         else
         {

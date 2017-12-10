@@ -19,9 +19,9 @@ public class TilePiece : MonoBehaviour {
     private int targetI, targetJ;
 
     private int layers;
-    private bool moveable;
+    private bool moveable = true;
 
-    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow };
+    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Indestructable };
     private _TileType tileType;
 
     public float swipeThreshhold = 0.15f;
@@ -29,6 +29,8 @@ public class TilePiece : MonoBehaviour {
     private bool destroyed;
 
     private bool movedOne = false;
+
+    private bool delayFill = false;
 
     private void Start()
     {
@@ -42,6 +44,12 @@ public class TilePiece : MonoBehaviour {
     {
         get { return destroyed; }
         set { destroyed = value; }
+    }
+    
+    public bool DelayFill
+    {
+        get { return delayFill; }
+        set { delayFill = value; }
     }
            
     public _TileType TileType
@@ -132,13 +140,16 @@ public class TilePiece : MonoBehaviour {
     {
         lockLeft = lockRight = false;
         lockUp = lockDown = false;
-        if (boardObj.FoundSwitchMatch(i,j, targetI, targetJ))  // collapse
+        if (movedOne)
         {
-             boardObj.Cascade();
-
-        } else
-        {
-            boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
+            if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
+            {
+                boardObj.Cascade();
+            }
+            else
+            {
+                boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
+            }
         }
         movedOne = false;
         lockMoveAxisX = false;
@@ -147,11 +158,10 @@ public class TilePiece : MonoBehaviour {
 
     public void OnMouseDrag()
     {
-        if (!boardObj.Locked)
+        if (!boardObj.Locked && moveable)
         {
             bool moveHor = false;
             bool moveVert = false;
-            //Debug.Log("deltax" + (Input.mousePosition.x - previousMousePosition.x) + "," + (Input.mousePosition.y - previousMousePosition.y));
             float deltaX = Input.mousePosition.x - previousMousePosition.x;
             float deltaY = Input.mousePosition.y - previousMousePosition.y;
             if (Mathf.Abs(deltaX) > Mathf.Abs(deltaY))
@@ -173,8 +183,12 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i;
                         targetJ = j - 1;
-                        boardObj.SwitchPositions(i, j, targetI, targetJ);
-                        movedOne = true;
+                        //Debug.Log(targetI + "," + targetJ + ": " + board[targetI, targetJ].GetComponent<TilePiece>().Moveable);
+                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                        {
+                            boardObj.SwitchPositions(i, j, targetI, targetJ);
+                            movedOne = true;
+                        }
                     }
                 }
                 else
@@ -187,8 +201,11 @@ public class TilePiece : MonoBehaviour {
                         {
                             targetI = i;
                             targetJ = j + 1;
-                            boardObj.SwitchPositions(i, j, targetI, targetJ);
-                            movedOne = true;
+                            if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                            {
+                                boardObj.SwitchPositions(i, j, targetI, targetJ);
+                                movedOne = true;
+                            }
                         }
                     }
                 }
@@ -203,8 +220,11 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i - 1;
                         targetJ = j;
-                        boardObj.SwitchPositions(i, j, targetI, targetJ);
-                        movedOne = true;
+                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                        {
+                            boardObj.SwitchPositions(i, j, targetI, targetJ);
+                            movedOne = true;
+                        }
                     }
                 }
                 if (!lockMoveAxisX && !lockDown && deltaY > 0.0f && i != Board.maxRows - 1)
@@ -215,8 +235,11 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i + 1;
                         targetJ = j;
-                        boardObj.SwitchPositions(i, j, targetI, targetJ);
-                        movedOne = true;
+                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                        {
+                            boardObj.SwitchPositions(i, j, targetI, targetJ);
+                            movedOne = true;
+                        }
                     }
                 }
             }

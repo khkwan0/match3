@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
@@ -12,6 +13,8 @@ public class GameController : MonoBehaviour {
     private Camera cam;
     private GameObject board;
 
+    private int startLevel;
+
     private PlayerDataController playerDataController;
 
 	void Awake () {
@@ -22,14 +25,27 @@ public class GameController : MonoBehaviour {
         playerDataController.LoadPlayerData();
         dataController = transform.GetComponent<DataController>();
         dataController.LoadGameData();
+        StartBoard();
+        if (playerDataController.playerData.lastLevel < 0)
+        {
+            startLevel = 0;
+        } else
+        {
+            startLevel = playerDataController.GetComponent<PlayerData>().lastLevel;
+        }
+            
+    }
+
+    public void StartBoard()
+    {
         board = GameObject.Instantiate(boardManager);
         board.GetComponent<Board>().SetGameData(dataController.gameData);
         board.GetComponent<Board>().SetBoardSize(new Vector2(cam.aspect * 2f * cam.orthographicSize, 2f * cam.orthographicSize));
+        StartLevel(startLevel);
     }
 
     private void Start()
     {
-        StartLevel(0);
     }
 
     public Camera GetCam()

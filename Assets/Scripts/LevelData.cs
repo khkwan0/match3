@@ -8,10 +8,6 @@ public class LevelData {
     public int cols;
     public int numTileValues;
     public int numMoves;
-    public int mission; // 0 for reach amount of points
-    public int missionGoal;
-    public int maxFillPoints;
-    public int tier1Fill;
-    public int tier2Fill;
-    public int tier3Fill;
+    public MissionData mission;
+    public List<BoardSpec> boardSpec;
 }

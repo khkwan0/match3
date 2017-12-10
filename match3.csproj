@@ -235,10 +235,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Board.cs" />
+    <Compile Include="Assets\Scripts\BoardSpec.cs" />
     <Compile Include="Assets\Scripts\DataController.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\GameData.cs" />
+    <Compile Include="Assets\Scripts\IntroScreenController.cs" />
     <Compile Include="Assets\Scripts\LevelData.cs" />
+    <Compile Include="Assets\Scripts\MissionData.cs" />
+    <Compile Include="Assets\Scripts\MissionGoals.cs" />
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\PlayerDataController.cs" />
     <Compile Include="Assets\Scripts\ScoreBarFillController.cs" />

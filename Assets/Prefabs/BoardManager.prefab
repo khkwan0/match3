@@ -81,7 +81,7 @@ MonoBehaviour:
   - {fileID: 1820176228177348, guid: d0f77334fc2afa741b1bca32827eeecd, type: 2}
   rainbowTile: {fileID: 1862638571403850, guid: 34186f11cdc011d4ea155c097df8258d,
     type: 2}
-  cam: {fileID: 20059895889851912, guid: 5fd4c0fa4fdd431489d113d364f10c62, type: 2}
+  steelTile: {fileID: 1563001725235454, guid: 5cd6be39c9656ac428905afb29741c4c, type: 2}
   locked: 0
   falling: 0
   canvas: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f, type: 2}

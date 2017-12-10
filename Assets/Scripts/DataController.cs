@@ -16,7 +16,6 @@ public class DataController : MonoBehaviour
         {
             string dataAsJson = File.ReadAllText(filePath);
             gameData = JsonUtility.FromJson<GameData>(dataAsJson);
-            Debug.Log(gameData.levelData[0].level);
         } else
         {
             Debug.LogError("Cannot load game data");
