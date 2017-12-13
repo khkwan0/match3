@@ -1247,6 +1247,10 @@ public class Board : MonoBehaviour {
                             Debug.Log("val left " + board[unmoveableRow, col - 1].GetComponent<TilePiece>().Value);
                             board[unmoveableRow, col - 1].SetActive(false);
                             board[i, col] = CloneAndSpawn(unmoveableRow, col - 1, i, col);
+                            while (falling > 0)
+                            {
+                                yield return null;
+                            }
                             falling++;
                             StartCoroutine(Fall(i, col));
                             for (int k = unmoveableRow; k < maxRows - 1; k++)
@@ -1264,6 +1268,10 @@ public class Board : MonoBehaviour {
                             Debug.Log("val righ " + board[unmoveableRow, col + 1].GetComponent<TilePiece>().Value);
                             board[unmoveableRow, col + 1].SetActive(false);
                             board[i, col] = CloneAndSpawn(unmoveableRow, col + 1, i, col);
+                            while (falling > 0)
+                            {
+                                yield return null;
+                            }
                             falling++;
                             StartCoroutine(Fall(i, col));
                             for (int k = unmoveableRow; k < maxRows - 1; k++)

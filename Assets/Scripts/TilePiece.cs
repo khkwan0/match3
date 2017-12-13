@@ -183,7 +183,8 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i;
                         targetJ = j - 1;
-                        //Debug.Log(targetI + "," + targetJ + ": " + board[targetI, targetJ].GetComponent<TilePiece>().Moveable);
+						Debug.Log (targetI + "," + targetJ);
+                        Debug.Log(targetI + "," + targetJ + ": " + board[targetI, targetJ].GetComponent<TilePiece>().Moveable);
                         if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
                         {
                             boardObj.SwitchPositions(i, j, targetI, targetJ);

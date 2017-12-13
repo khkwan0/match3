@@ -9,5 +9,5 @@ EditorBuildSettings:
     path: Assets/Intro.unity
     guid: b0f659c50b673d441a0bed9d09c985fa
   - enabled: 1
-    path: Assets/scene1.unity
+    path: Assets/Board.unity
     guid: ac4b131c022c1f143afab239d898d4c1

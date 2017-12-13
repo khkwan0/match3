@@ -52,12 +52,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 1194182236645348, guid: 701be0ce726fcbd44b719d6de2b820c1, type: 2}
-  - {fileID: 1260299135984194, guid: 20fed6ad6640e9e4f9016b4a487861ae, type: 2}
-  - {fileID: 1617159973967724, guid: d1c10e7393125284f9c3de7a9a401521, type: 2}
-  - {fileID: 1255487421677990, guid: d2fc8734e50162e4688fbced5aeec37d, type: 2}
-  - {fileID: 1191573404201132, guid: 38d6b165b158fb6478bc2f059248a92b, type: 2}
-  - {fileID: 1239147525806924, guid: f123130bd84dd224ab2b8d0adb886b2d, type: 2}
+  - {fileID: 1356911416458138, guid: add8666d3df81824f9f9ca5c4415ed4b, type: 2}
+  - {fileID: 1473554306366550, guid: 329a4f73e837fb34496f87e954533dde, type: 2}
+  - {fileID: 1441162943655262, guid: 7c3baf6615000244498d9265bfbf522c, type: 2}
+  - {fileID: 1804522275641066, guid: 4182c21502efff54a855979e37bd6935, type: 2}
+  - {fileID: 1148540041830986, guid: d0cfafdaf918e24489a0c444e74ced7d, type: 2}
+  - {fileID: 1870971757658718, guid: bc836c037aeb4764d9621ce6e1d8f5f1, type: 2}
   powerTilesVertical:
   - {fileID: 1839099881489734, guid: e545468e645f3b44c94c7f1ad719e2ae, type: 2}
   - {fileID: 1120809117750482, guid: af2e2052f2c0488499ca4f20c3a4b3a2, type: 2}
