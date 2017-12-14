@@ -23,13 +23,25 @@
                     "row": 3,
                     "col": 3,
                     "indestructable": 1,
-                    "movable": 0
+                    "immoveable": 1,
+                    "steel": 1,
+                    "nonblocking": 0
                 },
                 {
                     "row": 3,
                     "col": 4,
                     "indestructable": 1,
-                    "moveable": 0
+                    "immoveable": 1,
+                    "steel": 1,
+                    "nonblocking": 0
+                },
+                {
+                    "row": 7,
+                    "col":0,
+                    "invisible": 1,
+                    "immoveable": 1,
+                    "indestructable": 1,
+                    "nonblocking": 1
                 }
             ]            
         },

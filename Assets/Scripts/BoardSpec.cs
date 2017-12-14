@@ -1,10 +1,1 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-[System.Serializable]
-public class BoardSpec {
-    public int row;
-    public int col;
-    public int indestructable;
-    public int moveable;
- }
+﻿using System.Collections;using System.Collections.Generic;[System.Serializable]public class BoardSpec {    public int row;    public int col;    public int indestructable;    public int immoveable;    public int steel;    public int invisible;    public int nonblocking; }

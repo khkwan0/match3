@@ -19,9 +19,11 @@ public class TilePiece : MonoBehaviour {
     private int targetI, targetJ;
 
     private int layers;
+
+    [SerializeField]
     private bool moveable = true;
 
-    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Indestructable };
+    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Indestructable, Steel, Invisible };
     private _TileType tileType;
 
     public float swipeThreshhold = 0.15f;
@@ -31,6 +33,9 @@ public class TilePiece : MonoBehaviour {
     private bool movedOne = false;
 
     private bool delayFill = false;
+
+    [SerializeField]
+    private bool nonBlocking = true;
 
     private void Start()
     {
@@ -68,6 +73,12 @@ public class TilePiece : MonoBehaviour {
     {
         get { return moveable; }
         set { moveable = value; }
+    }
+
+    public bool NonBlocking
+    {
+        get { return nonBlocking; }
+        set { nonBlocking = value; }
     }
 
     public int Value
@@ -183,8 +194,6 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i;
                         targetJ = j - 1;
-						Debug.Log (targetI + "," + targetJ);
-                        Debug.Log(targetI + "," + targetJ + ": " + board[targetI, targetJ].GetComponent<TilePiece>().Moveable);
                         if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
                         {
                             boardObj.SwitchPositions(i, j, targetI, targetJ);

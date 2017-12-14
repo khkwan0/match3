@@ -17,7 +17,6 @@ public class Board : MonoBehaviour {
     public List<GameObject> powerTilesCross = new List<GameObject>();
     public GameObject rainbowTile;
     private GameObject[,] board;
-    public GameObject steelTile;
     public static Vector2 tileSize;
     public static Vector2 boardSize;
 
@@ -127,10 +126,9 @@ public class Board : MonoBehaviour {
                     if (boardSpec[k].row == i && boardSpec[k].col == j)
                     {
                         specFound = true;
-                        if (boardSpec[k].indestructable == 1 && boardSpec[k].moveable == 0)
-                        {
-                            board[i, j] = GameObject.Instantiate(
-                                steelTile,
+                        board[i, j] = new GameObject();
+                        board[i, j].AddComponent<TilePiece>();
+                        board[i, j].transform.SetPositionAndRotation(
                                 new Vector3(
                                     j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
                                     i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
@@ -138,12 +136,51 @@ public class Board : MonoBehaviour {
                                 ),
                                 Quaternion.identity
                             );
-                            board[i, j].SetActive(false);
-                            board[i, j].GetComponent<TilePiece>().Value = -1;
-                            board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
-                            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Indestructable;
+                        board[i, j].GetComponent<TilePiece>().Value = -1;
+                        board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+                        if (boardSpec[k].immoveable == 1)
+                        {
                             board[i, j].GetComponent<TilePiece>().Moveable = false;
                         }
+                        if (boardSpec[k].indestructable == 1)
+                        {
+                            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Indestructable;
+                        }
+                        if (boardSpec[k].nonblocking == 0)
+                        {
+                            board[i, j].AddComponent<BoxCollider2D>();
+                            board[i, j].GetComponent<BoxCollider2D>().size = new Vector2(0.5f, 0.5f);
+                            board[i, j].GetComponent<TilePiece>().NonBlocking = false;
+                        } else
+                        {
+                            board[i, j].GetComponent<TilePiece>().NonBlocking = true;
+                        }
+                        if (boardSpec[k].steel == 1)
+                        {
+                            board[i, j].name = "Steel Tile";
+                            board[i, j].transform.localScale = new Vector3(1.38f, 1.38f, 1.0f);
+                            board[i, j].AddComponent<SpriteRenderer>();
+                            board[i, j].GetComponent<SpriteRenderer>().sprite = (Sprite)Resources.Load("Sprites/steelTile", typeof(Sprite));
+                        }
+                        board[i, j].SetActive(false);
+                            
+                        //if (boardSpec[k].indestructable == 1 && boardSpec[k].immoveable == 0)
+                        //{
+                        //    board[i, j] = GameObject.Instantiate(
+                        //        steelTile,
+                        //        new Vector3(
+                        //            j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
+                        //            i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
+                        //            0.0f
+                        //        ),
+                        //        Quaternion.identity
+                        //    );
+                        //    board[i, j].SetActive(false);
+                        //    board[i, j].GetComponent<TilePiece>().Value = -1;
+                        //    board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+                        //    board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Indestructable;
+                        //    board[i, j].GetComponent<TilePiece>().Moveable = false;
+                        //}
                     }               
                 }
                 if (!specFound)
@@ -166,6 +203,7 @@ public class Board : MonoBehaviour {
                     board[i, j].GetComponent<TilePiece>().Value = idx;
                     board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
                     board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+                    board[i, j].GetComponent<TilePiece>().NonBlocking = false;
                 }
             }
         }
@@ -592,7 +630,7 @@ public class Board : MonoBehaviour {
             }
             else
             {
-                SpawnVerticalBlastTile(i, j, value);
+                SpawnHorizontalBlastTile(i, j, value);
                 for (int row = lowest; row < lowest + 4; row++)
                 {
                     if (row != i)
@@ -1192,13 +1230,13 @@ public class Board : MonoBehaviour {
                         {
                             if (board[i, col].GetComponent<TilePiece>().Moveable)
                             {
-                                Destroy(board[row, col]);
+                                Destroy(board[row, col]);                            
                                 board[row, col] = CloneAndSpawn(i, col, row, col);
                                 board[i, col].GetComponent<TilePiece>().Destroyed = true;
                                 falling++;
                                 StartCoroutine(Fall(row, col));
                             }
-                            else
+                            else if (board[i, col].GetComponent<TilePiece>().NonBlocking == false)
                             {
                                 board[row, col].GetComponent<TilePiece>().DelayFill = true;
                             }
@@ -1227,7 +1265,7 @@ public class Board : MonoBehaviour {
                 {
                     destroyedRow = row;
                 }
-                if (board[row, col].GetComponent<TilePiece>().Moveable == false)
+                if (board[row, col].GetComponent<TilePiece>().Moveable == false && board[row, col].GetComponent<TilePiece>().NonBlocking == false)
                 {
                     unmoveableRow = row;
                 }
@@ -1360,6 +1398,7 @@ public class Board : MonoBehaviour {
         GameObject tile;
         GameObject toSpawn;
 
+        Debug.Log(originalI + "," + originalJ);
         switch (board[originalI, originalJ].GetComponent<TilePiece>().TileType)
         {
             case TilePiece._TileType.HorizontalBlast: toSpawn = powerTilesHorizontal[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
