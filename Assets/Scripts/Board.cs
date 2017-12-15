@@ -47,6 +47,7 @@ public class Board : MonoBehaviour {
     int hintI, hintJ;
 
     private GameData gameData;
+    private GameController gameController;
     private int level;
     private int scoreMultiplier;
 
@@ -54,7 +55,7 @@ public class Board : MonoBehaviour {
 
     private float fillAmount;
     private int maxFillScore;
-
+    private int stars = 0;
     private List<BoardSpec> boardSpec;
 
     public void SetBoardSize(Vector2 _size)
@@ -65,6 +66,11 @@ public class Board : MonoBehaviour {
     public void SetGameData(GameData gd)
     {
         gameData = gd;
+    }
+
+    public void SetGameController(GameController gc)
+    {
+        gameController = gc;
     }
 
     public bool Locked
@@ -81,7 +87,8 @@ public class Board : MonoBehaviour {
 
     public void StartLevel(int level)
     {
-
+        Debug.Log(gameController.GetPlayerData().lastLevel);
+        stars = 0;
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
         GUI = GameObject.Instantiate(canvas);
         cascadeCount = 0;
@@ -90,7 +97,7 @@ public class Board : MonoBehaviour {
         numMoves = gameData.levelData[level].numMoves;
         numScore = 0;
 
-        this.level = gameData.levelData[level].level;;
+        this.level = gameData.levelData[level].level;
         maxRows = gameData.levelData[level].rows;
         maxCols = gameData.levelData[level].cols;
 
@@ -342,6 +349,9 @@ public class Board : MonoBehaviour {
             if (CheckWinCondition())
             {
                 Debug.Log("WIN - advance to next level");
+                System.TimeSpan t = System.DateTime.UtcNow - new System.DateTime(1970, 1, 1);
+                int secondsSinceEpoch = (int)t.TotalSeconds;
+                gameController.LevelWin(level, numScore, secondsSinceEpoch, stars);
             } else if (CheckLoseCondition())
             {
                 Debug.Log("LOSE");
@@ -1010,7 +1020,6 @@ public class Board : MonoBehaviour {
 
     IEnumerator SpinLockOnFalling()
     {
-        Debug.Log("Cascade");
         // wait for pieces to stop fallling
         while (falling > 0)
         {
@@ -1263,9 +1272,7 @@ public class Board : MonoBehaviour {
                                 StartCoroutine(Fall(row, col));
                             }
                             else if (board[i, col].GetComponent<TilePiece>().NonBlocking == false)
-                            {
-                                Debug.Log(row + "," + col + " jere");
-                                    
+                            {                                    
                                 board[row, col].GetComponent<TilePiece>().Destroyed = true;
                                 board[row, col].GetComponent<TilePiece>().DelayFill = true;
                             }
@@ -1278,7 +1285,6 @@ public class Board : MonoBehaviour {
 
     IEnumerator FinalizeUnmoveable()
     {
-        Debug.Log("Finalize Unmoveable");
         bool match = false;
         while (falling > 0)
         {

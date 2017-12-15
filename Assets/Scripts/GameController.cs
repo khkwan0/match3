@@ -31,15 +31,25 @@ public class GameController : MonoBehaviour {
             startLevel = 0;
         } else
         {
-            startLevel = playerDataController.GetComponent<PlayerData>().lastLevel;
-        }
-            
+            startLevel = playerDataController.GetComponent<PlayerData>().lastLevel + 1;
+        }            
+    }
+
+    public PlayerData GetPlayerData()
+    {
+        return playerDataController.playerData;
+    }
+
+    public void LevelWin(int level, int score, int timestamp, int stars)
+    {
+        playerDataController.PlayerSaveWin(level, score, timestamp, stars);
     }
 
     public void StartBoard()
     {
         board = GameObject.Instantiate(boardManager);
         board.GetComponent<Board>().SetGameData(dataController.gameData);
+        board.GetComponent<Board>().SetGameController(this);
         board.GetComponent<Board>().SetBoardSize(new Vector2(cam.aspect * 2f * cam.orthographicSize, 2f * cam.orthographicSize));
         StartLevel(startLevel);
     }
