@@ -28,7 +28,7 @@ public class TilePiece : MonoBehaviour {
 
     public float swipeThreshhold = 0.15f;
 
-    private bool destroyed;
+    private bool destroyed = false;
 
     private bool movedOne = false;
 
@@ -42,7 +42,6 @@ public class TilePiece : MonoBehaviour {
         boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
         board = boardObj.GetBoard();
         targetI = targetJ = -1;
-        destroyed = false;
     }
 
     public bool Destroyed

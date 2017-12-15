@@ -25,7 +25,9 @@
                     "indestructable": 1,
                     "immoveable": 1,
                     "steel": 1,
-                    "nonblocking": 0
+                    "nonblocking": 0,
+                    "value": -1,
+                    "tiletype": "nil"
                 },
                 {
                     "row": 3,
@@ -33,7 +35,9 @@
                     "indestructable": 1,
                     "immoveable": 1,
                     "steel": 1,
-                    "nonblocking": 0
+                    "nonblocking": 0,
+                    "value": -1,
+                    "tiletype": "nil"
                 },
                 {
                     "row": 7,
@@ -41,7 +45,69 @@
                     "invisible": 1,
                     "immoveable": 1,
                     "indestructable": 1,
-                    "nonblocking": 1
+                    "nonblocking": 1,
+                    "value": -1,
+                    "tiletype": "nil"
+                },
+                {
+                    "row": 1,
+                    "col": 4,
+                    "invisible": 0,
+                    "immoveable": 0,
+                    "indestructable": 0,
+                    "nonblocking": 0,
+                    "value": 3,
+                    "tiletype": "regular"
+                },
+                {
+                    "row": 2,
+                    "col": 4,
+                    "invisible": 0,
+                    "immoveable": 0,
+                    "indestructable": 0,
+                    "nonblocking": 0,
+                    "value": 3,
+                    "tiletype": "regular"
+                },
+                {
+                    "row": 0,
+                    "col": 5,
+                    "invisible": 0,
+                    "immoveable": 0,
+                    "indestructable": 0,
+                    "nonblocking": 0,
+                    "value": 2,
+                    "tiletype": "regular"
+                },
+                {
+                    "row": 0,
+                    "col": 4,
+                    "invisible": 0,
+                    "immoveable": 0,
+                    "indestructable": 0,
+                    "nonblocking": 0,
+                    "value": 2,
+                    "tiletype": "regular"
+                },
+                {
+                    "row": 0,
+                    "col": 6,
+                    "invisible": 0,
+                    "immoveable": 0,
+                    "indestructable": 0,
+                    "nonblocking": 0,
+                    "value": 1,
+                    "tiletype": "regular"
+                },
+                {
+                    "row": 0,
+                    "col": 7,
+                    "invisible": 0,
+                    "immoveable": 0,
+                    "indestructable": 0,
+                    "nonblocking": 0,
+                    "value": 2,
+                    "tiletype": "regular"
                 }
             ]            
         },

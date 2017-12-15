@@ -126,42 +126,60 @@ public class Board : MonoBehaviour {
                     if (boardSpec[k].row == i && boardSpec[k].col == j)
                     {
                         specFound = true;
-                        board[i, j] = new GameObject();
-                        board[i, j].AddComponent<TilePiece>();
-                        board[i, j].transform.SetPositionAndRotation(
-                                new Vector3(
-                                    j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
-                                    i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
-                                    0.0f
-                                ),
+                        if (boardSpec[k].tiletype == "regular")
+                        {
+                            board[i, j] = GameObject.Instantiate(
+                                tiles[boardSpec[k].value],
+                                GetScreenCoordinates(i, j),
                                 Quaternion.identity
                             );
-                        board[i, j].GetComponent<TilePiece>().Value = -1;
-                        board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
-                        if (boardSpec[k].immoveable == 1)
-                        {
-                            board[i, j].GetComponent<TilePiece>().Moveable = false;
-                        }
-                        if (boardSpec[k].indestructable == 1)
-                        {
-                            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Indestructable;
-                        }
-                        if (boardSpec[k].nonblocking == 0)
-                        {
-                            board[i, j].AddComponent<BoxCollider2D>();
-                            board[i, j].GetComponent<BoxCollider2D>().size = new Vector2(0.5f, 0.5f);
+                            board[i, j].GetComponent<TilePiece>().Value = boardSpec[k].value;
+                            board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+                            board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
                             board[i, j].GetComponent<TilePiece>().NonBlocking = false;
-                        } else
-                        {
-                            board[i, j].GetComponent<TilePiece>().NonBlocking = true;
+
                         }
-                        if (boardSpec[k].steel == 1)
+                        else
                         {
-                            board[i, j].name = "Steel Tile";
-                            board[i, j].transform.localScale = new Vector3(1.38f, 1.38f, 1.0f);
-                            board[i, j].AddComponent<SpriteRenderer>();
-                            board[i, j].GetComponent<SpriteRenderer>().sprite = (Sprite)Resources.Load("Sprites/steelTile", typeof(Sprite));
+                            board[i, j] = new GameObject();
+                            board[i, j].AddComponent<TilePiece>();
+                            board[i, j].transform.SetPositionAndRotation(
+                                    new Vector3(
+                                        j * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
+                                        i * tileSize.y - boardSize.y / 2.0f + tileSize.y / 2.0f + 1.0f,
+                                        0.0f
+                                    ),
+                                    Quaternion.identity
+                                );
+                            board[i, j].GetComponent<TilePiece>().Value = -1;
+                            board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
+                            if (boardSpec[k].immoveable == 1)
+                            {
+                                board[i, j].GetComponent<TilePiece>().Moveable = false;
+                            }
+                            if (boardSpec[k].indestructable == 1)
+                            {
+                                board[i, j].GetComponent<TilePiece>().TileType = TilePiece._TileType.Indestructable;
+                            }
+                            if (boardSpec[k].nonblocking == 0)
+                            {
+                                board[i, j].AddComponent<BoxCollider2D>();
+                                board[i, j].GetComponent<BoxCollider2D>().size = new Vector2(0.5f, 0.5f);
+                                board[i, j].GetComponent<TilePiece>().NonBlocking = false;
+                            }
+                            else
+                            {
+                                board[i, j].GetComponent<TilePiece>().NonBlocking = true;
+                            }
+                            if (boardSpec[k].steel == 1)
+                            {
+                                board[i, j].name = "Steel Tile";
+                                board[i, j].transform.localScale = new Vector3(1.38f, 1.38f, 1.0f);
+                                board[i, j].AddComponent<SpriteRenderer>();
+                                board[i, j].GetComponent<SpriteRenderer>().sprite = (Sprite)Resources.Load("Sprites/steelTile", typeof(Sprite));
+                            }
                         }
+
                         board[i, j].SetActive(false);
                             
                         //if (boardSpec[k].indestructable == 1 && boardSpec[k].immoveable == 0)
@@ -315,7 +333,6 @@ public class Board : MonoBehaviour {
         }
         if (matches)
         {
-
             FinalizeBoard();
             Fill();
             numMoves--;
@@ -759,10 +776,14 @@ public class Board : MonoBehaviour {
     private int CheckHorizontal(int i, int j, out int lowestCol)
     {
         int count = 1;
+        lowestCol = -1;
 
-        count += CheckLeft(i, j);
-        lowestCol = j - count + 1;
-        count += CheckRight(i, j);
+        if (!board[i, j].GetComponent<TilePiece>().Destroyed)
+        {
+            count += CheckLeft(i, j);
+            lowestCol = j - count + 1;
+            count += CheckRight(i, j);
+        }
         return count;
     }
 
@@ -791,10 +812,14 @@ public class Board : MonoBehaviour {
     private int CheckVertical(int i, int j, out int lowestRow)
     { 
         int count = 1;
+        lowestRow = -1;
 
-        count += CheckDown(i, j);
-        lowestRow = i - count + 1;
-        count += CheckUp(i, j);
+        if (!board[i, j].GetComponent<TilePiece>().Destroyed)
+        {
+            count += CheckDown(i, j);
+            lowestRow = i - count + 1;
+            count += CheckUp(i, j);
+        }
         return count;
     }
 
@@ -985,12 +1010,13 @@ public class Board : MonoBehaviour {
 
     IEnumerator SpinLockOnFalling()
     {
+        Debug.Log("Cascade");
         // wait for pieces to stop fallling
         while (falling > 0)
         {
             yield return null;
         }
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
         bool match = false;
         int lowest = -1;
 
@@ -1238,6 +1264,9 @@ public class Board : MonoBehaviour {
                             }
                             else if (board[i, col].GetComponent<TilePiece>().NonBlocking == false)
                             {
+                                Debug.Log(row + "," + col + " jere");
+                                    
+                                board[row, col].GetComponent<TilePiece>().Destroyed = true;
                                 board[row, col].GetComponent<TilePiece>().DelayFill = true;
                             }
                         }
@@ -1249,6 +1278,7 @@ public class Board : MonoBehaviour {
 
     IEnumerator FinalizeUnmoveable()
     {
+        Debug.Log("Finalize Unmoveable");
         bool match = false;
         while (falling > 0)
         {
@@ -1277,18 +1307,19 @@ public class Board : MonoBehaviour {
                 while (i < unmoveableRow)
                 {
                     LeftRightNeither leftRightNeither = ChooseLeftRightNeither(unmoveableRow, col);
-                    Debug.Log(leftRightNeither);
+                    //Debug.Log(leftRightNeither);
                     if (leftRightNeither != LeftRightNeither.Neither)
                     { 
                         if (leftRightNeither == LeftRightNeither.Left)
                         {
-                            Debug.Log("val left " + board[unmoveableRow, col - 1].GetComponent<TilePiece>().Value);
-                            board[unmoveableRow, col - 1].SetActive(false);
-                            board[i, col] = CloneAndSpawn(unmoveableRow, col - 1, i, col);
                             while (falling > 0)
                             {
                                 yield return null;
                             }
+                            //Debug.Log("val left " + board[unmoveableRow, col - 1].GetComponent<TilePiece>().Value);
+                            board[unmoveableRow, col - 1].SetActive(false);
+                            board[i, col] = CloneAndSpawn(unmoveableRow, col - 1, i, col);
+                            Destroy(board[unmoveableRow, col - 1]);
                             falling++;
                             StartCoroutine(Fall(i, col));
                             for (int k = unmoveableRow; k < maxRows - 1; k++)
@@ -1303,13 +1334,14 @@ public class Board : MonoBehaviour {
                         }
                         else
                         {
-                            Debug.Log("val righ " + board[unmoveableRow, col + 1].GetComponent<TilePiece>().Value);
-                            board[unmoveableRow, col + 1].SetActive(false);
-                            board[i, col] = CloneAndSpawn(unmoveableRow, col + 1, i, col);
                             while (falling > 0)
                             {
                                 yield return null;
                             }
+                            //Debug.Log("val righ " + board[unmoveableRow, col + 1].GetComponent<TilePiece>().Value);
+                            board[unmoveableRow, col + 1].SetActive(false);
+                            board[i, col] = CloneAndSpawn(unmoveableRow, col + 1, i, col);
+                            Destroy(board[unmoveableRow, col + 1]);
                             falling++;
                             StartCoroutine(Fall(i, col));
                             for (int k = unmoveableRow; k < maxRows - 1; k++)
@@ -1352,7 +1384,7 @@ public class Board : MonoBehaviour {
     private LeftRightNeither ChooseLeftRightNeither(int i, int j) {
         LeftRightNeither leftRightNeither = LeftRightNeither.Neither;
 
-        Debug.Log("LeftrightNeith input " + i + "," + j);
+        //Debug.Log("LeftrightNeith input " + i + "," + j);
         if (j == 0)
         {
             if (board[i, j + 1].GetComponent<TilePiece>().Moveable)
@@ -1398,7 +1430,7 @@ public class Board : MonoBehaviour {
         GameObject tile;
         GameObject toSpawn;
 
-        Debug.Log(originalI + "," + originalJ);
+        //Debug.Log(originalI + "," + originalJ);
         switch (board[originalI, originalJ].GetComponent<TilePiece>().TileType)
         {
             case TilePiece._TileType.HorizontalBlast: toSpawn = powerTilesHorizontal[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
@@ -1497,7 +1529,7 @@ public class Board : MonoBehaviour {
     {
         float startTime = Time.time;
         locked = true;
-        while (Time.time - startTime <= 0.5f) 
+        while (Time.time - startTime <= 0.35f) 
         {
             Vector3 newPosition = GetScreenCoordinates(i, j);
             board[i, j].transform.position = Vector3.Lerp(board[i, j].transform.position, newPosition, Time.time - startTime);
