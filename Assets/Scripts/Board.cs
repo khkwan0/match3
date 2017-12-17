@@ -87,7 +87,6 @@ public class Board : MonoBehaviour {
 
     public void StartLevel(int level)
     {
-        Debug.Log(gameController.GetPlayerData().lastLevel);
         stars = 0;
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
         GUI = GameObject.Instantiate(canvas);
@@ -312,9 +311,6 @@ public class Board : MonoBehaviour {
             return false;
         }
     }
-
-    void Update() {
-	}
 
     public GameObject[,] GetBoard()
     {
@@ -1535,7 +1531,7 @@ public class Board : MonoBehaviour {
     {
         float startTime = Time.time;
         locked = true;
-        while (Time.time - startTime <= 0.35f) 
+        while (Time.time - startTime <= 0.4f) 
         {
             Vector3 newPosition = GetScreenCoordinates(i, j);
             board[i, j].transform.position = Vector3.Lerp(board[i, j].transform.position, newPosition, Time.time - startTime);

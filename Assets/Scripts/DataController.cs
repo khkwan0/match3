@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class DataController : MonoBehaviour
 {
@@ -20,5 +19,10 @@ public class DataController : MonoBehaviour
         {
             Debug.LogError("Cannot load game data");
         }
+    }
+
+    public int NumLevels
+    {
+        get { return gameData.levelData.Count; }
     }
 }

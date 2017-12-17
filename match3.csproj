@@ -240,6 +240,7 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\GameData.cs" />
     <Compile Include="Assets\Scripts\IntroScreenController.cs" />
+    <Compile Include="Assets\Scripts\LevelButton.cs" />
     <Compile Include="Assets\Scripts\LevelData.cs" />
     <Compile Include="Assets\Scripts\MissionData.cs" />
     <Compile Include="Assets\Scripts\MissionGoals.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="Assets\Scripts\PlayerLevelData.cs" />
     <Compile Include="Assets\Scripts\ScoreBarFillController.cs" />
     <Compile Include="Assets\Scripts\TilePiece.cs" />
+    <Compile Include="Assets\Scripts\WorldController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark02.cs" />

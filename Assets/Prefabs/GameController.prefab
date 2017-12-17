@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4827875801409530}
   - component: {fileID: 114421197755217228}
   - component: {fileID: 114444795442680560}
+  - component: {fileID: 114813970030786044}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -52,6 +53,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87308ef9c4528d5428f2aea20c0f8d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boardManager: {fileID: 1651424320695778, guid: 9ddff400aa0c80740a1168ee3971bd43,
+    type: 2}
+  worldControllerPrefab: {fileID: 1229027399850918, guid: a90a1ae069ab0604cacf9090f531c636,
+    type: 2}
+  mainCamera: {fileID: 20059895889851912, guid: 5fd4c0fa4fdd431489d113d364f10c62,
+    type: 2}
 --- !u!114 &114444795442680560
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -65,3 +72,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameData:
     levelData: []
+--- !u!114 &114813970030786044
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1839500708764558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 778af4c6aa9a6a14fa795813adefae2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerData:
+    overallScore: 0
+    lastLevel: 0
+    timeStamp: 0
+    playerLevelData: []
