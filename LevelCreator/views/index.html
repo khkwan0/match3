@@ -2,15 +2,46 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
+    <title>{{ title }}</title>
   </head>
   <body>
+    <div>
+      {% for level in levels %}
+        <span class="levelChooser" style="cursor:pointer;text-decoration: underline" level="{{ level+1 }}">{{ level+1 }}</span>
+      {% endfor %}
+      <button id="newLevel">New</button>
+    </div>
     <div>
       Level: <input id="level" value="1" />
       <div><button id="loadLevel">Load</button></div>
     </div>
-    <div id="board_ctr">
-      <table id="board">
-      </table>
+    <div id="level_ctr">
+      <div id="board_ctr" style="float:left">
+        <table id="board">
+        </table>
+      </div>
+      <div style="float:left">
+        <div>
+          <ul style="list-style: none">
+            <li>
+              <input type="radio" name="tiletype" value="inspect" checked="checked" />Inspect
+            </li>
+            <li>
+              <input type="radio" name="tiletype" value="normal" />Normal
+            </li>
+            <li>
+              <input type="radio" name="tiletype" value="steel" />Steel
+            </li>
+            <li>
+              <input type="radio" name="tiletype" value="empty" />Empty
+            </li>
+          </ul>
+          <div>
+            <button id="save">Save</button>
+          </div>
+        </div>
+      </div>
+      <div style="clear:both"></div>
     </div>
     <div>
       <div>
@@ -29,39 +60,143 @@
     <script>
       $(document).ready(function() {
 
-        LoadLevel(1);
+        LoadLevel({{ level }});
+
+        var theBoard;
 
         function LoadLevel(level) {
           $.get('/levels?level=' + level,
             function(res) {
-              console.log(res);
+              theBoard = res;
+              console.log(theBoard);
               $('#rows').val(res.rows);
               $('#cols').val(res.cols);
-              createTable(res.rows, res.cols);                    
-              $('#board tr').on("click", function() {
-                console.log('click');
-              });
+              $('#level').val(res.level+1);
+              CreateTable(res.rows, res.cols, theBoard.boardSpec);                    
             }, 'json'
           );
         }
 
-        function createTable(rows, cols) {
+        function findIndex(row, col, boardSpec) {
+          index = -1;
+          if (boardSpec && boardSpec.length > 0) {
+            found = false;
+            i = 0;
+            while (i < boardSpec.length && !found) {
+              if (boardSpec[i].row == row && boardSpec[i].col == col) {
+                found = true;
+                index = i;
+              }
+              i++;
+            }
+          }
+          return index;
+        }
+
+        function CreateTable(rows, cols, boardSpec) {
           tableStr = '';
+          theBoard.rows = rows;
+          theBoard.cols = cols;
           for (row = rows - 1; row >= 0; row--) {
             tableStr += '<tr>';
             for (col = 0; col < cols; col++) {
-              tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'</td>';
+              found = false;
+              i = 0;
+              while (!found && boardSpec && i < boardSpec.length)
+              {
+                if (boardSpec[i].row == row && boardSpec[i].col == col) {
+                  found = true;
+                  str = '';
+                  if (boardSpec[i].indestructable == 1) {
+                    str += 'd';
+                  }
+                  if (boardSpec[i].immoveable == 1) {
+                    str += 'm';
+                  }
+                  if (boardSpec[i].invisible == 1) {
+                    str += 'v';
+                  }
+                  if (boardSpec[i].nonblocking == 1) {
+                    str += 'b';
+                  }
+                  if (boardSpec[i].value >= 0) {
+                    str += boardSpec[i].value;
+                  }
+                  tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'<br />'+str+'</td>';
+                }
+                i++;
+              }
+              if (!found) {
+                tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'</td>';
+              }
             }
             tableStr += '</tr>';
           }
           $('#board').html(tableStr);
+          BindBoardClick();
+        }
+
+        function BindBoardClick() {
+          $('#board tr td').on("click", function() {
+            var chosenType = $('input[name=tiletype]:checked').val();
+            idx = findIndex($(this).attr('row'), $(this).attr('col'), theBoard.boardSpec);
+            if (chosenType === 'normal') {
+              if (idx >= 0) {
+                theBoard.boardSpec.splice(idx, 1);
+                console.log(theBoard.boardSpec);
+              }
+            }
+            if (chosenType === 'steel') {
+              spec = {
+                row: $(this).attr('row'),
+                col: $(this).attr('col'),
+                immoveable: 1,
+                indestructable: 1,
+                nonblocking: 0,
+                invisible: 0,
+                steel: 1,
+                value: -1,
+                tiletype: "nil"
+              }
+              if (idx >= 0) {
+                theBoard.boardSpec[idx] = spec;
+              } else {
+                if (!theBoard.boardSpec) {
+                  theBoard.boardSpec = [];
+                }
+                theBoard.boardSpec.push(spec);
+              }
+            }
+            if (chosenType === 'empty') {
+              spec = {
+                row: $(this).attr('row'),
+                col: $(this).attr('col'),
+                immoveable: 1,
+                indestructable: 1,
+                nonblocking: 1,
+                invisible: 1,
+                steel: 0,
+                value: -1,
+                tiletype: "nil"
+              }
+              if (idx >= 0) {
+                theBoard.boardSpec[idx] = spec;
+              } else {
+                if (!theBoard.boardSpec) {
+                  theBoard.boardSpec = [];
+                }
+                theBoard.boardSpec.push(spec);
+              }
+            }
+            CreateTable($('#rows').val(), $('#cols').val(), theBoard.boardSpec);
+          });
         }
 
         $('#redraw_button').click(function(e) {
           rows = $('#rows').val();
           cols = $('#cols').val();
           if (rows > 0 && cols > 0) {
-            createTable(rows, cols);
+            CreateTable(rows, cols);
           }
         })
 
@@ -72,6 +207,26 @@
             LoadLevel(level);
           }
         });
+
+        $('#save').click(function(e) {
+          $.post('/levels',
+            {
+              board: JSON.stringify(theBoard)
+            },
+            function(res) {
+              console.log(res);
+            },'json'
+          )
+        })
+
+        $('#newLevel').click(function(e) {
+          window.location = '/newlevel';
+        })
+
+        $('.levelChooser').click(function(e) {
+          level = $(this).attr('level');
+          LoadLevel(level);
+        })
 
       })
     </script>

@@ -7,9 +7,10 @@
   height: 50px;
   border: 1px solid black;
   text-align: center;
+  cursor: pointer;
 }
 
-#board_ctr {
+#level_ctr {
   margin: 0 auto;
   width: 800px;
 }
