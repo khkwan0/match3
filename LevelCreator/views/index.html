@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
+  </head>
+  <body>
+    <div>
+      Level: <input id="level" value="1" />
+      <div><button id="loadLevel">Load</button></div>
+    </div>
+    <div id="board_ctr">
+      <table id="board">
+      </table>
+    </div>
+    <div>
+      <div>
+        Rows: <input id="rows" value="0" />
+      </div>
+      <div>
+        Cols: <input id="cols" value="0" />
+      </div>
+      <div>
+        <button id="redraw_button">Redraw</button>
+      </div>
+      </div>
+    </div>
+
+    <script src="/javascripts/jquery-3.2.1.min.js"></script>
+    <script>
+      $(document).ready(function() {
+
+        LoadLevel(1);
+
+        function LoadLevel(level) {
+          $.get('/levels?level=' + level,
+            function(res) {
+              console.log(res);
+              $('#rows').val(res.rows);
+              $('#cols').val(res.cols);
+              createTable(res.rows, res.cols);                    
+              $('#board tr').on("click", function() {
+                console.log('click');
+              });
+            }, 'json'
+          );
+        }
+
+        function createTable(rows, cols) {
+          tableStr = '';
+          for (row = rows - 1; row >= 0; row--) {
+            tableStr += '<tr>';
+            for (col = 0; col < cols; col++) {
+              tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'</td>';
+            }
+            tableStr += '</tr>';
+          }
+          $('#board').html(tableStr);
+        }
+
+        $('#redraw_button').click(function(e) {
+          rows = $('#rows').val();
+          cols = $('#cols').val();
+          if (rows > 0 && cols > 0) {
+            createTable(rows, cols);
+          }
+        })
+
+        $('#loadLevel').click(function(e) {
+          level = $('#level').val();
+          console.log(level);
+          if (level > 0) {
+            LoadLevel(level);
+          }
+        });
+
+      })
+    </script>
+  </body>
+</html>
+
