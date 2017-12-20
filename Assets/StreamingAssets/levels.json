@@ -6,17 +6,15 @@
             "cols": 8,
             "numTileValues": 5,
             "numMoves": 20,
+            "maxFillPoints": 4000,
+            "tier1Fill": 500,
+            "tier2Fill": 1000,
+            "tier3Fill": 2000,
             "mission": {
                 "type": 0,
-                "missionGoals": {
-                    "score": 2000,
-                    "maxFillPoints": 4000,
-                    "tier1Fill": 500,
-                    "tier2Fill": 1000,
-                    "tier3Fill": 2000,
-                    "tileType0": -1,
-                    "tileType1": -1
-                }
+                "missionGoals": [{
+                    "score": 2000
+                }]
             },
             "boardSpec": [
                 {
@@ -117,17 +115,15 @@
             "cols": 6,
             "numTileValues": 4,
             "numMoves": 50,
+            "tier1Fill": 7500,
+            "tier2Fill": 9000,
+            "tier3Fill": 10500,
+            "maxFillPoints": 15000,
             "mission": {
                 "type": 0,
-                "missionGoals": {
-                    "score": 10000,
-                    "maxFillPoints": 15000,
-                    "tier1Fill": 7500,
-                    "tier2Fill": 9000,
-                    "tier3Fill": 10500,
-                    "tileType0": -1,
-                    "tileType1": -1
-                }
+                "missionGoals": [{
+                    "score": 10000
+                }]
             }
         },
         {
@@ -136,17 +132,24 @@
             "cols": 8,
             "numTileValues": 5,
             "numMoves": 50,
+            "maxFillPoints": 5000,
+            "tier1Fill": 2000,
+            "tier2Fill": 3000,
+            "tier3Fill": 4000,
             "mission" : {
                 "type": 1,
-                "missionGoals": {
-                    "score": -1,
-                    "maxFillPoints": -1,
-                    "tier1Fill": -1,
-                    "tier2Fill": -1,
-                    "tier3Fill": -1,
-                    "tileType0": 20,
-                    "tileType1": 20
-                }                
+                "missionGoals": [
+                    {
+                        "tiletype": "regular",
+                        "tilevalue": 1,
+                        "toreach": 5
+                    },
+                    {
+                        "tiletype": "horizontal",
+                        "tilevalue": 2,
+                        "toreach": 1                        
+                    }
+                ]
             }
         }
     ]

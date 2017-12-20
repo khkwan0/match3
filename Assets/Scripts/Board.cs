@@ -112,8 +112,8 @@ public class Board : MonoBehaviour {
         if (gameData.levelData[level].mission.type == 0)
         {
             missionText = GUI.transform.Find("Mission").GetComponent<TextMeshProUGUI>();
-            missionText.text = "Get " + gameData.levelData[level].mission.missionGoals.score + " in " + numMoves + " moves or less.";
-            maxFillScore = gameData.levelData[level].mission.missionGoals.maxFillPoints;
+            missionText.text = "Get " + gameData.levelData[level].mission.missionGoals[0].score + " in " + numMoves + " moves or less.";
+            maxFillScore = gameData.levelData[level].maxFillPoints;
         }
 
 
@@ -362,7 +362,7 @@ public class Board : MonoBehaviour {
         
         if (gameData.levelData[level].mission.type == 0)
         {
-            if (numScore >= gameData.levelData[level].mission.missionGoals.score)
+            if (numScore >= gameData.levelData[level].mission.missionGoals[0].score)
             {
                 win = true;
             }
@@ -375,7 +375,7 @@ public class Board : MonoBehaviour {
         bool lose = false;
         if (gameData.levelData[level].mission.type == 0)
         {
-            if (numScore < gameData.levelData[level].mission.missionGoals.score && numMoves <= 0)
+            if (numScore < gameData.levelData[level].mission.missionGoals[0].score && numMoves <= 0)
             {
                 lose = true;
             }

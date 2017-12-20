@@ -35,6 +35,22 @@
             <li><input type="radio" name="tiletype" value="horizontal" />Horizontal</li>
             <li><input type="radio" name="tiletype" value="regular" />Normal Specific Value</li>
             <li>Value<input type="text" name="tilevalue" value="1" id="tilevalue" /></li>
+            <li>Moves<input type="text" name="nummoves" placeholder="20" id="nummoves" /></li>
+            <li>Tiles<input type="text" name="numtiles" placeholder="5" id="numtiles" /></li>
+            <li>MaxTime(sec)<input type="text" name="secs" placeholder="180" id="maxtime" /></li>
+            <li>Max Fill<input type="text" name="maxfillpoints" id="maxfillpoints" placeholder="4000" /></li>
+            <li>Tier 1<input type="text" name="t1fill" id="tier1fill" placeholder="700" /></li>
+            <li>Tier 2<input type="text" name="t2fill" id="tier2fill" placeholder="1000" /></li>
+            <li>Tier 3<input type="text" name="t3fill" id="tier3fill" placeholder="1500" /></li>
+            <li>Mission:
+              <ul style="list-style: none">
+                <li><input type="radio" name="mission" id="reach" value="0" checked="checked" />Reach</li>
+                  <ul>
+                    <li>Score:<input type="text" name="score" id="score" placeholder="2000" /></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </ul>
           <div>
             <button id="save">Save</button>
@@ -72,9 +88,24 @@
               $('#rows').val(res.rows);
               $('#cols').val(res.cols);
               $('#level').val(res.level+1);
-              CreateTable(res.rows, res.cols, theBoard.boardSpec);                    
+              CreateTable(res.rows, res.cols, theBoard.boardSpec);
+              FillMeta(theBoard);
             }, 'json'
           );
+        }
+
+        function FillMeta(level) {
+          $('#nummoves').val(level.numMoves);
+          $('#numtiles').val(level.numTileValues);
+          $('#maxtime').val(level.maxTime);
+          $('#tier1fill').val(level.tier1Fill);
+          $('#tier2fill').val(level.tier2Fill);
+          $('#tier3fill').val(level.tier3Fill);
+          $('#maxfillpoints').val(level.maxFillPoints);
+          if (level.mission.type == 0) {
+            $('#reached').prop('checked', true);
+            $('#score').val(level.mission.missionGoals[0].score);
+          }
         }
 
         function findIndex(row, col, boardSpec) {
