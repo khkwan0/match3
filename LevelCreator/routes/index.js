@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var ObjectId = require('mongodb').ObjectID;
+var fs = require('fs');
 
 /* GET home page. */
 
@@ -33,20 +34,40 @@ router.get('/level', (req, res, next)=> {
 })
 
 router.get('/levels', function(req, res, next) {
-  let targetLevel = 0;
-  if (req.query.level) {
-    targetLevel = req.query.level - 1;
-  }
-  console.log(targetLevel);
   let Levels = req.db.collection('levels');
-  Levels.findOne({level: targetLevel})
-  .then((result) => {
-    //console.log(result);
-    res.status(200).send(JSON.stringify(result));
-  })
-  .catch((err) => {
-    console.log(err.stack);
-  });
+  if (req.query.deploy) {
+     Levels.find()
+     .then((result) => {
+       levelData = {
+         levelData: result
+       };
+       fs.writeFile('../Assets/StreamingAssets/levels.json', JSON.stringify(levelData, null, 2), (err) => {
+        if (err) {
+          res.status(200).send(err);
+        } else {
+          res.status(200).send('ok');
+        }
+       });
+     })
+     .catch((err) => {
+       console.log(err.stack);
+       res.status(500).send(err.stack);
+     })
+  } else {
+    let targetLevel = 0;
+    if (req.query.level) {
+      targetLevel = req.query.level - 1;
+    }
+    console.log(targetLevel);
+    Levels.findOne({level: targetLevel})
+    .then((result) => {
+      //console.log(result);
+      res.status(200).send(JSON.stringify(result));
+    })
+    .catch((err) => {
+      console.log(err.stack);
+    });
+  }
 });
 
 router.post('/levels', (req, res, next) => {
@@ -79,8 +100,17 @@ router.get('/newlevel', (req, res, next) => {
       cols: 8,
       numTileValues: 5,
       numMoves: 50,
-      mission: {},
-      boardSpec: null
+      maxFillPoints: 4000,
+      tier1Fill: 1000,
+      tier2Fill: 2000,
+      tier3Fill: 3000,
+      mission: {
+        type: 0,
+        missionGoals: [{
+          score: 2000
+        }]
+      },
+      boardSpec: []
     }
     Levels.insert(toInsert)
     .then(() => {

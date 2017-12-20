@@ -44,11 +44,12 @@
             <li>Tier 3<input type="text" name="t3fill" id="tier3fill" placeholder="1500" /></li>
             <li>Mission:
               <ul style="list-style: none">
-                <li><input type="radio" name="mission" id="reach" value="0" checked="checked" />Reach</li>
-                  <ul>
-                    <li>Score:<input type="text" name="score" id="score" placeholder="2000" /></li>
-                  </ul>
-                </li>
+                <li><input type="radio" name="mission" id="scorereach" value="0" checked="checked" />Reach Score</li>
+                <ul>
+                  <li>Score:<input type="text" name="score" id="score" placeholder="2000" /></li>
+                </ul>
+                <li><input type="radio" name="mission" id="tilereach" value="1" />Get Tiles</li>
+
               </ul>
             </li>
           </ul>
@@ -69,7 +70,12 @@
       <div>
         <button id="redraw_button">Redraw</button>
       </div>
+      <div>
+        <button id="deploy">Deploy</button>
       </div>
+      <div>
+        <p id="status"></p>
+      </div>      
     </div>
 
     <script src="/javascripts/jquery-3.2.1.min.js"></script>
@@ -103,8 +109,13 @@
           $('#tier3fill').val(level.tier3Fill);
           $('#maxfillpoints').val(level.maxFillPoints);
           if (level.mission.type == 0) {
-            $('#reached').prop('checked', true);
-            $('#score').val(level.mission.missionGoals[0].score);
+            $('#scorereach').prop('checked', true);
+            if (level.mission.missionGoals && level.mission.missionGoals.length) {
+              $('#score').val(level.mission.missionGoals[0].score);
+            }
+          }
+          if (level.mission.type == 1) {
+            $('#tilereach').prop('checked', true);
           }
         }
 
@@ -186,8 +197,8 @@
             }
             if (chosenType === 'steel') {
               spec = {
-                row: $(this).attr('row'),
-                col: $(this).attr('col'),
+                row: parseInt($(this).attr('row')),
+                col: parseInt($(this).attr('col')),
                 immoveable: 1,
                 indestructable: 1,
                 nonblocking: 0,
@@ -229,9 +240,9 @@
             if (chosenType == 'cross' || chosenType == 'vertical' || chosenType == 'horizontal' || chosenType == 'regular') {
               value = $('#tilevalue').val();
               spec = {
-                row: $(this).attr('row'),
-                col: $(this).attr('col'),
-                value: value,
+                row: parseInt($(this).attr('row')),
+                col: parseInt($(this).attr('col')),
+                value: parseInt(value),
                 tiletype: chosenType
               };
               if (idx >= 0) {
@@ -264,6 +275,22 @@
         });
 
         $('#save').click(function(e) {
+          theBoard.rows = parseInt($('#rows').val());
+          theBoard.cols = parseInt($('#cols').val());
+          theBoard.maxFillPoints = parseInt($('#maxfillpoints').val());
+          theBoard.numMoves = parseInt($('#nummoves').val());
+          theBoard.numTilesValues = parseInt($('#numtiles').val());
+          theBoard.tier1Fill = parseInt($('#tier1fill').val());
+          theBoard.tier2Fill = parseInt($('#tier2fill').val());
+          theBoard.tier3Fill = parseInt($('#tier3fill').val());
+          missionType = parseInt($('input[name=mission]:checked').val());
+          theBoard.mission = {
+            type: missionType,
+            missionGoals: []   
+          }
+          if (missionType == 0) {
+            theBoard.mission.missionGoals.push({ score: parseInt($('#score').val())})
+          }
           $.post('/levels',
             {
               board: JSON.stringify(theBoard)
@@ -276,6 +303,13 @@
 
         $('#newLevel').click(function(e) {
           window.location = '/newlevel';
+        })
+
+        $('#deploy').click(function(e) {
+          $.get('/levels?deploy=1',
+          function(data) {
+            $('#status').text(data);
+          });
         })
       })
     </script>
