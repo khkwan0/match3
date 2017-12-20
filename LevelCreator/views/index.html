@@ -7,7 +7,7 @@
   <body>
     <div>
       {% for level in levels %}
-        <span class="levelChooser" style="cursor:pointer;text-decoration: underline" level="{{ level+1 }}">{{ level+1 }}</span>
+        <a href="/level?level={{level+1}}">{{level+1}}</a>
       {% endfor %}
       <button id="newLevel">New</button>
     </div>
@@ -26,15 +26,15 @@
             <li>
               <input type="radio" name="tiletype" value="inspect" checked="checked" />Inspect
             </li>
-            <li>
-              <input type="radio" name="tiletype" value="normal" />Normal
-            </li>
-            <li>
-              <input type="radio" name="tiletype" value="steel" />Steel
-            </li>
-            <li>
-              <input type="radio" name="tiletype" value="empty" />Empty
-            </li>
+            <li><input type="radio" name="tiletype" value="normal" />Normal Random</li>
+            <li><input type="radio" name="tiletype" value="steel" />Steel</li>
+            <li><input type="radio" name="tiletype" value="empty" />Empty</li>
+            <li><input type="radio" name="tiletype" value="rainbow" />Rainbow</li>
+            <li><input type="radio" name="tiletype" value="cross" />Cross</li>
+            <li><input type="radio" name="tiletype" value="vertical" />Vertical</li>
+            <li><input type="radio" name="tiletype" value="horizontal" />Horizontal</li>
+            <li><input type="radio" name="tiletype" value="regular" />Normal Specific Value</li>
+            <li>Value<input type="text" name="tilevalue" value="1" id="tilevalue" /></li>
           </ul>
           <div>
             <button id="save">Save</button>
@@ -122,6 +122,14 @@
                   if (boardSpec[i].value >= 0) {
                     str += boardSpec[i].value;
                   }
+                  if (typeof boardSpec[i].tiletype !== 'undefined') {
+                    switch (boardSpec[i].tiletype) {
+                      case 'vertical': str+='&#8597;';break;
+                      case 'horizontal': str +='&harr;';break;
+                      case 'cross': str += '&#9534;';break;
+                      default:break;                      
+                    }
+                  }
                   tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'<br />'+str+'</td>';
                 }
                 i++;
@@ -143,7 +151,6 @@
             if (chosenType === 'normal') {
               if (idx >= 0) {
                 theBoard.boardSpec.splice(idx, 1);
-                console.log(theBoard.boardSpec);
               }
             }
             if (chosenType === 'steel') {
@@ -188,6 +195,23 @@
                 theBoard.boardSpec.push(spec);
               }
             }
+            if (chosenType == 'cross' || chosenType == 'vertical' || chosenType == 'horizontal' || chosenType == 'regular') {
+              value = $('#tilevalue').val();
+              spec = {
+                row: $(this).attr('row'),
+                col: $(this).attr('col'),
+                value: value,
+                tiletype: chosenType
+              };
+              if (idx >= 0) {
+                theBoard.boardSpec[idx] = spec;
+              } else {
+                if (!theBoard.boardSpec) {
+                  theBoard.boardSpec = [];
+                }
+                theBoard.boardSpec.push(spec);
+              }
+            }
             CreateTable($('#rows').val(), $('#cols').val(), theBoard.boardSpec);
           });
         }
@@ -222,12 +246,6 @@
         $('#newLevel').click(function(e) {
           window.location = '/newlevel';
         })
-
-        $('.levelChooser').click(function(e) {
-          level = $(this).attr('level');
-          LoadLevel(level);
-        })
-
       })
     </script>
   </body>
