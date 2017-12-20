@@ -49,7 +49,14 @@
                   <li>Score:<input type="text" name="score" id="score" placeholder="2000" /></li>
                 </ul>
                 <li><input type="radio" name="mission" id="tilereach" value="1" />Get Tiles</li>
+                <ul>
+                  <div>
+                    <div id="type1">
 
+                    </div>
+                    <button id="more">More</button>
+                  </div>
+                </ul>
               </ul>
             </li>
           </ul>
@@ -81,6 +88,10 @@
     <script src="/javascripts/jquery-3.2.1.min.js"></script>
     <script>
       $(document).ready(function() {
+        $('.remove').on("click", function() {
+          DoRemoveType1($(this).attr('key'));
+        })
+      })
 
         LoadLevel({{ level }});
 
@@ -100,6 +111,7 @@
           );
         }
 
+        var latestKey = 0;
         function FillMeta(level) {
           $('#nummoves').val(level.numMoves);
           $('#numtiles').val(level.numTileValues);
@@ -116,6 +128,18 @@
           }
           if (level.mission.type == 1) {
             $('#tilereach').prop('checked', true);
+            html = '';
+            for (key in level.mission.missionGoals) {
+              html += '<ul id="type1'+key+'" class="type1" key="'+key+'">';
+              html += '<li><button class="remove" key="'+key+'">Remove</button>Tile Type: <input class="totiletype" id="totiletype'+key+'" value="'+level.mission.missionGoals[key].tiletype+'" /></li>';
+              html += '<ul>';
+              html += '<li>Value: <input class="tovalue" id="tovalue'+key+'" value="'+level.mission.missionGoals[key].tilevalue+'" /></li>';
+              html += '<li>Goal: <input class="toreach" id="toreach'+key+'" value="'+level.mission.missionGoals[key].toreach+'" /></li>';
+              html += '</ul>';
+              html += '</ul>';              
+              latestKey++;
+            }            
+            $('#type1').html(html);
           }
         }
 
@@ -311,7 +335,30 @@
             $('#status').text(data);
           });
         })
-      })
+
+        $('#more').click(function(e) {
+          key = latestKey;
+          html = '';
+          html += '<ul id="type1'+key+'" key="'+key+'">';
+          html += '<li><button class="remove" key="'+key+'">Remove</button>Tile Type: <input class="totiletype" value="regular" id="totiletype'+key+'"/></li>';
+          html += '<ul>';
+          html += '<li>Value: <input class="tovalue" id="tovalue'+key+'" value="1" /></li>';
+          html += '<li>Goal: <input class="toreach" id="toreach'+key+'" value="5" /></li>';
+          html += '</ul>';
+          html += '</ul>';
+          $('#type1').append(html);
+          latestKey++;
+          $('.remove').bind("click", function() {
+            DoRemoveType1($(this).attr('key'));
+          })
+        })
+
+        function DoRemoveType1(key) {
+          $('#type1'+key).remove();
+        }
+
+
+
     </script>
   </body>
 </html>
