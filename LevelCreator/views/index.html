@@ -315,6 +315,20 @@
           if (missionType == 0) {
             theBoard.mission.missionGoals.push({ score: parseInt($('#score').val())})
           }
+          if (missionType == 1) {
+            $('.type1').each(function(index) {
+              key = $(this).attr('key');
+              tiletype = $('#totiletype'+key).val();
+              value = parseInt($('#tovalue'+key).val());
+              reach = parseInt($('#toreach'+key).val());
+              toSave = {
+                tiletype: tiletype,
+                tilevalue: value,
+                toreach: reach
+              };
+              theBoard.mission.missionGoals.push(toSave);
+            })
+          }
           $.post('/levels',
             {
               board: JSON.stringify(theBoard)
@@ -339,7 +353,7 @@
         $('#more').click(function(e) {
           key = latestKey;
           html = '';
-          html += '<ul id="type1'+key+'" key="'+key+'">';
+          html += '<ul class="type1" id="type1'+key+'" key="'+key+'">';
           html += '<li><button class="remove" key="'+key+'">Remove</button>Tile Type: <input class="totiletype" value="regular" id="totiletype'+key+'"/></li>';
           html += '<ul>';
           html += '<li>Value: <input class="tovalue" id="tovalue'+key+'" value="1" /></li>';
