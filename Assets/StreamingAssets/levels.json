@@ -109,6 +109,50 @@
           "nonblocking": 0,
           "value": 2,
           "tiletype": "regular"
+        },
+        {
+          "row": 4,
+          "col": 4,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": 4,
+          "col": 3,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": 5,
+          "col": 3,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": 5,
+          "col": 4,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
         }
       ]
     },
@@ -135,7 +179,6 @@
     {
       "_id": "5a39eddf91279d6a17afdf52",
       "level": 2,
-      "row": 8,
       "cols": 8,
       "numTileValues": 5,
       "numMoves": 50,
@@ -152,12 +195,19 @@
             "toreach": 5
           },
           {
-            "tiletype": "horizontal",
+            "tiletype": "regular",
             "tilevalue": 2,
             "toreach": 1
+          },
+          {
+            "tiletype": "regular",
+            "tilevalue": 3,
+            "toreach": 5
           }
         ]
-      }
+      },
+      "rows": 8,
+      "numTilesValues": 5
     },
     {
       "_id": "5a39f058bc87ea3e2cf9fe08",

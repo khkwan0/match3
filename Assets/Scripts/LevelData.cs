@@ -8,6 +8,7 @@ public class LevelData {
     public int cols;
     public int numTileValues;
     public int numMoves;
+    public int maxTime;
     public int maxFillPoints;
     public int tier1Fill;
     public int tier2Fill;

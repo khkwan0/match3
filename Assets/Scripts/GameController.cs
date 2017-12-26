@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
         playerDataController = transform.GetComponent<PlayerDataController>();
         playerDataController.LoadPlayerData();
         dataController = transform.GetComponent<DataController>();
-        dataController.LoadGameData();         
+        dataController.LoadGameData();
         gameState = _state.intro;
         Object.DontDestroyOnLoad(transform);
         Object.DontDestroyOnLoad(cam);
@@ -44,6 +44,7 @@ public class GameController : MonoBehaviour {
     public void LevelWin(int level, int score, int timestamp, int stars)
     {
         playerDataController.PlayerSaveWin(level, score, timestamp, stars);
+        BackToWorld();
     }
 
     public void StartBoard()
@@ -62,6 +63,7 @@ public class GameController : MonoBehaviour {
 
     private void StartLevel(int level)
     {
+        playerDataController.StartLevel(level);
         board.GetComponent<Board>().StartLevel(level);
     }
 
@@ -91,7 +93,6 @@ public class GameController : MonoBehaviour {
     {
         if (scene == 2)
         {
-            Debug.Log("sceneload");
             gameState = _state.board;
             StartBoard();
         }
@@ -113,5 +114,31 @@ public class GameController : MonoBehaviour {
     {
         SceneManager.LoadScene(1);
         gameState = _state.world;
+    }
+
+    public void SetLevelScore(int level, int score)
+    {
+        playerDataController.SetLevelScore(level, score);
+    }
+
+    public void AddTileCount(int level, TilePiece._TileType tiletype, int value)
+    {
+        BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+        bcc.Deduct(tiletype, value);
+        playerDataController.AddTileCount(level, tiletype, value);
+    }
+
+    public int GetTileCount(int level, TilePiece._TileType tileType, int value)
+    {
+        return playerDataController.GetTileCount(level, tileType, value);
+    }
+    public void AddLevelStart(int level)
+    {
+        playerDataController.AddLevelStar(level);
+    }
+
+    public void AddOverallScore(int score)
+    {
+        playerDataController.AddOverallScore(score);
     }
 }

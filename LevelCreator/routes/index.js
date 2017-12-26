@@ -36,7 +36,7 @@ router.get('/level', (req, res, next)=> {
 router.get('/levels', function(req, res, next) {
   let Levels = req.db.collection('levels');
   if (req.query.deploy) {
-     Levels.find()
+     Levels.find({}, {sort: {level: 1}})
      .then((result) => {
        levelData = {
          levelData: result

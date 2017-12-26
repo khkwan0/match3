@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TilePiece : MonoBehaviour {
 
+    [SerializeField]
     private int value;
     [SerializeField]
     private int i, j;
@@ -25,6 +26,8 @@ public class TilePiece : MonoBehaviour {
 
     public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Indestructable, Steel, Invisible };
     private _TileType tileType;
+    private _TileType originalTileType;
+    private int originalValue;
 
     public float swipeThreshhold = 0.15f;
 
@@ -84,6 +87,18 @@ public class TilePiece : MonoBehaviour {
     {
         get { return value; }
         set { this.value = value; }
+    }
+
+    public int OriginalValue
+    {
+        get { return originalValue; }
+        set { this.originalValue = value; }
+    }
+    
+    public _TileType OriginalTileType
+    {
+        get { return originalTileType; }
+        set { originalTileType = value; }
     }
 
     public void SetLocation(int row, int col)
@@ -155,6 +170,12 @@ public class TilePiece : MonoBehaviour {
             if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
             {
                 boardObj.Cascade();
+                boardObj.EnableHintStart();
+ 
+                if (boardObj.CheckLoseCondition())
+                {
+                    Debug.Log("LOSE");
+                }
             }
             else
             {
@@ -253,5 +274,29 @@ public class TilePiece : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void ShowHint()
+    {
+        StartCoroutine(StandOut());
+    }
+
+    IEnumerator StandOut()
+    {
+        float startTime = Time.time;
+        float rotateAmount;
+        for (float radians = 0f; radians < (4f * 3.14f); radians += 0.5f) 
+        {
+            rotateAmount = Mathf.Sin(radians);
+            if (radians < (2f * 3.14f))
+            {
+                transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * 4.0f));
+            } else
+            {
+                transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * -4.0f));
+            }
+            yield return null;
+        }
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
     }
 }
