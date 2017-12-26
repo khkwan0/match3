@@ -36,4 +36,11 @@ public class BoardCanvasController : MonoBehaviour {
             }
         }
     }
+
+    public void ShowWin(int score, int stars)
+    {
+        GameObject go = transform.Find("WinCanvas").gameObject;
+        Debug.Log(go);
+        go.SetActive(true);
+    }
 }

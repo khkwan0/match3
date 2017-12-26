@@ -44,7 +44,7 @@ public class GameController : MonoBehaviour {
     public void LevelWin(int level, int score, int timestamp, int stars)
     {
         playerDataController.PlayerSaveWin(level, score, timestamp, stars);
-        BackToWorld();
+        //BackToWorld();
     }
 
     public void StartBoard()
@@ -140,5 +140,16 @@ public class GameController : MonoBehaviour {
     public void AddOverallScore(int score)
     {
         playerDataController.AddOverallScore(score);
+    }
+
+    public void ShowWin(int numScore, int stars)
+    {
+        BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+        bcc.ShowWin(numScore, stars);
+    }
+
+    public void WinButtonGoBackToWorld()
+    {
+        BackToWorld();
     }
 }

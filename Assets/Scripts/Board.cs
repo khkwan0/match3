@@ -55,6 +55,8 @@ public class Board : MonoBehaviour {
     private int stars = 0;
     private List<BoardSpec> boardSpec;
 
+    private bool winLocked;
+
     public GameObject TileExplosion;
     private int missionType;
 
@@ -100,8 +102,16 @@ public class Board : MonoBehaviour {
         get { return numScore; }
     }
 
+    
+    public bool WinLocked
+    {
+        get { return winLocked; }
+        set { winLocked = value; }
+    }
+
     public void StartLevel(int level)
     {
+        winLocked = false;
         stars = 0;
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
         GUI = GameObject.Instantiate(canvas);
@@ -165,6 +175,7 @@ public class Board : MonoBehaviour {
         }
         ShowTiles();
         InvokeRepeating("ShowHint", hintTimeout, hintTimeout);
+
     }
 
     public void EnableHintStart()
@@ -365,7 +376,7 @@ public class Board : MonoBehaviour {
             UpdateMoves(numMoves);
             cascadeCount = 0;
             scoreMultiplier = cascadeCount + 1;
-            CancelInvoke();
+            CancelInvoke("ShowHint");
         }                   
         return matches;            
     }
@@ -1207,12 +1218,12 @@ public class Board : MonoBehaviour {
         }
     }
 
-    public void Cascade()
+    public void Cascade(bool checkWin)
     {
-        StartCoroutine(DoCascade());
+        StartCoroutine(DoCascade(checkWin));
     }
 
-    IEnumerator DoCascade()
+    IEnumerator DoCascade(bool checkWin)
     {
         // wait for pieces to stop fallling
         while (falling > 0)
@@ -1254,11 +1265,11 @@ public class Board : MonoBehaviour {
             scoreMultiplier = cascadeCount + 1;
             FinalizeBoard();
             Fill();
-            Cascade();
+            Cascade(checkWin);
         }
         else
         {
-            StartCoroutine(FinalizeUnmoveable());
+            StartCoroutine(FinalizeUnmoveable(checkWin));
         }
     }
 
@@ -1490,7 +1501,7 @@ public class Board : MonoBehaviour {
         }
     }
 
-    IEnumerator FinalizeUnmoveable()
+    IEnumerator FinalizeUnmoveable(bool checkWin)
     {
         bool match = false;
         while (falling > 0)
@@ -1574,7 +1585,22 @@ public class Board : MonoBehaviour {
         }
         if (match)
         {
-            Cascade();
+            Cascade(true);
+        }
+        else  // final stop
+        {
+            if (checkWin && CheckWinCondition())
+            {
+                winLocked = true;
+                LevelWin();
+            }
+            else
+            {
+                if (!checkWin)
+                {
+                    ShowWinScreen();
+                }
+            }
         }
     }
 
@@ -1734,10 +1760,7 @@ public class Board : MonoBehaviour {
     private void IncrementScore(int amt)
     {
         numScore += amt * scoreMultiplier;
-        if (CheckWinCondition())
-        {
-            LevelWin();
-        }
+
         gameController.SetLevelScore(level, numScore);
         gameController.AddOverallScore(numScore);
 
@@ -1788,9 +1811,44 @@ public class Board : MonoBehaviour {
         {
             stars = 1;
         }
+        CancelInvoke("ShowHint");
         gameController.LevelWin(level, numScore, GetEpochTime(), stars);
+        ShowWin();
     }
 
+    private void ShowWin()
+    {
+        Debug.Log("Win finalize");
+           
+        StartCoroutine(WinFinalize());
+    }
+
+    IEnumerator WinFinalize()
+    {
+        while (falling > 0)
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(1.5f);
+        for (int i = 0; i < maxRows; i++)
+        {
+            for (int j = 0; j < maxCols; j++)
+            {
+                if (board[i, j].GetComponent<TilePiece>().Moveable && board[i, j].GetComponent<TilePiece>().TileType != TilePiece._TileType.Regular)
+                {
+                    MarkDestroy(i, j);
+                }
+            }
+        }
+        FinalizeBoard();
+        Fill();
+        Cascade(false);
+    }
+
+    private void ShowWinScreen()
+    {
+        gameController.ShowWin(numMoves, stars);
+    }
     private int GetEpochTime()
     {        
         System.TimeSpan t = System.DateTime.UtcNow - new System.DateTime(1970, 1, 1);

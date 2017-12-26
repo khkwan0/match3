@@ -169,9 +169,12 @@ public class TilePiece : MonoBehaviour {
         {
             if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
             {
-                boardObj.Cascade();
-                boardObj.EnableHintStart();
- 
+                boardObj.Cascade(true);
+                if (!boardObj.WinLocked)
+                {
+                    boardObj.EnableHintStart();
+                }
+             
                 if (boardObj.CheckLoseCondition())
                 {
                     Debug.Log("LOSE");
@@ -189,7 +192,7 @@ public class TilePiece : MonoBehaviour {
 
     public void OnMouseDrag()
     {
-        if (!boardObj.Locked && moveable)
+        if (!boardObj.Locked && !boardObj.WinLocked && moveable)
         {
             bool moveHor = false;
             bool moveVert = false;
@@ -283,20 +286,24 @@ public class TilePiece : MonoBehaviour {
 
     IEnumerator StandOut()
     {
-        float startTime = Time.time;
-        float rotateAmount;
-        for (float radians = 0f; radians < (4f * 3.14f); radians += 0.5f) 
+        if (!boardObj.WinLocked)
         {
-            rotateAmount = Mathf.Sin(radians);
-            if (radians < (2f * 3.14f))
+            float startTime = Time.time;
+            float rotateAmount;
+            for (float radians = 0f; radians < (4f * 3.14f); radians += 0.5f)
             {
-                transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * 4.0f));
-            } else
-            {
-                transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * -4.0f));
+                rotateAmount = Mathf.Sin(radians);
+                if (radians < (2f * 3.14f))
+                {
+                    transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * 4.0f));
+                }
+                else
+                {
+                    transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * -4.0f));
+                }
+                yield return null;
             }
-            yield return null;
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
         }
-        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
     }
 }
