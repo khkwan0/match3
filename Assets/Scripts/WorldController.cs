@@ -28,7 +28,7 @@ public class WorldController : MonoBehaviour {
         }
         panel = GameObject.Find("Panel");
         Object.DontDestroyOnLoad(transform);
-        DrawLevels();
+        //DrawLevels();
     }
 
     private void DrawLevels()

@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 114421197755217228}
   - component: {fileID: 114444795442680560}
   - component: {fileID: 114813970030786044}
+  - component: {fileID: 114005859416278314}
   m_Layer: 0
   m_Name: GameController
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42,6 +43,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114005859416278314
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1839500708764558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705c862ad6bdaa34d996d1315b6fdb2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  winSoundPrefab: {fileID: 1261635771341150, guid: 6acbed7de74a6414086cc145755fad87,
+    type: 2}
+  tileDestroySoundPrefab: {fileID: 1246691554660158, guid: 5c97a34e95a78aa4cb959f19b5897230,
+    type: 2}
+  greatSoundPrefab: {fileID: 1436659731353476, guid: 16fdad1a762805e4a843b20627730b35,
+    type: 2}
+  loseSoundPrefab: {fileID: 1906385274155342, guid: 417bf7b3a5c671043a8a94db66ddad8e,
+    type: 2}
+  wooHooSoundPrefab: {fileID: 1927232264267636, guid: 76904becb257f2f4883ce18a84360502,
+    type: 2}
+  soundFXOn: 0
 --- !u!114 &114421197755217228
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -59,6 +82,9 @@ MonoBehaviour:
     type: 2}
   mainCamera: {fileID: 20059895889851912, guid: 5fd4c0fa4fdd431489d113d364f10c62,
     type: 2}
+  endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
+    type: 2}
+  fireworkPrefab: {fileID: 100002, guid: 180149b1a35449044a27b451e816d2de, type: 2}
 --- !u!114 &114444795442680560
 MonoBehaviour:
   m_ObjectHideFlags: 1

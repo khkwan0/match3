@@ -15,7 +15,7 @@
         "type": 0,
         "missionGoals": [
           {
-            "score": 2000
+            "score": 200
           }
         ]
       },
@@ -51,43 +51,9 @@
           "tiletype": "nil"
         },
         {
-          "row": 1,
-          "col": 4,
-          "invisible": 0,
-          "immoveable": 0,
-          "indestructable": 0,
-          "nonblocking": 0,
-          "value": 3,
-          "tiletype": "regular"
-        },
-        {
-          "row": 2,
-          "col": 4,
-          "invisible": 0,
-          "immoveable": 0,
-          "indestructable": 0,
-          "nonblocking": 0,
-          "value": 3,
-          "tiletype": "regular"
-        },
-        {
           "row": 0,
           "col": 5,
-          "invisible": 0,
-          "immoveable": 0,
-          "indestructable": 0,
-          "nonblocking": 0,
-          "value": 2,
-          "tiletype": "regular"
-        },
-        {
-          "row": 0,
-          "col": 4,
-          "invisible": 0,
-          "immoveable": 0,
-          "indestructable": 0,
-          "nonblocking": 0,
-          "value": 2,
+          "value": 1,
           "tiletype": "regular"
         },
         {
@@ -111,6 +77,17 @@
           "tiletype": "regular"
         },
         {
+          "row": 5,
+          "col": 3,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
           "row": 4,
           "col": 4,
           "immoveable": 1,
@@ -134,7 +111,29 @@
         },
         {
           "row": 5,
-          "col": 3,
+          "col": 7,
+          "value": 6,
+          "tiletype": "rainbow",
+          "immoveable": 0,
+          "indestructable": 0,
+          "invisible": 0,
+          "steel": 0,
+          "nonblocking": 0
+        },
+        {
+          "row": 7,
+          "col": 7,
+          "value": 2,
+          "tiletype": "generator",
+          "immoveable": 1,
+          "indestructable": 1,
+          "invisible": 0,
+          "steel": 0,
+          "nonblocking": 0
+        },
+        {
+          "row": 4,
+          "col": 5,
           "immoveable": 1,
           "indestructable": 1,
           "nonblocking": 0,
@@ -144,15 +143,28 @@
           "tiletype": "nil"
         },
         {
-          "row": 5,
-          "col": 4,
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 0,
-          "invisible": 0,
-          "steel": 1,
+          "row": 0,
+          "col": 2,
+          "value": 1,
+          "tiletype": "regular"
+        },
+        {
+          "row": 1,
+          "col": 5,
           "value": -1,
-          "tiletype": "nil"
+          "tiletype": "unknowncrackable",
+          "immoveable": 1,
+          "indestructable": 0,
+          "invisible": 0,
+          "steel": 0,
+          "nonblocking": 0,
+          "hitpoints": 1
+        },
+        {
+          "row": 0,
+          "col": 3,
+          "value": 1,
+          "tiletype": "regular"
         }
       ]
     },
@@ -254,6 +266,249 @@
         }
       ],
       "numTilesValues": 5
+    },
+    {
+      "_id": "5a4cdfdd87673b563cdbf9ec",
+      "level": 4,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": []
+    },
+    {
+      "_id": "5a4ce01c87673b563cdbf9ed",
+      "level": 5,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [
+        {
+          "row": "7",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "6",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "5",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "4",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "7",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "6",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "5",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "4",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "2",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "1",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "0",
+          "col": "0",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "2",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "1",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": "0",
+          "col": "7",
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 1,
+          "invisible": 1,
+          "steel": 0,
+          "value": -1,
+          "tiletype": "nil"
+        }
+      ]
+    },
+    {
+      "_id": "5a4ce06587673b563cdbf9ee",
+      "level": 6,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [
+        {
+          "row": 0,
+          "col": 7,
+          "value": 1,
+          "tiletype": "cross"
+        },
+        {
+          "row": 7,
+          "col": 7,
+          "value": 1,
+          "tiletype": "cross"
+        },
+        {
+          "row": 7,
+          "col": 0,
+          "value": 1,
+          "tiletype": "cross"
+        },
+        {
+          "row": 0,
+          "col": 0,
+          "value": 1,
+          "tiletype": "cross"
+        }
+      ]
     }
   ]
 }

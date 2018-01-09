@@ -33,7 +33,9 @@
             <li><input type="radio" name="tiletype" value="cross" />Cross</li>
             <li><input type="radio" name="tiletype" value="vertical" />Vertical</li>
             <li><input type="radio" name="tiletype" value="horizontal" />Horizontal</li>
-            <li><input type="radio" name="tiletype" value="regular" />Normal Specific Value</li>
+            <li><input type="radio" name="tiletype" value="generator" />Generator</li>     
+            <li><input type="radio" name="tiletype" value="unknowncrackable" />Unknown Crackable</li>       
+            <li><input type="radio" name="tiletype" value="regular" />Normal Specific Value</li>            
             <li>Value<input type="text" name="tilevalue" value="1" id="tilevalue" /></li>
             <li>Moves<input type="text" name="nummoves" placeholder="20" id="nummoves" /></li>
             <li>Tiles<input type="text" name="numtiles" placeholder="5" id="numtiles" /></li>
@@ -193,9 +195,12 @@
                       case 'vertical': str+='&#8597;';break;
                       case 'horizontal': str +='&harr;';break;
                       case 'cross': str += '&#9534;';break;
+                      case 'rainbow': str += 'R';break;
+                      case 'generator': str += 'G';break;
+                      case 'unknowncrackable': str += 'U';break;
                       default:break;                      
                     }
-                  }
+                  }                  
                   tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'<br />'+str+'</td>';
                 }
                 i++;
@@ -261,6 +266,84 @@
                 theBoard.boardSpec.push(spec);
               }
             }
+            if (chosenType == 'generator') {
+              value = $('#tilevalue').val();
+              console.log(value);
+              spec = {
+                row: parseInt($(this).attr('row')),
+                col: parseInt($(this).attr('col')),
+                value: parseInt(value),
+                tiletype: chosenType,
+                immoveable: 1,
+                indestructable: 1,
+                invisible: 0,
+                steel: 0,
+                nonblocking: 0
+              }
+              if (idx >= 0) {
+                theBoard.boardSpec[idx] = spec;              
+              }
+              else 
+              {
+                if (!theBoard.boardSpec) 
+                {
+                  theBoard.boardSpec = [];
+                }
+                theBoard.boardSpec.push(spec);
+              }
+            }
+            if (chosenType == 'rainbow') 
+            {
+              value = 6;
+              spec = {
+                row: parseInt($(this).attr('row')),
+                col: parseInt($(this).attr('col')),
+                value: parseInt(value),
+                tiletype: chosenType,
+                immoveable: 0,
+                indestructable: 0,
+                invisible: 0,
+                steel: 0,
+                nonblocking: 0
+              }
+              if (idx >= 0) {
+                theBoard.boardSpec[idx] = spec;              
+              }
+              else 
+              {
+                if (!theBoard.boardSpec) 
+                {
+                  theBoard.boardSpec = [];
+                }
+                theBoard.boardSpec.push(spec);
+              }
+            }
+            if (chosenType == "unknowncrackable") {
+              value = -1;
+              spec = {
+                row: parseInt($(this).attr('row')),
+                col: parseInt($(this).attr('col')),
+                value: parseInt(value),
+                tiletype: chosenType,
+                immoveable: 1,
+                indestructable: 0,
+                invisible: 0,
+                steel: 0,
+                nonblocking: 0,
+                hitpoints: 1
+              }      
+              if (idx >= 0) {
+                theBoard.boardSpec[idx] = spec;              
+              }
+              else 
+              {
+                if (!theBoard.boardSpec) 
+                {
+                  theBoard.boardSpec = [];
+                }
+                theBoard.boardSpec.push(spec);
+              }        
+            }
             if (chosenType == 'cross' || chosenType == 'vertical' || chosenType == 'horizontal' || chosenType == 'regular') {
               value = $('#tilevalue').val();
               spec = {
@@ -278,6 +361,7 @@
                 theBoard.boardSpec.push(spec);
               }
             }
+            console.log(theBoard.boardSpec);
             CreateTable($('#rows').val(), $('#cols').val(), theBoard.boardSpec);
           });
         }

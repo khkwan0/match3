@@ -306,6 +306,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BackToWorldButtonController.cs" />
     <Compile Include="Assets\Scripts\Board.cs" />
     <Compile Include="Assets\Scripts\BoardCanvasController.cs" />
     <Compile Include="Assets\Scripts\BoardSpec.cs" />
@@ -314,6 +315,7 @@
     <Compile Include="Assets\Scripts\GameData.cs" />
     <Compile Include="Assets\Scripts\GoalCanvas.cs" />
     <Compile Include="Assets\Scripts\IntroScreenController.cs" />
+    <Compile Include="Assets\Scripts\LevelBaseController.cs" />
     <Compile Include="Assets\Scripts\LevelButton.cs" />
     <Compile Include="Assets\Scripts\LevelData.cs" />
     <Compile Include="Assets\Scripts\MissionData.cs" />
@@ -321,9 +323,14 @@
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\PlayerDataController.cs" />
     <Compile Include="Assets\Scripts\PlayerLevelData.cs" />
+    <Compile Include="Assets\Scripts\PostPanelController.cs" />
     <Compile Include="Assets\Scripts\ScoreBarFillController.cs" />
+    <Compile Include="Assets\Scripts\SoundController.cs" />
+    <Compile Include="Assets\Scripts\SoundOnButtonController.cs" />
     <Compile Include="Assets\Scripts\TilePiece.cs" />
     <Compile Include="Assets\Scripts\WorldController.cs" />
+    <Compile Include="Assets\Scripts\WorldNavController.cs" />
+    <Compile Include="Assets\test.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark02.cs" />

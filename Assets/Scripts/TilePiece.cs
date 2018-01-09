@@ -24,25 +24,39 @@ public class TilePiece : MonoBehaviour {
     [SerializeField]
     private bool moveable = true;
 
-    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Indestructable, Steel, Invisible };
+    [SerializeField]
+    private bool indestructable = false;
+
+    [SerializeField]
+    private bool invisible = false;
+
+    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Steel, Generator, Blank, UnknownCrackable};
+    [SerializeField]
     private _TileType tileType;
+    [SerializeField]
     private _TileType originalTileType;
     private int originalValue;
 
     public float swipeThreshhold = 0.15f;
 
+    [SerializeField]
     private bool destroyed = false;
 
     private bool movedOne = false;
 
+    [SerializeField]
     private bool delayFill = false;
 
     [SerializeField]
     private bool nonBlocking = true;
 
+    public List<Sprite> tileSprite = new List<Sprite>();
+
+    [SerializeField]
+    private int hitPoints;
     private void Start()
     {
-        boardObj = GameObject.FindGameObjectWithTag("GameController").GetComponent<Board>();
+        boardObj = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<Board>();
         board = boardObj.GetBoard();
         targetI = targetJ = -1;
     }
@@ -75,6 +89,24 @@ public class TilePiece : MonoBehaviour {
     {
         get { return moveable; }
         set { moveable = value; }
+    }
+
+    public bool Indestructable
+    {
+        get { return indestructable; }
+        set { indestructable = value; }
+    }
+
+    public bool Invisible
+    {
+        get { return invisible; }
+        set { invisible = value; }
+    }
+
+    public int HitPoints
+    {
+        get { return hitPoints; }
+        set { hitPoints = value; }
     }
 
     public bool NonBlocking
@@ -170,15 +202,6 @@ public class TilePiece : MonoBehaviour {
             if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
             {
                 boardObj.Cascade(true);
-                if (!boardObj.WinLocked)
-                {
-                    boardObj.EnableHintStart();
-                }
-             
-                if (boardObj.CheckLoseCondition())
-                {
-                    Debug.Log("LOSE");
-                }
             }
             else
             {
@@ -304,6 +327,22 @@ public class TilePiece : MonoBehaviour {
                 yield return null;
             }
             transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+        }
+    }
+
+    public void Crack()
+    {
+        hitPoints--;
+        if (hitPoints == 0)
+        {
+            tileType = _TileType.Regular;
+            moveable = true;
+            invisible = false;
+            indestructable = false;
+            nonBlocking = false;
+            int value = Random.Range(0, tileSprite.Count - 1);
+            gameObject.GetComponent<SpriteRenderer>().sprite = tileSprite[value];
+            this.value = value;
         }
     }
 }

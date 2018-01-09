@@ -180,9 +180,6 @@ public class PlayerDataController : MonoBehaviour {
         {
             playerData.playerLevelData[level].cross = new int[6];
         }
-        if (tileType != TilePiece._TileType.Regular) {
-            Debug.Log(tileType);
-        }
         switch (tileType)
         {
             case TilePiece._TileType.Regular:

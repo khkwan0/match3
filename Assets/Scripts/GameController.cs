@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour {
     public GameObject worldControllerPrefab;
     private GameObject worldController;
     public Camera mainCamera;
+    private SoundController soundController;
 
     private Camera cam;
     private GameObject board;
@@ -22,7 +23,15 @@ public class GameController : MonoBehaviour {
 
     public enum _state { intro, world, board };
     private _state gameState;
-    
+
+    public GameObject endBoardPanelPrefab;
+    private GameObject ebp;
+    BoardCanvasController bcc;
+    private Vector2 boardSize;
+    private GameObject lanternPrefab;
+
+    public GameObject fireworkPrefab;
+
 	void Awake () {
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
@@ -34,6 +43,36 @@ public class GameController : MonoBehaviour {
         gameState = _state.intro;
         Object.DontDestroyOnLoad(transform);
         Object.DontDestroyOnLoad(cam);
+        soundController = GetComponent<SoundController>();
+       
+    }
+
+    public void Start()
+    {
+        ShowStartButton();
+        lanternPrefab = Resources.Load("Sprites/sky_lantern") as GameObject;
+    }
+
+    public int CurrentLevel
+    {
+        get { return currentLevel; }
+        set { currentLevel = value; }
+    }
+
+    private void ShowStartButton()
+    {
+        StartCoroutine(PauseForSplash());
+    }
+
+    IEnumerator PauseForSplash()
+    {
+        yield return new WaitForSeconds(5f);
+        GameObject.FindGameObjectWithTag("SplashCanvas").GetComponent<Canvas>().enabled = true;
+    }
+
+    private void LevelPostStart()
+    {
+        bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
     }
 
     public PlayerData GetPlayerData()
@@ -52,7 +91,8 @@ public class GameController : MonoBehaviour {
         board = GameObject.Instantiate(boardManager);
         board.GetComponent<Board>().SetGameData(dataController.gameData);
         board.GetComponent<Board>().SetGameController(this);
-        board.GetComponent<Board>().SetBoardSize(new Vector2(cam.aspect * 2f * cam.orthographicSize, 2f * cam.orthographicSize));
+        boardSize = new Vector2(cam.aspect * 2f * cam.orthographicSize, 2f * cam.orthographicSize);
+        board.GetComponent<Board>().SetBoardSize(boardSize);
         StartLevel(currentLevel);
     }
 
@@ -65,6 +105,11 @@ public class GameController : MonoBehaviour {
     {
         playerDataController.StartLevel(level);
         board.GetComponent<Board>().StartLevel(level);
+    }
+
+    public void RestartLevel()
+    {
+        LoadLevel(currentLevel);
     }
 
     public void IntroOnClick()
@@ -86,7 +131,10 @@ public class GameController : MonoBehaviour {
     public void LoadLevel(int level)
     {
         currentLevel = level;
+
         SceneManager.LoadScene(2);
+        cam.transform.position = new Vector3(0.0f, 0.0f, cam.transform.position.z);
+        cam.orthographicSize = 6.0f;
     }
 
     public void OnLevelWasLoaded(int scene)
@@ -95,6 +143,7 @@ public class GameController : MonoBehaviour {
         {
             gameState = _state.board;
             StartBoard();
+            LevelPostStart();
         }
         if (scene == 1)
         {
@@ -112,6 +161,8 @@ public class GameController : MonoBehaviour {
 
     public void BackToWorld()
     {
+        CancelInvoke();
+        StopAllCoroutines();
         SceneManager.LoadScene(1);
         gameState = _state.world;
     }
@@ -119,11 +170,16 @@ public class GameController : MonoBehaviour {
     public void SetLevelScore(int level, int score)
     {
         playerDataController.SetLevelScore(level, score);
+        bcc.SetScore(score);
+    }
+
+    public void SetProgress(float amt)
+    {
+        bcc.SetFillAmount(amt);
     }
 
     public void AddTileCount(int level, TilePiece._TileType tiletype, int value)
     {
-        BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
         bcc.Deduct(tiletype, value);
         playerDataController.AddTileCount(level, tiletype, value);
     }
@@ -144,12 +200,111 @@ public class GameController : MonoBehaviour {
 
     public void ShowWin(int numScore, int stars)
     {
-        BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+        PlayWinSound();
         bcc.ShowWin(numScore, stars);
+    }
+
+    public void ShowLose()
+    {
+        bcc.ShowLose();
     }
 
     public void WinButtonGoBackToWorld()
     {
         BackToWorld();
     }
+
+    public void PlayWinSound()
+    {
+        soundController.PlayWinSound();
+    }
+
+    public void PlayTileDestroySound()
+    {
+        soundController.PlayTileDestroySound();
+    }
+
+    public void PlayGreatSound()
+    {
+        soundController.PlayGreat();
+    }
+
+    public void PlayWooHooSound()
+    {
+        soundController.PlayWooHoo();
+    }
+    
+    public void PlayLoseSound()
+    {
+        soundController.PlayLose();
+    }
+
+
+    public void ToggleSoundButton()
+    {
+        soundController.ToggleSoundButton();
+    }
+
+    public void ShowEndBoard(int score, int stars)
+    {
+        Debug.Log("Showendboard");
+        ebp = GameObject.Instantiate(endBoardPanelPrefab);       
+    }
+
+    public void ShowSkyLanterns()
+    {
+        InvokeRepeating("SpawnLantern", 0.5f, 1f);
+    }
+
+    private void SpawnLantern()
+    {
+        float sizeX = lanternPrefab.transform.Find("sky_lantern").GetComponent<Renderer>().bounds.size.x;
+        float sizeY = lanternPrefab.transform.Find("sky_lantern").GetComponent<Renderer>().bounds.size.y;
+        Vector3 newPos = new Vector3(Random.Range(-boardSize.x / 2f + sizeX / 2f, boardSize.x / 2f - sizeX),
+            -boardSize.y / 2f - sizeY,
+            -2f);
+        GameObject lantern = GameObject.Instantiate(lanternPrefab, newPos, Quaternion.identity);
+        lantern.GetComponent<Rigidbody>().velocity = new Vector2(0f, Random.Range(.5f, 2f));
+        StartCoroutine(LanternSway(lantern));
+    }
+
+    IEnumerator LanternSway(GameObject go)
+    {
+        Vector3 pos = new Vector3();
+        float sizeX = lanternPrefab.transform.Find("sky_lantern").GetComponent<Renderer>().bounds.size.x;
+        float sizeY = lanternPrefab.transform.Find("sky_lantern").GetComponent<Renderer>().bounds.size.y;
+        bool inView = true;
+        float topBounds = boardSize.y / 2f + sizeY / 2f;
+        float amplitude = Random.Range(0.05f, 0.2f);
+        while(inView)
+        {
+            pos = go.transform.position;
+            if (pos.y > topBounds)
+            {
+                inView = false;
+            }
+            else
+            {
+                pos.x += amplitude * Mathf.Sin(Time.fixedTime) / boardSize.x;
+                go.transform.position = pos;
+            }
+            yield return null;
+        }
+        Destroy(go);
+    }
+
+    public void ShowFireworks()
+    {
+        SpawnFirework();
+    }
+
+    private void SpawnFirework()
+    {
+        Vector3 newPos = new Vector3(Random.Range(-boardSize.x / 2f, boardSize.x / 2f),
+            -boardSize.y * 1.5f,
+            -2f);
+        GameObject firework = GameObject.Instantiate(fireworkPrefab);
+        firework.transform.position = newPos;
+    }
+
 }

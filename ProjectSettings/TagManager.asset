@@ -6,6 +6,10 @@ TagManager:
   tags:
   - GoalsCanvas
   - BoardCanvas
+  - BoardManager
+  - BoardScore
+  - ProgressBar
+  - SplashCanvas
   layers:
   - Default
   - TransparentFX

@@ -7,7 +7,15 @@ using TMPro;
 public class BoardCanvasController : MonoBehaviour {
 
     public GameObject missionGoalsCanvasPrefab;
-     
+    private TextMeshProUGUI scoreArea;
+    private GameObject progressBar;
+
+    public void Start()
+    {
+        scoreArea = GameObject.FindGameObjectWithTag("BoardScore").GetComponent<TextMeshProUGUI>();
+        progressBar = GameObject.FindGameObjectWithTag("ProgressBar").gameObject;
+    }
+
     public void SpawnMissionGoal(int toReach, TilePiece._TileType tileType, int tileValue, int xOffset, Sprite theSprite)
     {
         GameObject canvas;
@@ -40,7 +48,24 @@ public class BoardCanvasController : MonoBehaviour {
     public void ShowWin(int score, int stars)
     {
         GameObject go = transform.Find("WinCanvas").gameObject;
-        Debug.Log(go);
         go.SetActive(true);
+    }
+
+    public void ShowLose()
+    {
+        GameObject go = transform.Find("WinCanvas").gameObject;
+        go.SetActive(false);
+        go = transform.Find("LoseCanvas").gameObject;
+        go.SetActive(true);
+    }
+
+    public void SetScore(int score)
+    {
+        scoreArea.text = score.ToString();
+    }
+
+    public void SetFillAmount(float amt)
+    {
+        progressBar.GetComponent<Image>().fillAmount = amt;
     }
 }
