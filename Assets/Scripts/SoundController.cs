@@ -88,27 +88,27 @@ public class SoundController : MonoBehaviour {
         if (soundFXOn)
         {
             soundFXOn = false;
-            SetSoundButtonOff(true);
+            SetSoundButtonOff(soundFXOn);
         }
         else
         {
             soundFXOn = true;
-            SetSoundButtonOff(false);
+            SetSoundButtonOff(soundFXOn);
         }
     }
 
-    private void SetSoundButtonOff(bool off)
+    public void SetSoundButtonOff(bool on)
     {
         BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
-        if (off)
-        {
-            bcc.transform.Find("SoundOn").gameObject.SetActive(false);
-            bcc.transform.Find("SoundOff").gameObject.SetActive(true);
-        }
-        else
+        if (on)
         {
             bcc.transform.Find("SoundOn").gameObject.SetActive(true);
             bcc.transform.Find("SoundOff").gameObject.SetActive(false);
+        }
+        else
+        {
+            bcc.transform.Find("SoundOn").gameObject.SetActive(false);
+            bcc.transform.Find("SoundOff").gameObject.SetActive(true);
         }
     }
 }

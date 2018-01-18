@@ -31,10 +31,12 @@ public class TilePiece : MonoBehaviour {
     private bool invisible = false;
 
     public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Steel, Generator, Blank, UnknownCrackable};
+    public enum _OverlayType { None, Enclosure, Virus };
     [SerializeField]
     private _TileType tileType;
     [SerializeField]
     private _TileType originalTileType;
+
     private int originalValue;
 
     public float swipeThreshhold = 0.15f;
@@ -51,14 +53,21 @@ public class TilePiece : MonoBehaviour {
     private bool nonBlocking = true;
 
     public List<Sprite> tileSprite = new List<Sprite>();
+    public List<_OverlayType> overlayStack = new List<_OverlayType>();
 
     [SerializeField]
     private int hitPoints;
+
+    private void Awake()
+    {
+        overlayStack.Add(_OverlayType.None);
+    }
     private void Start()
     {
         boardObj = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<Board>();
         board = boardObj.GetBoard();
         targetI = targetJ = -1;
+
     }
 
     public bool Destroyed
@@ -90,6 +99,29 @@ public class TilePiece : MonoBehaviour {
         get { return moveable; }
         set { moveable = value; }
     }
+
+    public _OverlayType OverlayType
+    {
+        get { return overlayStack.Count > 0 ? overlayStack[overlayStack.Count - 1] : _OverlayType.None; }
+    }
+
+    public void AddOverlay(_OverlayType overlayType)
+    {
+        overlayStack.Add(overlayType);
+    }
+
+    public _OverlayType PopOverlay()
+    {
+        _OverlayType overlayType;
+        overlayType = _OverlayType.None;
+        if (overlayStack.Count > 1)
+        {
+            overlayType = overlayStack[overlayStack.Count - 1];
+            overlayStack.RemoveAt(overlayStack.Count - 1);
+        }
+        return overlayType;
+    }
+        
 
     public bool Indestructable
     {
@@ -201,7 +233,7 @@ public class TilePiece : MonoBehaviour {
         {
             if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
             {
-                boardObj.Cascade(true);
+                //boardObj.Cascade(true);
             }
             else
             {
@@ -215,7 +247,7 @@ public class TilePiece : MonoBehaviour {
 
     public void OnMouseDrag()
     {
-        if (!boardObj.Locked && !boardObj.WinLocked && moveable)
+        if (!boardObj.Locked && !boardObj.WinLocked && moveable && !destroyed)
         {
             bool moveHor = false;
             bool moveVert = false;
@@ -240,7 +272,7 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i;
                         targetJ = j - 1;
-                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable && !board[targetI, targetJ].GetComponent<TilePiece>().Destroyed)
                         {
                             boardObj.SwitchPositions(i, j, targetI, targetJ);
                             movedOne = true;
@@ -257,7 +289,7 @@ public class TilePiece : MonoBehaviour {
                         {
                             targetI = i;
                             targetJ = j + 1;
-                            if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                            if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable && !board[targetI, targetJ].GetComponent<TilePiece>().Destroyed)
                             {
                                 boardObj.SwitchPositions(i, j, targetI, targetJ);
                                 movedOne = true;
@@ -276,7 +308,7 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i - 1;
                         targetJ = j;
-                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable && !board[targetI, targetJ].GetComponent<TilePiece>().Destroyed)
                         {
                             boardObj.SwitchPositions(i, j, targetI, targetJ);
                             movedOne = true;
@@ -291,7 +323,7 @@ public class TilePiece : MonoBehaviour {
                     {
                         targetI = i + 1;
                         targetJ = j;
-                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable)
+                        if (board[targetI, targetJ].GetComponent<TilePiece>().Moveable && !board[targetI, targetJ].GetComponent<TilePiece>().Destroyed)
                         {
                             boardObj.SwitchPositions(i, j, targetI, targetJ);
                             movedOne = true;
@@ -309,25 +341,22 @@ public class TilePiece : MonoBehaviour {
 
     IEnumerator StandOut()
     {
-        if (!boardObj.WinLocked)
+        float startTime = Time.time;
+        float rotateAmount;
+        for (float radians = 0f; radians < (4f * 3.14f); radians += 0.5f)
         {
-            float startTime = Time.time;
-            float rotateAmount;
-            for (float radians = 0f; radians < (4f * 3.14f); radians += 0.5f)
+            rotateAmount = Mathf.Sin(radians);
+            if (radians < (2f * 3.14f))
             {
-                rotateAmount = Mathf.Sin(radians);
-                if (radians < (2f * 3.14f))
-                {
-                    transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * 4.0f));
-                }
-                else
-                {
-                    transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * -4.0f));
-                }
-                yield return null;
+                transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * 4.0f));
             }
-            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            else
+            {
+                transform.Rotate(new Vector3(0.0f, 0.0f, rotateAmount * -4.0f));
+            }
+            yield return null;
         }
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
     }
 
     public void Crack()

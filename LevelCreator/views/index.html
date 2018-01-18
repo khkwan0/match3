@@ -34,7 +34,7 @@
             <li><input type="radio" name="tiletype" value="vertical" />Vertical</li>
             <li><input type="radio" name="tiletype" value="horizontal" />Horizontal</li>
             <li><input type="radio" name="tiletype" value="generator" />Generator</li>     
-            <li><input type="radio" name="tiletype" value="unknowncrackable" />Unknown Crackable</li>       
+            <li><input type="radio" name="tiletype" value="unknowncrackable" />Unknown Crackable</li>
             <li><input type="radio" name="tiletype" value="regular" />Normal Specific Value</li>            
             <li>Value<input type="text" name="tilevalue" value="1" id="tilevalue" /></li>
             <li>Moves<input type="text" name="nummoves" placeholder="20" id="nummoves" /></li>
@@ -44,6 +44,24 @@
             <li>Tier 1<input type="text" name="t1fill" id="tier1fill" placeholder="700" /></li>
             <li>Tier 2<input type="text" name="t2fill" id="tier2fill" placeholder="1000" /></li>
             <li>Tier 3<input type="text" name="t3fill" id="tier3fill" placeholder="1500" /></li>
+            <li>Overlay
+              <ul>
+                <li> Overlay 1
+                  <select id="overlay1">
+                    <option value="None">None</option>
+                    <option value="enc">Enclosure</option>
+                    <option value="vir">Virus</option>
+                  </select>
+                </li>
+                <li> Overlay 2
+                    <select id="overlay2">
+                      <option value="None">None</option>
+                      <option value="enc">Enclosure</option>
+                      <option value="vir">Virus</option>
+                    </select>
+                  </li>
+              </ul>
+            </li>
             <li>Mission:
               <ul style="list-style: none">
                 <li><input type="radio" name="mission" id="scorereach" value="0" checked="checked" />Reach Score</li>
@@ -200,7 +218,15 @@
                       case 'unknowncrackable': str += 'U';break;
                       default:break;                      
                     }
-                  }                  
+                  }
+                  if (typeof boardSpec[i].overlay !== 'undefined') {
+                    str += '<br />';
+                    for (key in boardSpec[i].overlay) {
+                      if (boardSpec[i].overlay[key] !== 'None') {
+                        str += boardSpec[i].overlay[key];
+                      }
+                    }
+                  }
                   tableStr += '<td class="tile" row="'+row+'" col="'+col+'">'+row+','+col+'<br />'+str+'</td>';
                 }
                 i++;
@@ -219,11 +245,47 @@
           $('#board tr td').on("click", function() {
             var chosenType = $('input[name=tiletype]:checked').val();
             idx = findIndex($(this).attr('row'), $(this).attr('col'), theBoard.boardSpec);
+            console.log($(this).attr('row') + ' ' + $(this).attr('col') + ' ' + idx);
+            overlay = [];
             if (chosenType === 'normal') {
               if (idx >= 0) {
-                theBoard.boardSpec.splice(idx, 1);
+                console.log(theBoard.boardSpec.splice(idx, 1));
+                console.log('post splice');
+                console.log(theBoard.boardSpec);
+              }
+              hasOverlay = false;
+              if ($('#overlay1').val() != 'None') {
+                hasOverlay = true;
+                overlay.push($('#overlay1').val());
+              }
+              if ($('#overlay2').val() != 'None') {
+                hasOverlay = true;
+                overlay.push($('#overlay2').val());
+              }
+              if (hasOverlay) {
+                spec = {
+                  row: parseInt($(this).attr('row')),
+                  col: parseInt($(this).attr('col')),
+                  tiletype: 'regular',
+                  overlay: overlay,
+                  value: -1
+                }
+                idx = findIndex($(this).attr('row'), $(this).attr('col'), theBoard.boardSpec);    
+                if (idx >= 0) {
+                  console.log(idx);
+                  theBoard.boardSpec[idx] = spec;              
+                }
+                else 
+                {
+                  if (!theBoard.boardSpec) 
+                  {
+                    theBoard.boardSpec = [];
+                  }
+                  theBoard.boardSpec.push(spec);
+                }
               }
             }
+
             if (chosenType === 'steel') {
               spec = {
                 row: parseInt($(this).attr('row')),
@@ -280,6 +342,10 @@
                 steel: 0,
                 nonblocking: 0
               }
+
+              overlay.push($('#overlay1').val());
+              overlay.push($('#overlay2').val());
+              spec.overlay = overlay;
               if (idx >= 0) {
                 theBoard.boardSpec[idx] = spec;              
               }
@@ -294,7 +360,7 @@
             }
             if (chosenType == 'rainbow') 
             {
-              value = 6;
+              value = -1;
               spec = {
                 row: parseInt($(this).attr('row')),
                 col: parseInt($(this).attr('col')),
@@ -306,6 +372,10 @@
                 steel: 0,
                 nonblocking: 0
               }
+
+              overlay.push($('#overlay1').val());
+              overlay.push($('#overlay2').val());
+              spec.overlay = overlay;
               if (idx >= 0) {
                 theBoard.boardSpec[idx] = spec;              
               }
@@ -331,7 +401,10 @@
                 steel: 0,
                 nonblocking: 0,
                 hitpoints: 1
-              }      
+              }              
+              overlay.push($('#overlay1').val());
+              overlay.push($('#overlay2').val());
+              spec.overlay = overlay;
               if (idx >= 0) {
                 theBoard.boardSpec[idx] = spec;              
               }
@@ -343,7 +416,7 @@
                 }
                 theBoard.boardSpec.push(spec);
               }        
-            }
+            }            
             if (chosenType == 'cross' || chosenType == 'vertical' || chosenType == 'horizontal' || chosenType == 'regular') {
               value = $('#tilevalue').val();
               spec = {
@@ -352,6 +425,16 @@
                 value: parseInt(value),
                 tiletype: chosenType
               };
+              if ($('#overlay1').val() != 'None') {
+                overlay.push($('#overlay1').val());
+              }
+              if ($('#overlay2').val() != 'None') {
+                overlay.push($('#overlay2').val());
+              }
+              if (overlay.length > 0) {
+                spec.overlay = overlay;
+              }
+              
               if (idx >= 0) {
                 theBoard.boardSpec[idx] = spec;
               } else {
@@ -454,9 +537,6 @@
         function DoRemoveType1(key) {
           $('#type1'+key).remove();
         }
-
-
-
     </script>
   </body>
 </html>

@@ -52,12 +52,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 1356911416458138, guid: add8666d3df81824f9f9ca5c4415ed4b, type: 2}
-  - {fileID: 1473554306366550, guid: 329a4f73e837fb34496f87e954533dde, type: 2}
-  - {fileID: 1441162943655262, guid: 7c3baf6615000244498d9265bfbf522c, type: 2}
-  - {fileID: 1804522275641066, guid: 4182c21502efff54a855979e37bd6935, type: 2}
-  - {fileID: 1148540041830986, guid: d0cfafdaf918e24489a0c444e74ced7d, type: 2}
-  - {fileID: 1870971757658718, guid: bc836c037aeb4764d9621ce6e1d8f5f1, type: 2}
+  - {fileID: 1392849396128456, guid: f1150d37d1a65485aba11c5822e1b515, type: 2}
+  - {fileID: 1299359681565482, guid: cdfe2700a3094461f8e1a7b33a4df068, type: 2}
+  - {fileID: 1002371784076068, guid: 71be62ea3311b0940b7c35136fa386b5, type: 2}
+  - {fileID: 1379779600264396, guid: 9e61c92f584cc4e9ba0c132b9f66e644, type: 2}
+  - {fileID: 1310158108310270, guid: b8291fc60ab92114788f21171eb5418d, type: 2}
+  - {fileID: 1479895335568616, guid: cbeb7c19a058fd448a93de37fbd56abe, type: 2}
   powerTilesVertical:
   - {fileID: 1839099881489734, guid: e545468e645f3b44c94c7f1ad719e2ae, type: 2}
   - {fileID: 1120809117750482, guid: af2e2052f2c0488499ca4f20c3a4b3a2, type: 2}
@@ -95,12 +95,23 @@ MonoBehaviour:
   generating: 0
   canvas: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f, type: 2}
   scoreAmt: 10
+  horizontalBlastScoreAmt: 50
+  verticalBlastScoreAmt: 50
+  crossBlastScoreAmt: 100
+  rainbowScoreAmt: 200
+  floatingScoreLifeTimeSeconds: 1
   hintTimeout: 3
   hintI: 0
   hintJ: 0
   cascadeCount: 0
   TileExplosion: {fileID: 100010, guid: 645413a00f7bd0242bbd6d0e5eb6f439, type: 2}
   finishing: 0
+  virusPrefab: {fileID: 1182425577532832, guid: 6d881bdc5f3abcd4dbd75052c75542b8,
+    type: 2}
   woodEnclosurePrefab: {fileID: 1885386360325542, guid: 90cc51a42fa6b6c4d8dc57b6d16d1d45,
     type: 2}
-  fallLerpTime: 0
+  floatingScore: {fileID: 1127082610409916, guid: b381848f43f8fdb41ace35dcbaf60a77,
+    type: 2}
+  didFill: 0
+  didCornerFill: 0
+  fallLerpTime: 0.5

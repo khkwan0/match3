@@ -245,6 +245,11 @@ public class GameController : MonoBehaviour {
         soundController.ToggleSoundButton();
     }
 
+    public void UpdateSoundButton()
+    {
+        soundController.SetSoundButtonOff(soundController.SoundFXOn);
+    }
+
     public void ShowEndBoard(int score, int stars)
     {
         Debug.Log("Showendboard");
@@ -306,5 +311,6 @@ public class GameController : MonoBehaviour {
         GameObject firework = GameObject.Instantiate(fireworkPrefab);
         firework.transform.position = newPos;
     }
+
 
 }
