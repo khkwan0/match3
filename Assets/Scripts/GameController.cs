@@ -12,6 +12,11 @@ public class GameController : MonoBehaviour {
     private GameObject worldController;
     public Camera mainCamera;
     private SoundController soundController;
+    public GameObject pauseButtonPrefab;
+    private GameObject pauseButton;
+    public GameObject pauseMenuPrefab;
+    private GameObject pauseMenu;
+       
 
     private Camera cam;
     private GameObject board;
@@ -25,12 +30,16 @@ public class GameController : MonoBehaviour {
     private _state gameState;
 
     public GameObject endBoardPanelPrefab;
+    public GameObject startBoardPanelPrefab;
     private GameObject ebp;
     BoardCanvasController bcc;
     private Vector2 boardSize;
     private GameObject lanternPrefab;
 
     public GameObject fireworkPrefab;
+
+    private bool pauseMenuEnabled;
+    private bool paused;
 
 	void Awake () {
         Application.targetFrameRate = 60;
@@ -44,6 +53,8 @@ public class GameController : MonoBehaviour {
         Object.DontDestroyOnLoad(transform);
         Object.DontDestroyOnLoad(cam);
         soundController = GetComponent<SoundController>();
+        pauseMenuEnabled = true;
+        paused = false;
        
     }
 
@@ -51,6 +62,12 @@ public class GameController : MonoBehaviour {
     {
         ShowStartButton();
         lanternPrefab = Resources.Load("Sprites/sky_lantern") as GameObject;
+    }
+
+    public bool PauseMenuEnabled
+    {
+        get { return pauseMenuEnabled; }
+        set { pauseMenuEnabled = value; }
     }
 
     public int CurrentLevel
@@ -112,6 +129,14 @@ public class GameController : MonoBehaviour {
         LoadLevel(currentLevel);
     }
 
+    public void ShowPauseButton()
+    {
+        if (!pauseButton)
+        {
+            pauseButton = GameObject.Instantiate(pauseButtonPrefab);
+        }
+        pauseButton.SetActive(true);
+    }
     public void IntroOnClick()
     {
         SceneManager.LoadScene(1);
@@ -250,6 +275,27 @@ public class GameController : MonoBehaviour {
         soundController.SetSoundButtonOff(soundController.SoundFXOn);
     }
 
+    public void ShowStartBoard()
+    {
+        soundController.PlaySwishUp();
+        GameObject sbp = GameObject.Instantiate(startBoardPanelPrefab);
+        StartBoardPanelController sbpc = GameObject.FindGameObjectWithTag("StartPanel").GetComponent<StartBoardPanelController>();
+        sbpc.SetText("");
+        if (dataController.gameData.levelData[currentLevel].mission.type == 0)
+        {
+            sbpc.AppendText("\nGet " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].score + " in " + dataController.gameData.levelData[currentLevel].numMoves + " moves.\nGood Luck!");
+        }
+        board.GetComponent<Board>().Locked = true;
+    }
+
+    public void DisappearStartBoard()
+    {
+        soundController.PlaySwishDown();
+        GameObject.FindGameObjectWithTag("StartBoardPanel").GetComponent<StartBoardController>().Disappear();
+        board.GetComponent<Board>().Locked = false;
+        ShowPauseButton();
+    }
+
     public void ShowEndBoard(int score, int stars)
     {
         Debug.Log("Showendboard");
@@ -312,5 +358,57 @@ public class GameController : MonoBehaviour {
         firework.transform.position = newPos;
     }
 
+    public void ShowPauseMenu()
+    {
+        if (pauseMenuEnabled)
+        {
+            if (pauseMenu)
+            {
+                ClosePauseMenu();
+            }
+            else
+            {
+                pauseMenu = GameObject.Instantiate(pauseMenuPrefab, new Vector3(-10.0f, 0f, -2f), Quaternion.identity);
+                soundController.PlaySwishUp();               
+            }
+        }
+    }
 
+    public void ClosePauseMenu()
+    {
+        if (pauseMenu)
+        {
+            soundController.PlaySwishDown();
+            pauseMenu.GetComponent<PauseMenuController>().Close();
+            ResumeGame();
+        }
+    }
+
+    public void DestroyPauseMenu()
+    {
+        if (pauseMenu)
+        {
+            Destroy(pauseMenu);
+        }
+    }
+    
+    public void PauseGame()
+    {
+        paused = true;
+    }
+
+    public void ResumeGame()
+    {
+        paused = false;
+    }
+
+    public void LockBoard()
+    {
+        board.GetComponent<Board>().Locked = true;
+    }
+
+    public void UnLockBoard()
+    {
+        board.GetComponent<Board>().Locked = false;
+    }
 }

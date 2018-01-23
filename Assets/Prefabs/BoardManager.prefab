@@ -108,10 +108,12 @@ MonoBehaviour:
   finishing: 0
   virusPrefab: {fileID: 1182425577532832, guid: 6d881bdc5f3abcd4dbd75052c75542b8,
     type: 2}
-  woodEnclosurePrefab: {fileID: 1885386360325542, guid: 90cc51a42fa6b6c4d8dc57b6d16d1d45,
+  woodEnclosurePrefab: {fileID: 1505809299440390, guid: 5fdfdb11b91da5b47a1c4abae544b0f1,
     type: 2}
   floatingScore: {fileID: 1127082610409916, guid: b381848f43f8fdb41ace35dcbaf60a77,
     type: 2}
+  virusCount: 0
+  virusCure: 0
   didFill: 0
   didCornerFill: 0
   fallLerpTime: 0.5

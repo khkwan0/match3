@@ -23,6 +23,8 @@ public class TilePiece : MonoBehaviour {
 
     [SerializeField]
     private bool moveable = true;
+    [SerializeField]
+    private bool originalMovable = true;
 
     [SerializeField]
     private bool indestructable = false;
@@ -98,6 +100,12 @@ public class TilePiece : MonoBehaviour {
     {
         get { return moveable; }
         set { moveable = value; }
+    }
+
+    public bool OriginalMoveable
+    {
+        get { return originalMovable; }
+        set { originalMovable = value; }
     }
 
     public _OverlayType OverlayType

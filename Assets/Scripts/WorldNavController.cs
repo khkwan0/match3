@@ -13,7 +13,7 @@ public class WorldNavController : MonoBehaviour {
     private float magnitude;
     public float scrollSpeedLimiter;
 
-    public float orthoZoomSpeed = 0.05f;
+    public float orthoZoomSpeed = 0.005f;
     public float accelerator = 4.0f;
 
 	void Start () {

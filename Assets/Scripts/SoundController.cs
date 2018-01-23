@@ -14,6 +14,10 @@ public class SoundController : MonoBehaviour {
     private GameObject loseSound;
     public GameObject wooHooSoundPrefab;
     private GameObject wooHooSound;
+    public GameObject swishUpPrefab;
+    public GameObject swishDownPrefab;
+    private GameObject swishUp;
+    private GameObject swishDown;
 
 
     [SerializeField]
@@ -55,6 +59,24 @@ public class SoundController : MonoBehaviour {
             greatSound = GameObject.Instantiate(greatSoundPrefab);
         }
         DoPlay(greatSound.GetComponent<AudioSource>());
+    }
+
+    public void PlaySwishUp()
+    {
+        if (!swishUp)
+        {
+            swishUp = GameObject.Instantiate(swishUpPrefab);
+        }
+        DoPlay(swishUp.GetComponent<AudioSource>());
+    }
+
+    public void PlaySwishDown()
+    {
+        if (!swishDown)
+        {
+            swishDown = GameObject.Instantiate(swishDownPrefab);
+        }
+        DoPlay(swishDown.GetComponent<AudioSource>());
     }
 
     public void PlayWooHoo()

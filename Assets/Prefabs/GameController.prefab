@@ -64,6 +64,10 @@ MonoBehaviour:
     type: 2}
   wooHooSoundPrefab: {fileID: 1927232264267636, guid: 76904becb257f2f4883ce18a84360502,
     type: 2}
+  swishUpPrefab: {fileID: 1047445360783412, guid: 1d70cfa1ef4859d4795b433cb1371cab,
+    type: 2}
+  swishDownPrefab: {fileID: 1029200494913764, guid: 005d981e69d784b47a8f0d57e451963e,
+    type: 2}
   soundFXOn: 0
 --- !u!114 &114421197755217228
 MonoBehaviour:
@@ -82,7 +86,13 @@ MonoBehaviour:
     type: 2}
   mainCamera: {fileID: 20059895889851912, guid: 5fd4c0fa4fdd431489d113d364f10c62,
     type: 2}
+  pauseButtonPrefab: {fileID: 1330364988206304, guid: b6cf91352d53ce44c90a9ea37e061d15,
+    type: 2}
+  pauseMenuPrefab: {fileID: 1570005743263098, guid: 88543b37125f62f439d33dac6416f8bd,
+    type: 2}
   endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
+    type: 2}
+  startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
     type: 2}
   fireworkPrefab: {fileID: 100002, guid: 180149b1a35449044a27b451e816d2de, type: 2}
 --- !u!114 &114444795442680560
