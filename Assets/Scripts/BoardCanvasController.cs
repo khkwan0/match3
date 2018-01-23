@@ -14,6 +14,9 @@ public class BoardCanvasController : MonoBehaviour {
     {
         scoreArea = GameObject.FindGameObjectWithTag("BoardScore").GetComponent<TextMeshProUGUI>();
         progressBar = GameObject.FindGameObjectWithTag("ProgressBar").gameObject;
+        GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        GetComponent<Canvas>().planeDistance = 3f;
+
     }
 
     public void SpawnMissionGoal(int toReach, TilePiece._TileType tileType, int tileValue, int xOffset, Sprite theSprite)
@@ -64,8 +67,17 @@ public class BoardCanvasController : MonoBehaviour {
         scoreArea.text = score.ToString();
     }
 
-    public void SetFillAmount(float amt)
+    public void SetFillAmount(int tier1, int tier2, int tier3, int maxFill, int numScore)
     {
+        float amt = (float)numScore / (float)maxFill;
+        ProgressBarController pbc = transform.Find("ProgressUI").GetComponent<ProgressBarController>();
+        pbc.CheckStarFill(tier1, tier2, tier3, numScore);
         progressBar.GetComponent<Image>().fillAmount = amt;
+    }
+
+    public void PlaceStars(int tier1, int tier2, int tier3, int mfs)
+    {
+        ProgressBarController pbc = transform.Find("ProgressUI").GetComponent<ProgressBarController>();
+        pbc.PlaceStars(tier1, tier2, tier3, mfs);
     }
 }

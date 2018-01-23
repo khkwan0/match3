@@ -356,6 +356,9 @@
     <None Include="Assets\TextMesh Pro\Fonts\Bangers - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Fonts\Oswald-Bold - OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials\Mitr\OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials\Pattaya\OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials\Trirong\OFL.txt" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />

@@ -7,7 +7,7 @@ public class PauseButtonController : MonoBehaviour {
     // Use this for initialization
     private GameController gc;
 	void Start () {
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
 	}
 	
 	// Update is called once per frame
@@ -17,6 +17,7 @@ public class PauseButtonController : MonoBehaviour {
 
     public void OnMouseUp()
     {
+        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         gc.ShowPauseMenu();
     }
 }

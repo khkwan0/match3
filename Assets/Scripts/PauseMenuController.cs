@@ -10,6 +10,9 @@ public class PauseMenuController : MonoBehaviour {
     public Vector3 newPosition = new Vector3();
     public Vector3 outPosition = new Vector3();
     private GameController gc;
+    public GameObject confirmPrefab;
+    private GameObject cp = null;
+
 	void Start () {
         StartCoroutine(MoveToMiddle());
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
@@ -42,6 +45,7 @@ public class PauseMenuController : MonoBehaviour {
 
     public void Close()
     {
+        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         gc.PauseMenuEnabled = false;
         StartCoroutine(Disappear());
     }
@@ -63,5 +67,33 @@ public class PauseMenuController : MonoBehaviour {
         }
         gc.PauseMenuEnabled = true;
         gc.DestroyPauseMenu();
+    }
+
+    public void Confirm()
+    {
+        Close();
+        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        gc.PauseMenuEnabled = false;
+        cp = GameObject.Instantiate(confirmPrefab);
+        StartCoroutine(MoveToMiddleGeneric(cp));
+
+    }
+
+    IEnumerator MoveToMiddleGeneric(GameObject go)
+    {
+        gc.PlaySwishUp();
+        float startTime = Time.time;
+        float currentLerp = 0.0f;
+        while (Time.time - startTime <= lerpTime)
+        {
+            currentLerp += Time.deltaTime;
+            if (currentLerp > lerpTime)
+            {
+                currentLerp = lerpTime;
+            }
+            float perc = currentLerp / lerpTime;
+            go.transform.position = Vector3.Lerp(go.transform.position, newPosition, perc);
+            yield return null;
+        }
     }
 }

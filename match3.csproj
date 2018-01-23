@@ -310,6 +310,7 @@
     <Compile Include="Assets\Scripts\Board.cs" />
     <Compile Include="Assets\Scripts\BoardCanvasController.cs" />
     <Compile Include="Assets\Scripts\BoardSpec.cs" />
+    <Compile Include="Assets\Scripts\ConfirmPanelController.cs" />
     <Compile Include="Assets\Scripts\DataController.cs" />
     <Compile Include="Assets\Scripts\FloatingScoreController.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
@@ -329,6 +330,7 @@
     <Compile Include="Assets\Scripts\PlayerDataController.cs" />
     <Compile Include="Assets\Scripts\PlayerLevelData.cs" />
     <Compile Include="Assets\Scripts\PostPanelController.cs" />
+    <Compile Include="Assets\Scripts\ProgressBarController.cs" />
     <Compile Include="Assets\Scripts\ScoreBarFillController.cs" />
     <Compile Include="Assets\Scripts\SoundController.cs" />
     <Compile Include="Assets\Scripts\SoundOnButtonController.cs" />
@@ -385,6 +387,9 @@
     <None Include="Assets\TextMesh Pro\Fonts\Bangers - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Fonts\Oswald-Bold - OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials\Mitr\OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials\Pattaya\OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials\Trirong\OFL.txt" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />

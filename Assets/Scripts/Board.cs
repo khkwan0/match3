@@ -61,7 +61,6 @@ public class Board : MonoBehaviour {
     [SerializeField]
     private int cascadeCount;
 
-    private float fillAmount;
     private int maxFillScore;
     private int stars = 0;
     private List<BoardSpec> boardSpec;
@@ -84,6 +83,9 @@ public class Board : MonoBehaviour {
     private List<GameObject> toDestroy = new List<GameObject>();
 
     public GameObject floatingScore;
+    private int tier1Fill;
+    private int tier2Fill;
+    private int tier3Fill;
 
     [SerializeField]
     private int virusCount;
@@ -189,6 +191,11 @@ public class Board : MonoBehaviour {
 
         //missionText = GUI.transform.Find("Mission").GetComponent<TextMeshProUGUI>();
         maxFillScore = gameData.levelData[level].maxFillPoints;
+        tier1Fill = gameData.levelData[level].tier1Fill;
+        tier2Fill = gameData.levelData[level].tier2Fill;
+        tier3Fill = gameData.levelData[level].tier3Fill;
+        BoardCanvasController bcc = GUI.GetComponent<BoardCanvasController>();
+        bcc.PlaceStars(tier1Fill, tier2Fill, tier3Fill, maxFillScore);
         //if (gameData.levelData[level].mission.type == 0)
         //{
         //    missionText.text = "Get " + gameData.levelData[level].mission.missionGoals[0].score + " in " + numMoves + " moves or less.";
@@ -215,9 +222,7 @@ public class Board : MonoBehaviour {
         //        GUI.GetComponent<BoardCanvasController>().SpawnMissionGoal(gameData.levelData[level].mission.missionGoals[idx].toreach, tileType, tileValue, idx, theSprite);
         //    }
         //}
-
-        fillAmount = 0.0f;
-
+       
         hintI = hintJ = -1;
         boardSpec = gameData.levelData[level].boardSpec;
         DrawBoard();
@@ -2602,8 +2607,7 @@ public class Board : MonoBehaviour {
         gameController.SetLevelScore(level, numScore);
         gameController.AddOverallScore(numScore);
 
-        fillAmount = 1.0f * numScore / maxFillScore;
-        gameController.SetProgress(fillAmount);
+        gameController.SetProgress(tier1Fill, tier2Fill, tier3Fill, maxFillScore, numScore);
     }
 
     private void UpdateMoves(int _moves)

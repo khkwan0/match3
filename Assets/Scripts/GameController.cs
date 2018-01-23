@@ -198,9 +198,9 @@ public class GameController : MonoBehaviour {
         bcc.SetScore(score);
     }
 
-    public void SetProgress(float amt)
+    public void SetProgress(int tier1, int tier2, int tier3, int maxFill, int numScore)
     {
-        bcc.SetFillAmount(amt);
+        bcc.SetFillAmount(tier1, tier2, tier3, maxFill, numScore);
     }
 
     public void AddTileCount(int level, TilePiece._TileType tiletype, int value)
@@ -264,7 +264,15 @@ public class GameController : MonoBehaviour {
         soundController.PlayLose();
     }
 
+    public void PlaySwishUp()
+    {
+        soundController.PlaySwishUp();
+    }
 
+    public void PlaySwishDown()
+    {
+        soundController.PlaySwishDown();
+    }
     public void ToggleSoundButton()
     {
         soundController.ToggleSoundButton();
@@ -325,7 +333,7 @@ public class GameController : MonoBehaviour {
         float sizeX = lanternPrefab.transform.Find("sky_lantern").GetComponent<Renderer>().bounds.size.x;
         float sizeY = lanternPrefab.transform.Find("sky_lantern").GetComponent<Renderer>().bounds.size.y;
         bool inView = true;
-        float topBounds = boardSize.y / 2f + sizeY / 2f;
+        float topBounds = boardSize.y / 2f + sizeY;
         float amplitude = Random.Range(0.05f, 0.2f);
         while(inView)
         {
