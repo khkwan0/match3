@@ -32,7 +32,7 @@ public class TilePiece : MonoBehaviour {
     [SerializeField]
     private bool invisible = false;
 
-    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Steel, Generator, Blank, UnknownCrackable};
+    public enum _TileType { Regular, VerticalBlast, HorizontalBlast, CrossBlast, Rainbow, Steel, Generator, Blank, UnknownCrackable, DropCount};
     public enum _OverlayType { None, Enclosure, Virus };
     [SerializeField]
     private _TileType tileType;
@@ -130,7 +130,6 @@ public class TilePiece : MonoBehaviour {
         return overlayType;
     }
         
-
     public bool Indestructable
     {
         get { return indestructable; }

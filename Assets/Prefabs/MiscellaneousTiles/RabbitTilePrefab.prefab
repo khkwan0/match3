@@ -9,33 +9,32 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1002371784076068}
+  m_RootGameObject: {fileID: 1970427073881298}
   m_IsPrefabParent: 1
---- !u!1 &1002371784076068
+--- !u!1 &1970427073881298
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4330526394266658}
-  - component: {fileID: 212991174436376912}
-  - component: {fileID: 61077751436649498}
-  - component: {fileID: 114588958768947910}
-  - component: {fileID: 50476565362984754}
+  - component: {fileID: 4073603574288072}
+  - component: {fileID: 212650223955730300}
+  - component: {fileID: 114080738647147090}
+  - component: {fileID: 61454887352933766}
   m_Layer: 0
-  m_Name: lime
+  m_Name: RabbitTilePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4330526394266658
+--- !u!4 &4073603574288072
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002371784076068}
+  m_GameObject: {fileID: 1970427073881298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
@@ -43,57 +42,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &50476565362984754
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002371784076068}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!61 &61077751436649498
+--- !u!61 &61454887352933766
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002371784076068}
+  m_GameObject: {fileID: 1970427073881298}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.01, y: 2.01}
-    newSize: {x: 1.35, y: 1.55}
+    oldSize: {x: 1.19, y: 1.64}
+    newSize: {x: 1.19, y: 1.64}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.35, y: 1.55}
+  m_Size: {x: 1.19, y: 1.64}
   m_EdgeRadius: 0
---- !u!114 &114588958768947910
+--- !u!114 &114080738647147090
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002371784076068}
+  m_GameObject: {fileID: 1970427073881298}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51659a809be4837498682767aab3a5a3, type: 3}
@@ -111,7 +90,8 @@ MonoBehaviour:
   targetI: 0
   targetJ: 0
   moveable: 1
-  indestructable: 0
+  originalMovable: 1
+  indestructable: 1
   invisible: 0
   tileType: 0
   originalTileType: 0
@@ -120,15 +100,14 @@ MonoBehaviour:
   delayFill: 0
   nonBlocking: 1
   tileSprite: []
-  overlay: {fileID: 0}
   overlayStack: 
   hitPoints: 0
---- !u!212 &212991174436376912
+--- !u!212 &212650223955730300
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002371784076068}
+  m_GameObject: {fileID: 1970427073881298}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -157,12 +136,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 858e86ad107809b4294bf937e3d0d48c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 011cfd0a08a80514995c18a7fc955c23, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.35, y: 1.55}
+  m_Size: {x: 1.19, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

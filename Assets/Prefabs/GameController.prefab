@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4827875801409530}
   - component: {fileID: 114421197755217228}
+  - component: {fileID: 114784408392974112}
   - component: {fileID: 114444795442680560}
   - component: {fileID: 114813970030786044}
   - component: {fileID: 114005859416278314}
@@ -90,11 +91,17 @@ MonoBehaviour:
     type: 2}
   pauseMenuPrefab: {fileID: 1570005743263098, guid: 88543b37125f62f439d33dac6416f8bd,
     type: 2}
+  boardCanvasPrefab: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f,
+    type: 2}
+  loseCanvasPrefab: {fileID: 1180781946918924, guid: c478f4cc97cb7c9499993ebc4ff9fe8a,
+    type: 2}
   endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
     type: 2}
   startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
     type: 2}
   fireworkPrefab: {fileID: 100002, guid: 180149b1a35449044a27b451e816d2de, type: 2}
+  pauseMenuEnabled: 1
+  paused: 0
 --- !u!114 &114444795442680560
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -108,6 +115,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameData:
     levelData: []
+--- !u!114 &114784408392974112
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1839500708764558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544042d4b1c186643b628df2d4595732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tracksPrefabs:
+  - {fileID: 1116145881618084, guid: bb9a99c6ebc941646947e9c68994031e, type: 2}
+  - {fileID: 1886443861543672, guid: d1cea67c3c5ba7144bf9f6415c0f85c8, type: 2}
+  - {fileID: 1455269464341828, guid: 7f85352b2f71ca14e930a16ea419f539, type: 2}
+  - {fileID: 1724450035013282, guid: 12b141efe81717542a44c45f021e540a, type: 2}
 --- !u!114 &114813970030786044
 MonoBehaviour:
   m_ObjectHideFlags: 1

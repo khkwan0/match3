@@ -111,6 +111,7 @@ MonoBehaviour:
   targetI: 0
   targetJ: 0
   moveable: 1
+  originalMovable: 1
   indestructable: 0
   invisible: 0
   tileType: 0
@@ -126,7 +127,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 726e9dea13ed2aa4b941af968ed04bea, type: 3}
   - {fileID: 21300000, guid: 44c996a656f6e654a9b49cddfa7026d6, type: 3}
   - {fileID: 21300000, guid: 0db84a5f6cd69bc4f963121ca1efa208, type: 3}
-  overlay: {fileID: 0}
   overlayStack: 
   hitPoints: 0
 --- !u!212 &212763278756299468

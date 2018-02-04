@@ -16,6 +16,13 @@ public class GameController : MonoBehaviour {
     private GameObject pauseButton;
     public GameObject pauseMenuPrefab;
     private GameObject pauseMenu;
+    public GameObject boardCanvasPrefab;
+    private GameObject boardCanvas;
+    public GameObject loseCanvasPrefab;
+    private GameObject loseCanvas;
+    public GameObject ripple;
+
+    private BoardCanvasController bcc;
        
 
     private Camera cam;
@@ -32,13 +39,14 @@ public class GameController : MonoBehaviour {
     public GameObject endBoardPanelPrefab;
     public GameObject startBoardPanelPrefab;
     private GameObject ebp;
-    BoardCanvasController bcc;
     private Vector2 boardSize;
     private GameObject lanternPrefab;
 
     public GameObject fireworkPrefab;
 
+    [SerializeField]
     private bool pauseMenuEnabled;
+    [SerializeField]
     private bool paused;
 
 	void Awake () {
@@ -54,8 +62,12 @@ public class GameController : MonoBehaviour {
         Object.DontDestroyOnLoad(cam);
         soundController = GetComponent<SoundController>();
         pauseMenuEnabled = true;
-        paused = false;
-       
+        paused = false;       
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnLevelFinishLoading;
     }
 
     public void Start()
@@ -85,6 +97,7 @@ public class GameController : MonoBehaviour {
     {
         yield return new WaitForSeconds(5f);
         GameObject.FindGameObjectWithTag("SplashCanvas").GetComponent<Canvas>().enabled = true;
+        ripple.SetActive(true);
     }
 
     private void LevelPostStart()
@@ -122,6 +135,8 @@ public class GameController : MonoBehaviour {
     {
         playerDataController.StartLevel(level);
         board.GetComponent<Board>().StartLevel(level);
+        MusicController mc = GetComponent<MusicController>();
+        mc.PlayTrack(0);
     }
 
     public void RestartLevel()
@@ -137,6 +152,7 @@ public class GameController : MonoBehaviour {
         }
         pauseButton.SetActive(true);
     }
+
     public void IntroOnClick()
     {
         SceneManager.LoadScene(1);
@@ -158,19 +174,23 @@ public class GameController : MonoBehaviour {
         currentLevel = level;
 
         SceneManager.LoadScene(2);
+        if (!cam)
+        {
+            cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        }
         cam.transform.position = new Vector3(0.0f, 0.0f, cam.transform.position.z);
         cam.orthographicSize = 6.0f;
     }
 
-    public void OnLevelWasLoaded(int scene)
+    private void OnLevelFinishLoading(Scene scene, LoadSceneMode mode) 
     {
-        if (scene == 2)
+        if (scene.name == "Board")
         {
             gameState = _state.board;
             StartBoard();
             LevelPostStart();
         }
-        if (scene == 1)
+        if (scene.name == "World")
         {
             if (board)
             {
@@ -185,11 +205,16 @@ public class GameController : MonoBehaviour {
     }
 
     public void BackToWorld()
-    {
-        CancelInvoke();
-        StopAllCoroutines();
-        SceneManager.LoadScene(1);
-        gameState = _state.world;
+    {       
+        GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        if (gc)
+        {
+            pauseMenuEnabled = true;
+            gc.CancelInvoke();
+            gc.StopAllCoroutines();
+            SceneManager.LoadScene(1);
+            gc.gameState = _state.world;
+        }
     }
 
     public void SetLevelScore(int level, int score)
@@ -231,7 +256,7 @@ public class GameController : MonoBehaviour {
 
     public void ShowLose()
     {
-        bcc.ShowLose();
+        loseCanvas = GameObject.Instantiate(loseCanvasPrefab);
     }
 
     public void WinButtonGoBackToWorld()
@@ -285,6 +310,11 @@ public class GameController : MonoBehaviour {
 
     public void ShowStartBoard()
     {
+        boardCanvas = GameObject.Instantiate(boardCanvasPrefab);
+        if (boardCanvas)
+        {
+            bcc = boardCanvas.GetComponent<BoardCanvasController>();
+        }
         soundController.PlaySwishUp();
         GameObject sbp = GameObject.Instantiate(startBoardPanelPrefab);
         StartBoardPanelController sbpc = GameObject.FindGameObjectWithTag("StartPanel").GetComponent<StartBoardPanelController>();
@@ -293,20 +323,40 @@ public class GameController : MonoBehaviour {
         {
             sbpc.AppendText("\nGet " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].score + " in " + dataController.gameData.levelData[currentLevel].numMoves + " moves.\nGood Luck!");
         }
+        if (dataController.gameData.levelData[currentLevel].mission.type == 1)
+        {
+            sbpc.AppendText("\nMatch the following pieces: \n");
+            sbpc.ShowMissionGoals(dataController.gameData.levelData[currentLevel].mission.missionGoals, board);
+        }
+        if (dataController.gameData.levelData[currentLevel].mission.type == 2)
+        {
+            sbpc.AppendText("\nBring " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].numfall + " to the bottom");
+            if (!bcc)
+            {
+                bcc = GameObject.FindGameObjectWithTag("BoardCanvasController").GetComponent<BoardCanvasController>();
+            }
+            bcc.ShowDropCountPanel();
+            bcc.SetDropCountText("0 / " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].numfall);
+
+        }
         board.GetComponent<Board>().Locked = true;
     }
 
     public void DisappearStartBoard()
     {
-        soundController.PlaySwishDown();
-        GameObject.FindGameObjectWithTag("StartBoardPanel").GetComponent<StartBoardController>().Disappear();
-        board.GetComponent<Board>().Locked = false;
-        ShowPauseButton();
+        GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
+        if (gc)
+        {
+            gc.PlaySwishDown();
+            GameObject.FindGameObjectWithTag("StartBoardPanel").GetComponent<StartBoardController>().Disappear();
+            gc.board.GetComponent<Board>().Locked = false;
+            gc.ShowPauseButton();
+        }
     }
 
     public void ShowEndBoard(int score, int stars)
     {
-        Debug.Log("Showendboard");
         ebp = GameObject.Instantiate(endBoardPanelPrefab);       
     }
 
@@ -387,8 +437,8 @@ public class GameController : MonoBehaviour {
         if (pauseMenu)
         {
             soundController.PlaySwishDown();
-            pauseMenu.GetComponent<PauseMenuController>().Close();
-            ResumeGame();
+            pauseMenu.GetComponent<PauseMenuController>().Close(true);
+            paused = false;
         }
     }
 
@@ -419,4 +469,25 @@ public class GameController : MonoBehaviour {
     {
         board.GetComponent<Board>().Locked = false;
     }
+
+    public void PlaceStars(int tier1Fill, int tier2Fill, int tier3Fill, int maxFillScore)
+    {
+        bcc.PlaceStars(tier1Fill, tier2Fill, tier3Fill, maxFillScore);
+    }
+
+    public void UpdateDropCount(int amt)
+    {
+        bcc.SetDropCountText(amt + " / " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].numfall);
+    }
+
+    public void SpawnMissionGoal(int toreach, TilePiece._TileType tileType, int tileValue, int idx, Sprite theSprite)
+    {
+        if (!bcc)
+        {
+            bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+        }
+        bcc.ShowTileCountPanel();
+        bcc.SpawnMissionGoal(toreach, tileType, tileValue, idx, theSprite);
+    }
+
 }

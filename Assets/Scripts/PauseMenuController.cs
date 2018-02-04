@@ -17,13 +17,9 @@ public class PauseMenuController : MonoBehaviour {
         StartCoroutine(MoveToMiddle());
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         gc.PauseMenuEnabled = false;
-	}
+        gc.PauseGame();
+    }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     IEnumerator MoveToMiddle()
     {
         float startTime = Time.time;
@@ -40,17 +36,19 @@ public class PauseMenuController : MonoBehaviour {
             yield return null;
         }
         gc.PauseMenuEnabled = true;
-        gc.PauseGame();
+
     }
 
-    public void Close()
+    public void Close(bool enablePauseMenuButton)
     {
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        gc.PauseMenuEnabled = false;
-        StartCoroutine(Disappear());
+        if (gc)
+        {
+            gc.PauseMenuEnabled = false;
+            StartCoroutine(Disappear(enablePauseMenuButton));
+        }
     }
 
-    IEnumerator Disappear()
+    IEnumerator Disappear(bool toEnablePauseMenuButton)
     {
         float startTime = Time.time;
         float currentLerp = 0.0f;
@@ -65,35 +63,18 @@ public class PauseMenuController : MonoBehaviour {
             transform.position = Vector3.Lerp(transform.position, outPosition, perc);
             yield return null;
         }
-        gc.PauseMenuEnabled = true;
+        gc.PauseMenuEnabled = toEnablePauseMenuButton;
         gc.DestroyPauseMenu();
     }
 
     public void Confirm()
     {
-        Close();
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        gc.PauseMenuEnabled = false;
-        cp = GameObject.Instantiate(confirmPrefab);
-        StartCoroutine(MoveToMiddleGeneric(cp));
-
-    }
-
-    IEnumerator MoveToMiddleGeneric(GameObject go)
-    {
-        gc.PlaySwishUp();
-        float startTime = Time.time;
-        float currentLerp = 0.0f;
-        while (Time.time - startTime <= lerpTime)
+        if (gc)
         {
-            currentLerp += Time.deltaTime;
-            if (currentLerp > lerpTime)
-            {
-                currentLerp = lerpTime;
-            }
-            float perc = currentLerp / lerpTime;
-            go.transform.position = Vector3.Lerp(go.transform.position, newPosition, perc);
-            yield return null;
+            GameObject.Instantiate(confirmPrefab);
         }
+        this.Close(false);
     }
+
+
 }

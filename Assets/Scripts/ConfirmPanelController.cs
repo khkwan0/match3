@@ -6,15 +6,13 @@ public class ConfirmPanelController : MonoBehaviour {
 
     public float lerpTime;
     public Vector3 outPosition = new Vector3();
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Vector3 newPosition = new Vector3();
+    private GameController gc;
+    private void Start()
+    {
+        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        StartCoroutine(MoveToMiddle());
+    }
 
     public void ConfirmNegative()
     {
@@ -25,11 +23,30 @@ public class ConfirmPanelController : MonoBehaviour {
         }
     }
 
+    IEnumerator MoveToMiddle()
+    {
+        gc.PlaySwishUp();
+        gc.PauseMenuEnabled = false;
+        float startTime = Time.time;
+        float currentLerp = 0.0f;
+        while (Time.time - startTime <= lerpTime)
+        {
+            currentLerp += Time.deltaTime;
+            if (currentLerp > lerpTime)
+            {
+                currentLerp = lerpTime;
+            }
+            float perc = currentLerp / lerpTime;
+            transform.position = Vector3.Lerp(transform.position, newPosition, perc);
+            yield return null;
+        }
+        gc.PauseMenuEnabled = false;
+    }
+
     IEnumerator DisappearGeneric(GameObject go)
     {
         float startTime = Time.time;
         float currentLerp = 0.0f;
-        GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         gc.PlaySwishDown();
         while (Time.time - startTime <= lerpTime)
         {
@@ -44,6 +61,7 @@ public class ConfirmPanelController : MonoBehaviour {
         }
 
         gc.PauseMenuEnabled = true;
+        gc.ResumeGame();
         Destroy(go);
     }
 }

@@ -8,16 +8,16 @@ using TMPro;
 public class StartBoardPanelController : MonoBehaviour {
 
 
-    public GameObject StartPanelStartButtonPrefab;
-    public GameObject StartPanelExitButtonPrefab;
+    //public GameObject StartPanelStartButtonPrefab;
+    //public GameObject StartPanelExitButtonPrefab;
 
-    private GameObject spsb;
-    private GameObject speb;
+    //private GameObject spsb;
+    //private GameObject speb;
 
 	// Use this for initialization
 	void Start () {
-        spsb = GameObject.Instantiate(StartPanelStartButtonPrefab, transform);
-        speb = GameObject.Instantiate(StartPanelExitButtonPrefab, transform);
+        //spsb = GameObject.Instantiate(StartPanelStartButtonPrefab, transform);
+        //speb = GameObject.Instantiate(StartPanelExitButtonPrefab, transform);
 	}
 	
 	// Update is called once per frame
@@ -39,6 +39,52 @@ public class StartBoardPanelController : MonoBehaviour {
         TextMeshProUGUI tmpgui = GameObject.FindGameObjectWithTag("StartPanelText").GetComponent<TextMeshProUGUI>();
 
         tmpgui.text = tmpgui.text + text;
+    }
+
+    public void ShowMissionGoals(List<MissionGoals> mg, GameObject board)
+    {
+        for (int i = 0; i < mg.Count; i++)
+        {
+            GameObject go = SpawnMissionGoal(i, board, mg);
+            if (go)
+            {
+                //go.GetComponent<RectTransform>().SetParent(GameObject.FindGameObjectWithTag("StartPanelSpeechCanvas").transform.Find("PanelText"), false);
+                go.transform.position = new Vector3(i * go.GetComponent<SpriteRenderer>().bounds.size.x - GetComponent<SpriteRenderer>().bounds.size.x/3, go.GetComponent<SpriteRenderer>().bounds.size.y/2, -1f);
+                go.GetComponent<Transform>().SetParent(transform, false);
+            }
+        }
+    }
+
+    private GameObject SpawnMissionGoal(int i, GameObject board, List<MissionGoals> mg)
+    {
+        TilePiece._TileType tileType = TilePiece._TileType.Regular;
+        Sprite theSprite = null;
+        switch (mg[i].tiletype)
+        {
+            case "regular": tileType = TilePiece._TileType.Regular; theSprite = board.GetComponent<Board>().tiles[mg[i].tilevalue].GetComponent<SpriteRenderer>().sprite; break;
+            case "horizontal": tileType = TilePiece._TileType.HorizontalBlast; theSprite = board.GetComponent<Board>().powerTilesHorizontal[mg[i].tilevalue].GetComponent<SpriteRenderer>().sprite; break;
+            case "vertical": tileType = TilePiece._TileType.VerticalBlast; theSprite = board.GetComponent<Board>().powerTilesVertical[mg[i].tilevalue].GetComponent<SpriteRenderer>().sprite; break;
+            case "cross": tileType = TilePiece._TileType.CrossBlast; theSprite = board.GetComponent<Board>().powerTilesCross[mg[i].tilevalue].GetComponent<SpriteRenderer>().sprite; break;
+            case "rainbow": tileType = TilePiece._TileType.Rainbow; theSprite = board.GetComponent<Board>().rainbowTile.GetComponent<SpriteRenderer>().sprite; break;
+            case "generator": tileType = TilePiece._TileType.Generator; theSprite = board.GetComponent<Board>().generatorTiles[mg[i].tilevalue].GetComponent<SpriteRenderer>().sprite; break;
+            default: break;
+        }
+        GameObject go = null;
+        if (theSprite)
+        {
+            GameObject missionImage = new GameObject(theSprite.name);
+            missionImage.AddComponent<SpriteRenderer>();
+            missionImage.GetComponent<SpriteRenderer>().sprite = theSprite;
+
+            //GameObject missionText = new GameObject(theSprite.name + "_text", typeof(RectTransform));
+            //missionText.AddComponent<CanvasScaler>();
+            //missionText.GetComponent<RectTransform>().SetParent(missionImage.transform, false);
+            //missionText.AddComponent<TextMeshProUGUI>();
+            //missionText.GetComponent<TextMeshProUGUI>().text = mg[i].toreach.ToString();
+
+            go = missionImage;
+        }
+        return go;
     }
 
 }

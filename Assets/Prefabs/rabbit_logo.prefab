@@ -20,6 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4660713958964430}
   - component: {fileID: 212412664081060638}
+  - component: {fileID: 114885220187493828}
+  - component: {fileID: 61624302570685790}
   m_Layer: 0
   m_Name: rabbit_logo
   m_TagString: Untagged
@@ -40,6 +42,66 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &61624302570685790
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1046837675453666}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 4.89, y: 6.45}
+    newSize: {x: 4.89, y: 6.45}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 4.89, y: 6.45}
+  m_EdgeRadius: 0
+--- !u!114 &114885220187493828
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1046837675453666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51659a809be4837498682767aab3a5a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 0
+  i: 0
+  j: 0
+  lockMoveAxisX: 0
+  lockMoveAxisY: 0
+  lockLeft: 0
+  lockRight: 0
+  lockUp: 0
+  lockDown: 0
+  targetI: 0
+  targetJ: 0
+  moveable: 1
+  originalMovable: 1
+  indestructable: 0
+  invisible: 0
+  tileType: 0
+  originalTileType: 0
+  swipeThreshhold: 0.15
+  destroyed: 0
+  delayFill: 0
+  nonBlocking: 1
+  tileSprite: []
+  overlayStack: 
+  hitPoints: 0
 --- !u!212 &212412664081060638
 SpriteRenderer:
   m_ObjectHideFlags: 1

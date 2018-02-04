@@ -10,7 +10,8 @@ public class StartBoardController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        StartCoroutine(SlideUp());	
+        StartCoroutine(SlideUp());
+        GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>().PauseMenuEnabled = true;
 	}
 	
 	// Update is called once per frame

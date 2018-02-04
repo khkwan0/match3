@@ -7,4 +7,5 @@ public class MissionGoals {
     public string tiletype;
     public int tilevalue;
     public int toreach;
+    public int numfall;
 }

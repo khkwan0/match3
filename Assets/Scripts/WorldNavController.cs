@@ -11,15 +11,14 @@ public class WorldNavController : MonoBehaviour {
     private Vector3 newCameraPos = new Vector3();
     private Vector3 cameraPos;
     private float magnitude;
-    public float scrollSpeedLimiter;
 
-    public float orthoZoomSpeed = 0.005f;
-    public float accelerator = 4.0f;
+    public float scrollSpeedLimiter;
+    public float orthoZoomSpeed ;
+    public float accelerator;
 
 	void Start () {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         cameraPos = cam.transform.position;
-        scrollSpeedLimiter = 50.0f;
 	}
 	
 	// Update is called once per frame

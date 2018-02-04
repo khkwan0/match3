@@ -9,6 +9,8 @@ public class BoardCanvasController : MonoBehaviour {
     public GameObject missionGoalsCanvasPrefab;
     private TextMeshProUGUI scoreArea;
     private GameObject progressBar;
+    public GameObject dropCountPanel;
+    public GameObject tileCountPanel;
 
     public void Start()
     {
@@ -20,20 +22,20 @@ public class BoardCanvasController : MonoBehaviour {
     }
 
     public void SpawnMissionGoal(int toReach, TilePiece._TileType tileType, int tileValue, int xOffset, Sprite theSprite)
-    {
-        GameObject canvas;
-        Transform missionGoalsCanvas;
-
-        missionGoalsCanvas = transform.Find("MissionGoalsCanvas");
-        canvas = GameObject.Instantiate(missionGoalsCanvasPrefab, missionGoalsCanvas);
-
-        canvas.GetComponent<RectTransform>().anchoredPosition = new Vector3(xOffset * missionGoalsCanvasPrefab.GetComponent<RectTransform>().rect.width, 0.0f, 0.0f);
-        GameObject image = canvas.transform.Find("Image").gameObject;
-        image.GetComponent<Image>().sprite = theSprite;
-        canvas.GetComponent<GoalCanvas>().tileType = tileType;
-        canvas.GetComponent<GoalCanvas>().value = tileValue;
-        canvas.GetComponent<GoalCanvas>().toReach = toReach;
-        canvas.transform.Find("reachtext").GetComponent<TextMeshProUGUI>().text = canvas.GetComponent<GoalCanvas>().toReach.ToString();
+    { 
+        GameObject tileCountPanel = GameObject.FindGameObjectWithTag("TileCountPanel");
+        if (tileCountPanel)
+        {
+            GameObject canvas;
+            canvas = GameObject.Instantiate(missionGoalsCanvasPrefab, tileCountPanel.transform);
+            canvas.GetComponent<RectTransform>().anchoredPosition = new Vector3(xOffset * missionGoalsCanvasPrefab.GetComponent<RectTransform>().rect.width + 60f, 0.0f, 0.0f);
+            GameObject image = canvas.transform.Find("Image").gameObject;
+            image.GetComponent<Image>().sprite = theSprite;
+            canvas.GetComponent<GoalCanvas>().tileType = tileType;
+            canvas.GetComponent<GoalCanvas>().value = tileValue;
+            canvas.GetComponent<GoalCanvas>().toReach = toReach;
+            canvas.transform.Find("reachtext").GetComponent<TextMeshProUGUI>().text = canvas.GetComponent<GoalCanvas>().toReach.ToString();
+        }
     }
 
     public void Deduct(TilePiece._TileType tileType, int value)
@@ -56,10 +58,11 @@ public class BoardCanvasController : MonoBehaviour {
 
     public void ShowLose()
     {
-        GameObject go = transform.Find("WinCanvas").gameObject;
-        go.SetActive(false);
-        go = transform.Find("LoseCanvas").gameObject;
-        go.SetActive(true);
+        //GameObject go = transform.Find("WinCanvas").gameObject;
+        //go.SetActive(false);
+        //go = transform.Find("LoseCanvas").gameObject;
+        //go.SetActive(true);
+        
     }
 
     public void SetScore(int score)
@@ -79,5 +82,20 @@ public class BoardCanvasController : MonoBehaviour {
     {
         ProgressBarController pbc = transform.Find("ProgressUI").GetComponent<ProgressBarController>();
         pbc.PlaceStars(tier1, tier2, tier3, mfs);
+    }
+
+    public void ShowDropCountPanel()
+    {
+        dropCountPanel.SetActive(true);
+    }
+
+    public void SetDropCountText(string text)
+    {
+        GameObject.FindGameObjectWithTag("DropCountText").GetComponent<TextMeshProUGUI>().text = text;
+    }
+
+    public void ShowTileCountPanel()
+    {
+        tileCountPanel.SetActive(true);
     }
 }

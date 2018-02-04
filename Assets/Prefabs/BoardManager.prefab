@@ -90,6 +90,12 @@ MonoBehaviour:
     type: 2}
   unknownCrackable: {fileID: 1716125127661510, guid: 1fd2f1ebcc565784fa56f9866c336210,
     type: 2}
+  rabbitPrefab: {fileID: 1970427073881298, guid: 8dce86562cfbdb0419206565d21f65b7,
+    type: 2}
+  tileBackgroundLayerContainerPrefab: {fileID: 1274182586130066, guid: 772eba611e5146e478e82953e2d0877d,
+    type: 2}
+  tileBackground: {fileID: 1920035364909136, guid: 386ccd215986e5c4f831ae3f7360233d,
+    type: 2}
   locked: 0
   falling: 0
   generating: 0
@@ -103,6 +109,7 @@ MonoBehaviour:
   hintTimeout: 3
   hintI: 0
   hintJ: 0
+  scoreMultiplier: 0
   cascadeCount: 0
   TileExplosion: {fileID: 100010, guid: 645413a00f7bd0242bbd6d0e5eb6f439, type: 2}
   finishing: 0
@@ -116,4 +123,7 @@ MonoBehaviour:
   virusCure: 0
   didFill: 0
   didCornerFill: 0
+  dropCount: 0
+  dropCountSpawned: 0
+  numFall: 0
   fallLerpTime: 0.5

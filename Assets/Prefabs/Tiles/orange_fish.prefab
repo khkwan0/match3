@@ -111,6 +111,7 @@ MonoBehaviour:
   targetI: 0
   targetJ: 0
   moveable: 1
+  originalMovable: 1
   indestructable: 0
   invisible: 0
   tileType: 0
@@ -120,7 +121,6 @@ MonoBehaviour:
   delayFill: 0
   nonBlocking: 1
   tileSprite: []
-  overlay: {fileID: 0}
   overlayStack: 
   hitPoints: 0
 --- !u!212 &212688198167096540

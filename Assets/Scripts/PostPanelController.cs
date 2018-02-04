@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class PostPanelController : MonoBehaviour {
 
-    public GameObject backToWorldButtonPrefab;
-    private GameObject backToWorldBUtton;
-
+    private GameController gc;
 	void Start () {
-        backToWorldBUtton = GameObject.Instantiate(backToWorldButtonPrefab, transform);
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public void BackToWorld()
+    {
+        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        gc.BackToWorld();
+    }
 }

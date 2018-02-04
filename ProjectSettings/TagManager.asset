@@ -15,6 +15,11 @@ TagManager:
   - StartBoardPanel
   - MovesTextArea
   - ConfirmPanel
+  - DropCountText
+  - DropCountPanel
+  - TileCountPanel
+  - StartPanelSpeechCanvas
+  - ripples
   layers:
   - Default
   - TransparentFX
