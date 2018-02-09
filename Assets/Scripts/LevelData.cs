@@ -13,6 +13,7 @@ public class LevelData {
     public int tier1Fill;
     public int tier2Fill;
     public int tier3Fill;
+    public List<Helpers> helpers;
     public MissionData mission;
     public List<BoardSpec> boardSpec;
 }

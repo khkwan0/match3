@@ -81,6 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87308ef9c4528d5428f2aea20c0f8d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dataController: {fileID: 0}
   boardManager: {fileID: 1651424320695778, guid: 9ddff400aa0c80740a1168ee3971bd43,
     type: 2}
   worldControllerPrefab: {fileID: 1229027399850918, guid: a90a1ae069ab0604cacf9090f531c636,
@@ -95,6 +96,10 @@ MonoBehaviour:
     type: 2}
   loseCanvasPrefab: {fileID: 1180781946918924, guid: c478f4cc97cb7c9499993ebc4ff9fe8a,
     type: 2}
+  ripple: {fileID: 0}
+  helperPanelPrefab: {fileID: 1670301722656814, guid: c26fd524ed9a33e43a8e6231de9232df,
+    type: 2}
+  currentHelper: {fileID: 0}
   endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
     type: 2}
   startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
@@ -131,6 +136,7 @@ MonoBehaviour:
   - {fileID: 1886443861543672, guid: d1cea67c3c5ba7144bf9f6415c0f85c8, type: 2}
   - {fileID: 1455269464341828, guid: 7f85352b2f71ca14e930a16ea419f539, type: 2}
   - {fileID: 1724450035013282, guid: 12b141efe81717542a44c45f021e540a, type: 2}
+  musicOn: 0
 --- !u!114 &114813970030786044
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -318,6 +318,9 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\GameData.cs" />
     <Compile Include="Assets\Scripts\GoalCanvas.cs" />
+    <Compile Include="Assets\Scripts\HelperCanvasController.cs" />
+    <Compile Include="Assets\Scripts\HelperController.cs" />
+    <Compile Include="Assets\Scripts\Helpers.cs" />
     <Compile Include="Assets\Scripts\IntroScreenController.cs" />
     <Compile Include="Assets\Scripts\LevelBaseController.cs" />
     <Compile Include="Assets\Scripts\LevelButton.cs" />
@@ -326,6 +329,7 @@
     <Compile Include="Assets\Scripts\MissionData.cs" />
     <Compile Include="Assets\Scripts\MissionGoals.cs" />
     <Compile Include="Assets\Scripts\MusicController.cs" />
+    <Compile Include="Assets\Scripts\MusicOnButtonController.cs" />
     <Compile Include="Assets\Scripts\PauseButtonController.cs" />
     <Compile Include="Assets\Scripts\PauseMenuController.cs" />
     <Compile Include="Assets\Scripts\PlaneSoundTrigger.cs" />
@@ -384,6 +388,8 @@
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\WarpTextExample.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\BasicShader.shader" />
+    <None Include="Assets\Shaders\WaterRippleShader.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\ParticleSystems\ParticleSystemsGuidelines.txt" />
     <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAdd.shader" />
@@ -411,7 +417,6 @@
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
-    <None Include="Assets\WaterRippleShader.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

@@ -20,8 +20,18 @@ public class Board : MonoBehaviour {
     public GameObject rainbowTile;
     public GameObject unknownCrackable;
     public GameObject rabbitPrefab;
+    public GameObject teleporterPrefab;
+    //public GameObject helperCanvasPrefab;
+    //public GameObject helperPanelPrefab;
+    private GameObject helperPanel;
+    //public GameObject helperPrefab;
+    //private List<GameObject> helpers;
+    public GameObject hammerPrefab;
+    public GameObject bombPrefab;
     private GameObject[,] board;
     private GameObject[,] backgroundBoard;
+    public GameObject darkMaskPrefab;
+    private GameObject darkMask;
     public static Vector2 tileSize;
     public static Vector2 boardSize;
 
@@ -107,6 +117,9 @@ public class Board : MonoBehaviour {
     [SerializeField]
     private int numFall;
 
+    [SerializeField]
+    private GameController._helperType helperType;
+
     public float fallLerpTime;
 
     private Vector3 localScale;
@@ -172,8 +185,7 @@ public class Board : MonoBehaviour {
     }
 
     public void StartLevel(int level)
-    {
-        Debug.Log("startlevel");
+    {        
         gameController.ShowStartBoard();
         virusCount = 0;
         dropCountSpawned = 0;
@@ -185,9 +197,11 @@ public class Board : MonoBehaviour {
         reshufflingCount = 0;
         finalPointBonus = 100;
         dropCount = 0;
+
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
 
         gameController.UpdateSoundButton();
+        gameController.UpdateMusicButton();
         cascadeCount = 0;
         scoreMultiplier = cascadeCount + 1;
 
@@ -291,6 +305,10 @@ public class Board : MonoBehaviour {
                                 backgroundBoard[i, j].GetComponent<TileBackgroundController>().SetTeleIJ(boardSpec[k].telefromrow, boardSpec[k].telefromcol);
                                 GameObject.Instantiate(tileMaskPrefab, GetScreenCoordinates(i + 1, j), Quaternion.identity).name = "tilemask";
                                 GameObject.Instantiate(tileMaskPrefab, GetScreenCoordinates(boardSpec[k].telefromrow - 1, boardSpec[k].telefromcol), Quaternion.identity);
+                                GameObject.Instantiate(teleporterPrefab, GetScreenCoordinates(i + 1, j), Quaternion.identity).name = "tele";
+                                Vector3 teleOutPos = GetScreenCoordinates(boardSpec[k].telefromrow - 1, boardSpec[k].telefromcol);
+                                teleOutPos -= new Vector3(0f, -0.5f, 0f);
+                                GameObject.Instantiate(teleporterPrefab, teleOutPos, Quaternion.identity).name = "tele";
 
                             }
                         }
@@ -528,6 +546,142 @@ public class Board : MonoBehaviour {
         }
     }
 
+    public GameController._helperType HelperType
+    {
+        get { return helperType; }
+        set
+        {
+            locked = (value == GameController._helperType.None) ? false : true;    
+            helperType = value;
+        }
+    }
+    public void ExecuteHelper(int i, int j)
+    {
+        SetDestroyEffect();
+        if (helperType != GameController._helperType.None)
+        {
+            gameController.GetComponent<GameController>().DeductHelper();
+            if (helperType == GameController._helperType.Horizontal)
+            {
+                if (board[i, j].GetComponent<TilePiece>().Moveable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+                {
+                    int value = board[i, j].GetComponent<TilePiece>().Value;
+                    Destroy(board[i, j]);
+                    SpawnHorizontalBlastTile(i, j, value);
+
+                }
+            }
+            if (helperType == GameController._helperType.Vertical)
+            {
+                if (board[i, j].GetComponent<TilePiece>().Moveable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+                {
+                    int value = board[i, j].GetComponent<TilePiece>().Value;
+                    Destroy(board[i, j]);
+                    SpawnVerticalBlastTile(i, j, value);
+                }
+            }
+            if (helperType == GameController._helperType.Hammer)
+            {
+                StartCoroutine(ExecuteHammer(1f, i, j));
+            }
+            if (helperType == GameController._helperType.Rainbow)
+            {
+                if (board[i, j].GetComponent<TilePiece>().Moveable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+                {
+                    Destroy(board[i, j]);
+                    SpawnRainbowTile(i, j);
+                }
+            }
+            if (helperType == GameController._helperType.Bomb)
+            {
+                StartCoroutine(ExecuteBomb(1f, i, j));
+            }
+        }
+    }
+
+    IEnumerator ExecuteHammer(float animationTime, int i, int j)
+    {
+        float startTime = Time.time;
+        if (!board[i, j].GetComponent<TilePiece>().Indestructable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+        {
+            GameObject hammer = GameObject.Instantiate(hammerPrefab, GetScreenCoordinatesWithZ(i, j, -1f), Quaternion.identity);
+            while ((Time.time - startTime) < animationTime)
+            {
+                hammer.transform.Rotate(0f, 0f, 1f);
+                yield return null;
+            }
+            if (board[i, j].GetComponent<TilePiece>().OverlayType != TilePiece._OverlayType.None)
+            {
+                PopOverlay(i, j);
+            }
+            else
+            {
+                MarkDestroy(i, j);
+                FinalizeUnmoveable2(true);
+                cascadeCount = 0;
+                scoreMultiplier = cascadeCount + 1;
+            }
+            Destroy(hammer);
+        }
+    }
+
+    IEnumerator ExecuteBomb(float animationTime, int i, int j)
+    {
+
+        if (!board[i, j].GetComponent<TilePiece>().Indestructable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+        {
+            float startTime = Time.time;
+            GameObject bomb = GameObject.Instantiate(bombPrefab, GetScreenCoordinatesWithZ(i, j, -1f), Quaternion.identity);
+            while ((Time.time - startTime) < animationTime)
+            {
+                bomb.transform.Rotate(0f, 0f, 1f);
+                yield return null;
+            }
+            for (int row = i - 1; row < i + 2; row++)
+            {
+                for (int col = j - 1; col < j + 2; col++)
+                {
+
+                    if (row > 0 && col > 0 && row < maxRows && col < maxCols)
+                    {
+                        if (!board[row, col].GetComponent<TilePiece>().Indestructable && !board[row, col].GetComponent<TilePiece>().Destroyed)
+                        {
+                            if (board[row, col].GetComponent<TilePiece>().OverlayType != TilePiece._OverlayType.None)
+                            {
+                                PopOverlay(row, col);
+                            }
+                            else
+                            {
+                                MarkDestroy(row, col);                                
+                            }
+                        }
+                    }
+                }
+            }
+            FinalizeUnmoveable2(true);
+            cascadeCount = 0;
+            scoreMultiplier = cascadeCount + 1;
+            Destroy(bomb);
+        }
+    }
+
+    public void Darken()
+    {
+        if (!darkMask)
+        {
+            darkMask = GameObject.Instantiate(darkMaskPrefab);
+        }
+    }
+
+    public void Undarken()
+    {
+        if (darkMask)
+        {
+            Destroy(darkMask);
+        }
+    }
+
+
     private bool IsContiguousHorizontal(int i, int j, int value)
     {
         if (j > 1)
@@ -571,6 +725,16 @@ public class Board : MonoBehaviour {
         return board;
     }
 
+    private void SetDestroyEffect()
+    {
+        switch (Random.Range(0, 2))
+        {
+            case 0: destroyEffect = "explode"; break;
+            case 1: destroyEffect = "fall"; break;
+            default: break;
+        }
+    }
+
     public bool FoundSwitchMatch(int i, int j, int switchedI, int switchedJ)
     {
         bool matches = false;
@@ -585,12 +749,7 @@ public class Board : MonoBehaviour {
             matches = true;
         } else
         {
-            switch(Random.Range(0, 2))
-            {
-                case 0: destroyEffect = "explode"; break;
-                case 1: destroyEffect = "fall"; break;
-                default:break;
-            }
+            SetDestroyEffect();
             matches = CheckIJ(i, j);
             matches |= CheckIJ(switchedI, switchedJ);
         }

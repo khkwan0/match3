@@ -6,12 +6,13 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 
     // Use this for initialization
-    private DataController dataController;
+    public DataController dataController;
     public GameObject boardManager;
     public GameObject worldControllerPrefab;
     private GameObject worldController;
     public Camera mainCamera;
     private SoundController soundController;
+    private MusicController musicController;
     public GameObject pauseButtonPrefab;
     private GameObject pauseButton;
     public GameObject pauseMenuPrefab;
@@ -21,7 +22,10 @@ public class GameController : MonoBehaviour {
     public GameObject loseCanvasPrefab;
     private GameObject loseCanvas;
     public GameObject ripple;
-
+    public GameObject helperPanelPrefab;
+    private GameObject helperPanel;
+    [SerializeField]
+    private GameObject currentHelper;
     private BoardCanvasController bcc;
        
 
@@ -49,6 +53,17 @@ public class GameController : MonoBehaviour {
     [SerializeField]
     private bool paused;
 
+    public enum _helperType { None, Hammer, Vertical, Horizontal, Rainbow, Bomb };
+    public static GameController GetGameController()
+    {
+        return GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+    }
+
+    public GameObject CurrentHelper
+    {
+        get { return currentHelper; }
+    }
+
 	void Awake () {
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
@@ -61,6 +76,7 @@ public class GameController : MonoBehaviour {
         Object.DontDestroyOnLoad(transform);
         Object.DontDestroyOnLoad(cam);
         soundController = GetComponent<SoundController>();
+        musicController = GetComponent<MusicController>();
         pauseMenuEnabled = true;
         paused = false;       
     }
@@ -103,6 +119,7 @@ public class GameController : MonoBehaviour {
     private void LevelPostStart()
     {
         bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+
     }
 
     public PlayerData GetPlayerData()
@@ -308,6 +325,16 @@ public class GameController : MonoBehaviour {
         soundController.SetSoundButtonOff(soundController.SoundFXOn);
     }
 
+    public void UpdateMusicButton()
+    {
+        musicController.SetMusicButtonState(musicController.MusicOn);
+    }
+
+    public void ToggleMusicButton()
+    {
+        musicController.ToggleMusicButton();
+    }
+
     public void ShowStartBoard()
     {
         boardCanvas = GameObject.Instantiate(boardCanvasPrefab);
@@ -352,6 +379,9 @@ public class GameController : MonoBehaviour {
             GameObject.FindGameObjectWithTag("StartBoardPanel").GetComponent<StartBoardController>().Disappear();
             gc.board.GetComponent<Board>().Locked = false;
             gc.ShowPauseButton();
+            bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+            helperPanel = GameObject.Instantiate(helperPanelPrefab);
+            helperPanel.GetComponent<HelperCanvasController>().CreateHelpers(gc.dataController.gameData.levelData[currentLevel], helperPanel.transform);
         }
     }
 
@@ -490,4 +520,54 @@ public class GameController : MonoBehaviour {
         bcc.SpawnMissionGoal(toreach, tileType, tileValue, idx, theSprite);
     }
 
+    public LevelData GetLevelData()
+    {
+        return dataController.gameData.levelData[currentLevel];
+    }
+
+    public void SetHelper(GameObject helper)
+    {
+        if (helper)
+        {
+            currentHelper = helper;
+            _helperType helperType = helper.GetComponent<HelperController>().HelperType;
+            board.GetComponent<Board>().HelperType = helperType;
+            Darken();
+            helperPanel = GameObject.FindGameObjectWithTag("HelperPanel");
+            if (helperPanel)
+            {
+                helperPanel.GetComponent<HelperCanvasController>().MaskOtherHelpers(helper);
+            }
+        }
+        else
+        {
+            currentHelper = null;
+            board.GetComponent<Board>().HelperType = _helperType.None;
+            Undarken();
+            helperPanel = GameObject.FindGameObjectWithTag("HelperPanel");
+            if (helperPanel)
+            {
+                helperPanel.GetComponent<HelperCanvasController>().ShowAllHelpers();
+            }
+        }
+    }
+
+    public void DeductHelper()
+    {
+        if (currentHelper)
+        {
+            currentHelper.GetComponent<HelperController>().Decrement();
+        }
+        currentHelper = null;
+    }
+
+    public void Darken()
+    {
+        board.GetComponent<Board>().Darken();
+    }
+
+    public void Undarken()
+    {
+        board.GetComponent<Board>().Undarken();
+    }
 }

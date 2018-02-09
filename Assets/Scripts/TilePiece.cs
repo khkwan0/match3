@@ -60,6 +60,8 @@ public class TilePiece : MonoBehaviour {
     [SerializeField]
     private int hitPoints;
 
+    private GameController gameController;
+
     private void Awake()
     {
         overlayStack.Add(_OverlayType.None);
@@ -69,6 +71,7 @@ public class TilePiece : MonoBehaviour {
         boardObj = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<Board>();
         board = boardObj.GetBoard();
         targetI = targetJ = -1;
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
 
     }
 
@@ -206,14 +209,26 @@ public class TilePiece : MonoBehaviour {
         originalX = transform.position.x;
         originalY = transform.position.y;
         //Debug.Log(i + "," + j + gameObject);
+        if (boardObj.HelperType != GameController._helperType.None)
+        {
+            // highlight
+        }
     }
 
     public void OnMouseUp()
     {
-        if (boardObj.Locked)
+        if (boardObj.HelperType != GameController._helperType.None)
         {
-            StartCoroutine(SpinWait());
-        } else
+            // execute helper
+            boardObj.ExecuteHelper(i, j);
+            // finished...
+            gameController.SetHelper(null);
+        }
+        else if (boardObj.Locked && boardObj.HelperType == GameController._helperType.None)
+            {
+                StartCoroutine(SpinWait());
+            }
+        else
         {
             if (targetI >= 0 && targetJ >= 0)
             {

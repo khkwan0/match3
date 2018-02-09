@@ -70,6 +70,16 @@
                   </li>
               </ul>
             </li>
+            <li>Helpers:
+              <ul>
+                <li><input type="checkbox" class="helper" id="bomb" />Bomb<input id="bomb_amt" value="0"/></li>
+                <li><input type="checkbox" class="helper" id="rainbow" />Rainbow<input id="rainbow_amt" value="0"/></li>
+                <li><input type="checkbox" class="helper" id="hammer" />Hammer<input id="hammer_amt" value="0" /></li>
+                <li><input type="checkbox" class="helper" id="vertical" />Vertical<input id="vertical_amt" value="0" /></li>
+                <li><input type="checkbox" class="helper" id="horizontal" />Horizontal<input id="horizontal_amt" value="0" /></li>
+              </ul>
+
+            </li>
             <li>Mission:
               <ul style="list-style: none">
                 <li><input type="radio" name="mission" id="scorereach" value="0" checked="checked" />Reach Score</li>
@@ -154,6 +164,15 @@
           $('#tier2fill').val(level.tier2Fill);
           $('#tier3fill').val(level.tier3Fill);
           $('#maxfillpoints').val(level.maxFillPoints);
+          if (level.helpers.length > 0) {
+            for (var i in level.helpers) {
+              if (parseInt(level.helpers[i].amount) > 0) {
+                $('#'+level.helpers[i].helpertype).prop('checked', true);
+                $('#'+level.helpers[i].helpertype + '_amt').val(parseInt(level.helpers[i].amount));
+              
+              }
+            }
+          }
           if (level.mission.type == 0) {
             $('#scorereach').prop('checked', true);
             if (level.mission.missionGoals && level.mission.missionGoals.length) {
@@ -575,6 +594,17 @@
           theBoard.tier1Fill = parseInt($('#tier1fill').val());
           theBoard.tier2Fill = parseInt($('#tier2fill').val());
           theBoard.tier3Fill = parseInt($('#tier3fill').val());
+          theBoard.helpers = [];
+          $('.helper:checked').each(function() {
+            var id = $(this).attr('id');
+            var amount = parseInt($('#'+id+'_amt').val());
+            helper = {
+              "helpertype": id,
+              "amount": amount
+            }
+            console.log(helper);
+            theBoard.helpers.push(helper);
+          })
           missionType = parseInt($('input[name=mission]:checked').val());
           theBoard.mission = {
             type: missionType,

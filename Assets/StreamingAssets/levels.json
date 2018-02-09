@@ -178,39 +178,9 @@
         },
         {
           "row": 7,
-          "col": 4,
-          "value": 1,
-          "tiletype": "vertical"
-        },
-        {
-          "row": 7,
-          "col": 5,
-          "value": 1,
-          "tiletype": "vertical"
-        },
-        {
-          "row": 7,
           "col": 2,
           "value": 1,
           "tiletype": "regular"
-        },
-        {
-          "row": 7,
-          "col": 6,
-          "value": 1,
-          "tiletype": "vertical"
-        },
-        {
-          "row": 0,
-          "col": 3,
-          "value": 2,
-          "tiletype": "vertical"
-        },
-        {
-          "row": 0,
-          "col": 2,
-          "value": 2,
-          "tiletype": "vertical"
         },
         {
           "row": "0",
@@ -318,6 +288,20 @@
           "steel": 0,
           "value": -1,
           "tiletype": "nil"
+        }
+      ],
+      "helpers": [
+        {
+          "helpertype": "bomb",
+          "amount": 2
+        },
+        {
+          "helpertype": "hammer",
+          "amount": 2
+        },
+        {
+          "helpertype": "vertical",
+          "amount": 2
         }
       ]
     },

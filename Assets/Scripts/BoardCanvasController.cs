@@ -12,13 +12,12 @@ public class BoardCanvasController : MonoBehaviour {
     public GameObject dropCountPanel;
     public GameObject tileCountPanel;
 
-    public void Start()
+    private void Awake()
     {
         scoreArea = GameObject.FindGameObjectWithTag("BoardScore").GetComponent<TextMeshProUGUI>();
         progressBar = GameObject.FindGameObjectWithTag("ProgressBar").gameObject;
         GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         GetComponent<Canvas>().planeDistance = 3f;
-
     }
 
     public void SpawnMissionGoal(int toReach, TilePiece._TileType tileType, int tileValue, int xOffset, Sprite theSprite)
