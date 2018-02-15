@@ -239,7 +239,8 @@ MonoBehaviour:
     type: 2}
   HorizontalBlastPrefab: {fileID: 1024081797350174, guid: 3c322ea9be0b1684e96ce27390ce5318,
     type: 2}
-  RainbowPrefab: {fileID: 0}
+  RainbowPrefab: {fileID: 1933788119181066, guid: dee951e11e4ca374a96bf3e918011766,
+    type: 2}
   BombPrefab: {fileID: 1904403020068648, guid: f2650a35c125be6438523173751daa3f, type: 2}
 --- !u!114 &114975756965543070
 MonoBehaviour:

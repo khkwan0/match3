@@ -21,13 +21,14 @@ public class GameController : MonoBehaviour {
     private GameObject boardCanvas;
     public GameObject loseCanvasPrefab;
     private GameObject loseCanvas;
-    public GameObject ripple;
     public GameObject helperPanelPrefab;
     private GameObject helperPanel;
     [SerializeField]
     private GameObject currentHelper;
     private BoardCanvasController bcc;
-       
+
+    public List<GameObject> backgroundPrefabs = new List<GameObject>();
+    private GameObject background;
 
     private Camera cam;
     private GameObject board;
@@ -113,7 +114,6 @@ public class GameController : MonoBehaviour {
     {
         yield return new WaitForSeconds(5f);
         GameObject.FindGameObjectWithTag("SplashCanvas").GetComponent<Canvas>().enabled = true;
-        ripple.SetActive(true);
     }
 
     private void LevelPostStart()
@@ -153,7 +153,8 @@ public class GameController : MonoBehaviour {
         playerDataController.StartLevel(level);
         board.GetComponent<Board>().StartLevel(level);
         MusicController mc = GetComponent<MusicController>();
-        mc.PlayTrack(0);
+        //mc.PlayTrack(0);
+        mc.PlayRandomTrack();
     }
 
     public void RestartLevel()
@@ -206,6 +207,7 @@ public class GameController : MonoBehaviour {
             gameState = _state.board;
             StartBoard();
             LevelPostStart();
+            background = GameObject.Instantiate(backgroundPrefabs[currentLevel % backgroundPrefabs.Count]);
         }
         if (scene.name == "World")
         {
@@ -274,6 +276,7 @@ public class GameController : MonoBehaviour {
     public void ShowLose()
     {
         loseCanvas = GameObject.Instantiate(loseCanvasPrefab);
+        board.GetComponent<Board>().HideTiles();
     }
 
     public void WinButtonGoBackToWorld()
@@ -289,6 +292,16 @@ public class GameController : MonoBehaviour {
     public void PlayTileDestroySound()
     {
         soundController.PlayTileDestroySound();
+    }
+
+    public void PlayKickSound() 
+    {
+        soundController.PlayKickSound();
+    }
+
+    public void PlayBTSSound()
+    {
+        soundController.PlayBTSSound();
     }
 
     public void PlayGreatSound()
@@ -387,7 +400,8 @@ public class GameController : MonoBehaviour {
 
     public void ShowEndBoard(int score, int stars)
     {
-        ebp = GameObject.Instantiate(endBoardPanelPrefab);       
+        ebp = GameObject.Instantiate(endBoardPanelPrefab);
+        board.GetComponent<Board>().HideTiles();
     }
 
     public void ShowSkyLanterns()

@@ -253,14 +253,15 @@ public class TilePiece : MonoBehaviour {
         lockUp = lockDown = false;
         if (movedOne)
         {
-            if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
-            {
-                //boardObj.Cascade(true);
-            }
-            else
-            {
-                boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
-            }
+            //if (boardObj.FoundSwitchMatch(i, j, targetI, targetJ))  // collapse
+            //{
+            //    //boardObj.Cascade(true);
+            //}
+            //else
+            //{
+            //    boardObj.SwitchPositions(targetI, targetJ, i, j);  // revert
+            //}
+            StartCoroutine(boardObj.FoundSwitchMatch(i, j, targetI, targetJ));
         }
         movedOne = false;
         lockMoveAxisX = false;

@@ -18,7 +18,10 @@ public class SoundController : MonoBehaviour {
     public GameObject swishDownPrefab;
     private GameObject swishUp;
     private GameObject swishDown;
-
+    public GameObject kickSoundPrefab;
+    private GameObject kickSound;
+    public GameObject btsSoundPrefab;
+    private GameObject btsSound;
 
     [SerializeField]
     private bool soundFXOn;
@@ -59,6 +62,24 @@ public class SoundController : MonoBehaviour {
             greatSound = GameObject.Instantiate(greatSoundPrefab);
         }
         DoPlay(greatSound.GetComponent<AudioSource>());
+    }
+
+    public void PlayKickSound()
+    {
+        if (!kickSound)
+        {
+            kickSound = GameObject.Instantiate(kickSoundPrefab);
+        }
+        DoPlay(kickSound.GetComponent<AudioSource>());
+    }
+
+    public void PlayBTSSound()
+    {
+        if (!btsSound) 
+        {
+            btsSound = GameController.Instantiate(btsSoundPrefab);
+        }
+        DoPlay(btsSound.GetComponent<AudioSource>());
     }
 
     public void PlaySwishUp()

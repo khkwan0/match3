@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1933788119181066}
+  m_IsPrefabParent: 1
+--- !u!1 &1933788119181066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4372876058164696}
+  - component: {fileID: 114740633014305772}
+  - component: {fileID: 61019051674032936}
+  - component: {fileID: 114680837979392988}
+  m_Layer: 0
+  m_Name: RainbowTile2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4372876058164696
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1933788119181066}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &61019051674032936
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1933788119181066}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &114680837979392988
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1933788119181066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51659a809be4837498682767aab3a5a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 0
+  i: 0
+  j: 0
+  lockMoveAxisX: 0
+  lockMoveAxisY: 0
+  lockLeft: 0
+  lockRight: 0
+  lockUp: 0
+  lockDown: 0
+  targetI: 0
+  targetJ: 0
+  moveable: 1
+  originalMovable: 1
+  indestructable: 0
+  invisible: 0
+  tileType: 0
+  originalTileType: 0
+  swipeThreshhold: 0.15
+  destroyed: 0
+  delayFill: 0
+  nonBlocking: 1
+  tileSprite: []
+  overlayStack: 
+  hitPoints: 0
+--- !u!114 &114740633014305772
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1933788119181066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e378678afe55be943b8c2b16db4f5f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 21300000, guid: d65c017ec8d56684ca24ac9e23dca413, type: 3}
+  - {fileID: 21300000, guid: ba6cc5019a10e0d48b8964e16407492b, type: 3}
+  - {fileID: 21300000, guid: 037ff0efd0e30034c960ff01f0b24105, type: 3}
+  - {fileID: 21300000, guid: ae654647e5fe39847b8585d9d6c93c6e, type: 3}
+  - {fileID: 21300000, guid: 858e86ad107809b4294bf937e3d0d48c, type: 3}
+  - {fileID: 21300000, guid: a8d370cb3544d407daa0595accc13517, type: 3}

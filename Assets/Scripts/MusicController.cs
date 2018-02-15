@@ -31,6 +31,16 @@ public class MusicController : MonoBehaviour {
         }
     }
 
+    public void PlayRandomTrack()
+    {
+        currentTrack = GameObject.Instantiate(tracksPrefabs[Random.Range(0, tracksPrefabs.Count)]);
+        currentTrack.GetComponent<AudioSource>().Play();
+        if (!musicOn)
+        {
+            currentTrack.GetComponent<AudioSource>().Pause();
+        }
+    }
+
     public void ToggleMusicButton()
     {
         if (musicOn)

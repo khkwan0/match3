@@ -69,6 +69,10 @@ MonoBehaviour:
     type: 2}
   swishDownPrefab: {fileID: 1029200494913764, guid: 005d981e69d784b47a8f0d57e451963e,
     type: 2}
+  kickSoundPrefab: {fileID: 1637546757931572, guid: eae45d65631380d49a0fa7f1ddeb8276,
+    type: 2}
+  btsSoundPrefab: {fileID: 1563270700068648, guid: b49676c571e692343bc094a5121e8a9e,
+    type: 2}
   soundFXOn: 0
 --- !u!114 &114421197755217228
 MonoBehaviour:
@@ -96,10 +100,19 @@ MonoBehaviour:
     type: 2}
   loseCanvasPrefab: {fileID: 1180781946918924, guid: c478f4cc97cb7c9499993ebc4ff9fe8a,
     type: 2}
-  ripple: {fileID: 0}
   helperPanelPrefab: {fileID: 1670301722656814, guid: c26fd524ed9a33e43a8e6231de9232df,
     type: 2}
   currentHelper: {fileID: 0}
+  backgroundPrefabs:
+  - {fileID: 1018132055996958, guid: 8d8b3102494e9284a862ecf4146298e0, type: 2}
+  - {fileID: 1706894944585416, guid: 38696af498bd69b49b2493806cbf3efd, type: 2}
+  - {fileID: 1742756473040386, guid: b5da159bf1b30354a851fa2afd5cfd70, type: 2}
+  - {fileID: 1408818656501838, guid: 02401ae04e6ee7e47b578f824d7a9930, type: 2}
+  - {fileID: 1036305205600618, guid: 6f314604156a7854296f6af9bf9c9765, type: 2}
+  - {fileID: 1190314630939516, guid: 1876576b0b39e6146815cb2303144adb, type: 2}
+  - {fileID: 1543284726875146, guid: 3432eabf1d115a74885e1a84208f4652, type: 2}
+  - {fileID: 1255096673136508, guid: 70ce42b37bd95aa41b85a7a7e78084c1, type: 2}
+  - {fileID: 1394522315743736, guid: a26a4c3500e184746ab0ef164fd3fdf2, type: 2}
   endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
     type: 2}
   startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
@@ -136,6 +149,17 @@ MonoBehaviour:
   - {fileID: 1886443861543672, guid: d1cea67c3c5ba7144bf9f6415c0f85c8, type: 2}
   - {fileID: 1455269464341828, guid: 7f85352b2f71ca14e930a16ea419f539, type: 2}
   - {fileID: 1724450035013282, guid: 12b141efe81717542a44c45f021e540a, type: 2}
+  - {fileID: 1623057723217216, guid: 3de34f21d8f1f8c4188ffab95b82db6e, type: 2}
+  - {fileID: 1788923822778354, guid: ae54d27b2543c6247826187e85a417c4, type: 2}
+  - {fileID: 1893892032898982, guid: a7f7d7c0a461f6643a9178c1683fea92, type: 2}
+  - {fileID: 1250913427841940, guid: 6b8ab525c0d6ed34c907e6d3f4114468, type: 2}
+  - {fileID: 1506691250684920, guid: e0facc0db224a5e46928caccf374b2bf, type: 2}
+  - {fileID: 1933994913704574, guid: f427548539c7534428a53821a1880fac, type: 2}
+  - {fileID: 1824124915659568, guid: 9dd640368055b6645bf0677d3b236890, type: 2}
+  - {fileID: 1942498609325178, guid: 43ad0bc1880d78543aff902b2ff28eef, type: 2}
+  - {fileID: 1601758667102534, guid: d0052847bac90684ea2ac2764fe1d154, type: 2}
+  - {fileID: 1464194095631898, guid: 59a9a571f975470469df8584a3e1e9a5, type: 2}
+  - {fileID: 1375503370048720, guid: b8c693438fb5618499c34839fec5710c, type: 2}
   musicOn: 0
 --- !u!114 &114813970030786044
 MonoBehaviour:
@@ -153,3 +177,7 @@ MonoBehaviour:
     lastLevel: 0
     timeStamp: 0
     playerLevelData: []
+    musicOnOff: 0
+    sfxOnOff: 0
+    musicVolume: 0
+    sfxVolume: 0

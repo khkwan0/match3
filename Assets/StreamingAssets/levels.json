@@ -6,7 +6,7 @@
       "rows": 8,
       "cols": 7,
       "numTileValues": 5,
-      "numMoves": 2,
+      "numMoves": 20,
       "maxFillPoints": 4000,
       "tier1Fill": 500,
       "tier2Fill": 1000,
@@ -71,17 +71,6 @@
           "nonblocking": 0,
           "invisible": 0,
           "steel": 1,
-          "value": -1,
-          "tiletype": "nil"
-        },
-        {
-          "row": "4",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
           "value": -1,
           "tiletype": "nil"
         },
@@ -171,123 +160,45 @@
           "tiletype": "regular"
         },
         {
-          "row": 7,
-          "col": 3,
-          "value": 4,
-          "tiletype": "regular"
+          "row": 4,
+          "col": 0,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
         },
         {
-          "row": 7,
+          "row": 2,
           "col": 2,
           "value": 1,
           "tiletype": "regular"
         },
         {
-          "row": "0",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
+          "row": 6,
+          "col": 5,
+          "value": 1,
+          "tiletype": "vertical"
+        },
+        {
+          "row": 6,
+          "col": 6,
+          "value": 1,
+          "tiletype": "regular"
         },
         {
           "row": 6,
           "col": 3,
-          "immoveable": 0,
-          "indestructable": 1,
-          "nonblocking": 0,
-          "invisible": 0,
-          "steel": 0,
-          "rabbit": 1,
-          "value": -1,
-          "tiletype": "rabbit"
-        },
-        {
-          "row": 7,
-          "col": 1,
-          "value": 4,
+          "value": 1,
           "tiletype": "regular"
-        },
-        {
-          "row": "7",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
         },
         {
           "row": 6,
-          "col": 2,
-          "value": 4,
+          "col": 4,
+          "value": 2,
           "tiletype": "regular"
-        },
-        {
-          "row": 5,
-          "col": 2,
-          "value": 4,
-          "tiletype": "regular"
-        },
-        {
-          "row": "6",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
-        },
-        {
-          "row": "5",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
-        },
-        {
-          "row": "3",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
-        },
-        {
-          "row": "2",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
-        },
-        {
-          "row": "1",
-          "col": "0",
-          "immoveable": 1,
-          "indestructable": 1,
-          "nonblocking": 1,
-          "invisible": 1,
-          "steel": 0,
-          "value": -1,
-          "tiletype": "nil"
         }
       ],
       "helpers": [
@@ -928,6 +839,166 @@
           "tiletype": "cross"
         }
       ]
+    },
+    {
+      "_id": "5a82edde80967a0a7fe1f4ac",
+      "level": 7,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [
+        {
+          "row": 6,
+          "col": 5,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": 4,
+          "col": 5,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": 2,
+          "col": 5,
+          "immoveable": 1,
+          "indestructable": 1,
+          "nonblocking": 0,
+          "invisible": 0,
+          "steel": 1,
+          "value": -1,
+          "tiletype": "nil"
+        },
+        {
+          "row": 0,
+          "col": 5,
+          "value": 3,
+          "tiletype": "regular"
+        },
+        {
+          "row": 0,
+          "col": 4,
+          "value": 3,
+          "tiletype": "regular"
+        },
+        {
+          "row": 0,
+          "col": 7,
+          "value": 3,
+          "tiletype": "regular"
+        }
+      ],
+      "helpers": []
+    },
+    {
+      "_id": "5a82ef5a80967a0a7fe1f4ad",
+      "level": 8,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 6,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [
+        {
+          "row": 5,
+          "col": 7,
+          "value": 5,
+          "tiletype": "generator",
+          "immoveable": 1,
+          "indestructable": 1,
+          "invisible": 0,
+          "steel": 0,
+          "nonblocking": 0,
+          "overlay": [
+            "None",
+            "None"
+          ]
+        },
+        {
+          "row": 4,
+          "col": 7,
+          "value": 5,
+          "tiletype": "generator",
+          "immoveable": 1,
+          "indestructable": 1,
+          "invisible": 0,
+          "steel": 0,
+          "nonblocking": 0,
+          "overlay": [
+            "None",
+            "None"
+          ]
+        },
+        {
+          "row": 3,
+          "col": 7,
+          "value": 5,
+          "tiletype": "generator",
+          "immoveable": 1,
+          "indestructable": 1,
+          "invisible": 0,
+          "steel": 0,
+          "nonblocking": 0,
+          "overlay": [
+            "None",
+            "None"
+          ]
+        },
+        {
+          "row": 5,
+          "col": 6,
+          "value": 2,
+          "tiletype": "regular"
+        },
+        {
+          "row": 4,
+          "col": 6,
+          "value": 2,
+          "tiletype": "regular"
+        },
+        {
+          "row": 2,
+          "col": 6,
+          "value": 2,
+          "tiletype": "regular"
+        }
+      ],
+      "helpers": []
     }
   ]
 }

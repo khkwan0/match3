@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "match3.Plugins", "match3.Pl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "match3.Editor.Plugins", "match3.Editor.Plugins.csproj", "{03151524-09FD-D487-5469-F8EB6C3CA24B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "match3.Editor", "match3.Editor.csproj", "{97B8CD52-A3F4-BF04-DBEB-395C0298EA36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{03151524-09FD-D487-5469-F8EB6C3CA24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03151524-09FD-D487-5469-F8EB6C3CA24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03151524-09FD-D487-5469-F8EB6C3CA24B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97B8CD52-A3F4-BF04-DBEB-395C0298EA36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97B8CD52-A3F4-BF04-DBEB-395C0298EA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97B8CD52-A3F4-BF04-DBEB-395C0298EA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97B8CD52-A3F4-BF04-DBEB-395C0298EA36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

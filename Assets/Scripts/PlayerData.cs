@@ -8,4 +8,8 @@ public class PlayerData
     public int lastLevel;
     public int timeStamp;
     public List<PlayerLevelData> playerLevelData;
+    public int musicOnOff;
+    public int sfxOnOff;
+    public float musicVolume;
+    public float sfxVolume;
 }

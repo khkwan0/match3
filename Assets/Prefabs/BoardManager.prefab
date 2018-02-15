@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 1392849396128456, guid: f1150d37d1a65485aba11c5822e1b515, type: 2}
+  - {fileID: 1392849396128456, guid: 8137443edfd1b4a4e81a37ca51b8d5df, type: 2}
   - {fileID: 1299359681565482, guid: cdfe2700a3094461f8e1a7b33a4df068, type: 2}
   - {fileID: 1002371784076068, guid: 71be62ea3311b0940b7c35136fa386b5, type: 2}
   - {fileID: 1379779600264396, guid: 9e61c92f584cc4e9ba0c132b9f66e644, type: 2}
@@ -82,21 +82,19 @@ MonoBehaviour:
   - {fileID: 1975680508499230, guid: 621a08a670ca3e14c9f81893ea760c07, type: 2}
   - {fileID: 1820176228177348, guid: d0f77334fc2afa741b1bca32827eeecd, type: 2}
   generatorTiles:
-  - {fileID: 1014418954379840, guid: ed194e798762c9b40b7fdd94abd0ca38, type: 2}
+  - {fileID: 1014418954379840, guid: 3124e5f061d143642a0e88f44285dcdb, type: 2}
   - {fileID: 1784904232890486, guid: e0d881caa9032c04c8bdf32f99ca6ace, type: 2}
   - {fileID: 1302048441976504, guid: be5fb67bd69a4db4eaf32aa63338dfef, type: 2}
   - {fileID: 1213943118485796, guid: 30fa84c120b6f864da44ecff25c99577, type: 2}
   - {fileID: 1517696488760576, guid: 163406918c1dc154a87b483105744128, type: 2}
   - {fileID: 1234450992414212, guid: 216140e80d286f8498295c002fab2494, type: 2}
-  rainbowTile: {fileID: 1862638571403850, guid: 34186f11cdc011d4ea155c097df8258d,
+  rainbowTile: {fileID: 1933788119181066, guid: 943e6e5afbf77b247bf73a2a2f72cbd6,
     type: 2}
   unknownCrackable: {fileID: 1716125127661510, guid: 1fd2f1ebcc565784fa56f9866c336210,
     type: 2}
   rabbitPrefab: {fileID: 1970427073881298, guid: 8dce86562cfbdb0419206565d21f65b7,
     type: 2}
   teleporterPrefab: {fileID: 1229163206625810, guid: f71ee15cffc853d4380940519d0e1868,
-    type: 2}
-  helperPanelPrefab: {fileID: 1373382920032622, guid: 6a26bd76d5e021f49a6f31cf8b7b5e2e,
     type: 2}
   hammerPrefab: {fileID: 1904403020068648, guid: 055607f9a32079f479777e7d42bd54ed,
     type: 2}
@@ -107,8 +105,11 @@ MonoBehaviour:
     type: 2}
   tileBackground: {fileID: 1920035364909136, guid: 386ccd215986e5c4f831ae3f7360233d,
     type: 2}
+  sparkleTrailPrefab: {fileID: 1516059353794238, guid: 66512d2119f5c90499c986d39fc15c31,
+    type: 2}
   locked: 0
   falling: 0
+  sparkleCount: 0
   generating: 0
   canvas: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f, type: 2}
   scoreAmt: 10
@@ -123,6 +124,8 @@ MonoBehaviour:
   scoreMultiplier: 0
   cascadeCount: 0
   TileExplosion: {fileID: 100010, guid: 645413a00f7bd0242bbd6d0e5eb6f439, type: 2}
+  TileBurstPrefab: {fileID: 1844909769888628, guid: 20e8f9a4df788144eb6b54366c36ab7c,
+    type: 2}
   finishing: 0
   virusPrefab: {fileID: 1182425577532832, guid: 6d881bdc5f3abcd4dbd75052c75542b8,
     type: 2}
@@ -139,3 +142,6 @@ MonoBehaviour:
   numFall: 0
   helperType: 0
   fallLerpTime: 0.5
+  trailLerpTime: 0.5
+  straightLineTrailLerpTime: 0.5
+  growLerpTime: 2

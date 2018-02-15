@@ -8,60 +8,76 @@
 		_Speed("Speed", float) = 1
 		_Frequency("Frequency", float) = 1
 	}
-	SubShader {
-		Tags { "RenderType"="Opaque" }
-		LOD 200
+	SubShader 
+	{
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+		LOD 100
 
-		CGPROGRAM
-		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows vertex:vert
-
-		// Use shader model 3.0 target, to get nicer looking lighting
-		#pragma target 3.0
-
-		sampler2D _MainTex;
-		float _Scale, _Speed, _Frequency;
-		half4 _Color;
-
-		struct Input {
-			float2 uv_MainTex;
-			float3 customValue;
-		};
-
-		half _Glossiness;
-		half _Metallic;
-
-		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-		// #pragma instancing_options assumeuniformscaling
-		UNITY_INSTANCING_BUFFER_START(Props)
-			// put more per-instance properties here
-		UNITY_INSTANCING_BUFFER_END(Props)
-
-
-		void vert(inout appdata_full v, out Input o) 
+		ZWrite Off
+		Blend SrcAlpha OneMinusSrcAlpha
+		Pass 
 		{
-			UNITY_INITIALIZE_OUTPUT(Input, o);
-			half offsetvert = (v.vertex.x * v.vertex.x) + (v.vertex.z * v.vertex.z);
+			CGPROGRAM
+			// Physically based Standard lighting model, and enable shadows on all light types
+			/*#pragma surface surf Standard fullforwardshadows vertex:vert*/
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+			// Use shader model 3.0 target, to get nicer looking lighting
+			#pragma target 3.0
 
-			half value = _Scale * sin(_Time.w * _Speed + offsetvert * _Frequency);
+			sampler2D _MainTex;
+			float4 _MainTex_ST;
+			float _Scale, _Speed, _Frequency;
+			half4 _Color;
 
-			v.vertex.y += value;
-			//v.normal.y += value;
-			o.customValue = value;
+			struct appdata {
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+				float3 normal: NORMAL;
+			};
+
+			struct v2f {
+				float2 uv : TEXCOORD0;
+				float4 vertex : SV_POSITION;
+				float3 normal: NORMAL;
+			};
+
+			half _Glossiness;
+			half _Metallic;
+
+			//// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
+			//// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
+			//// #pragma instancing_options assumeuniformscaling
+			//UNITY_INSTANCING_BUFFER_START(Props)
+			//	// put more per-instance properties here
+			//UNITY_INSTANCING_BUFFER_END(Props)
+
+
+			v2f vert(appdata v)
+			{
+				v2f o;
+				half offsetvert = (v.vertex.x * v.vertex.x) + (v.vertex.z * v.vertex.z);
+
+				half value = _Scale * sin(_Time.w * _Speed + offsetvert * _Frequency);
+
+
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.normal = v.normal;
+				o.vertex.y += value;
+				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.normal.y -= value;
+				//v.normal.y += value;
+				//o.customValue = value;
+				return o;
+			}
+
+			fixed4 frag(v2f i) : SV_TARGET {
+				fixed4 col = tex2D(_MainTex, i.uv) * _Color;
+				return col;
+			}
+			ENDCG
 		}
-
-		void surf (Input IN, inout SurfaceOutputStandard o) {
-			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb;
-			// Metallic and smoothness come from slider variables
-			o.Metallic = _Metallic;
-			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
-			o.Normal.y -= IN.customValue;
-		}
-		ENDCG
 	}
 	FallBack "Diffuse"
 }
