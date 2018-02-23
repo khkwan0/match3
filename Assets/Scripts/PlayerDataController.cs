@@ -31,7 +31,16 @@ public class PlayerDataController : MonoBehaviour {
                 overallScore = 0,
                 lastLevel = -1,
                 timeStamp = secondsSinceEpoch,
-                playerLevelData = new List<PlayerLevelData>()
+                playerLevelData = new List<PlayerLevelData>(),
+                sfxOnOff = 1,
+                musicOnOff = 1,
+                musicVolume = 1f,
+                sfxVolume = 1f,
+                rainbowHelper = 2,
+                bombHelper = 2,
+                horizontalHelper = 2,
+                verticalHelper = 2,
+                hammerHelper = 2
             };
             PlayerLevelData pld = new PlayerLevelData
             {
@@ -41,6 +50,7 @@ public class PlayerDataController : MonoBehaviour {
             };
             playerData.playerLevelData.Add(pld);
             string jsonString = JsonUtility.ToJson(playerData);
+            Debug.Log(jsonString);
             File.WriteAllText(filePath, jsonString);
         }
     }
@@ -78,6 +88,47 @@ public class PlayerDataController : MonoBehaviour {
             };
             playerData.playerLevelData[level] = pld;
         }
+    }
+
+    public void AddRewards(List<Rewards> rewards)
+    {
+        for (int i = 0; i < rewards.Count; i++)
+        {
+            switch(rewards[i].reward)
+            {
+                case "hammer": playerData.hammerHelper++; break;
+                case "rainbow": playerData.rainbowHelper++; break;
+                case "vertical": playerData.verticalHelper++; break;
+                case "bomb": playerData.bombHelper++;break;
+                case "horizontal": playerData.horizontalHelper++; break;
+                default: break;
+            }
+        }
+    }
+    public void EnableSFX(bool on) 
+    {
+        if (on)
+        {
+            playerData.sfxOnOff = 1;
+        }
+        else
+        {
+            playerData.sfxOnOff = 0;
+        }
+        SavePlayerData();
+    }
+
+    public void EnableMusic(bool on)
+    {
+        if (on)
+        {
+            playerData.musicOnOff = 1;
+        }
+        else
+        {
+            playerData.musicOnOff = 0;
+        }
+        SavePlayerData();
     }
 
     public void SavePlayerData()
@@ -237,5 +288,18 @@ public class PlayerDataController : MonoBehaviour {
     public void AddOverallScore(int score)
     {
         playerData.overallScore += score;
+    }
+
+    public void DeductHelper(GameController._helperType helperType)
+    {
+        switch (helperType) {
+            case GameController._helperType.Bomb: playerData.bombHelper--; break;
+            case GameController._helperType.Hammer: playerData.hammerHelper--; break;
+            case GameController._helperType.Rainbow: playerData.rainbowHelper--; break;
+            case GameController._helperType.Horizontal: playerData.horizontalHelper--; break;
+            case GameController._helperType.Vertical: playerData.verticalHelper--; break;
+            default: break;
+        }
+        SavePlayerData();
     }
 }

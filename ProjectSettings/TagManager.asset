@@ -21,6 +21,10 @@ TagManager:
   - StartPanelSpeechCanvas
   - ripples
   - HelperPanel
+  - EndBoardPanel
+  - RewardsPanel
+  - BombDisplay
+  - Fire
   layers:
   - Default
   - TransparentFX

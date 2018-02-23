@@ -123,6 +123,9 @@ MonoBehaviour:
   tileSprite: []
   overlayStack: 
   hitPoints: 0
+  bomb: 0
+  bombHP: 0
+  gui: {fileID: 0}
 --- !u!212 &212635014246009924
 SpriteRenderer:
   m_ObjectHideFlags: 1

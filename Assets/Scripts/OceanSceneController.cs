@@ -91,7 +91,7 @@ public class OceanSceneController : MonoBehaviour {
         GameObject fish;
 
         fish = GameObject.Instantiate(fishPrefabs[Random.Range(0, fishPrefabs.Count)], transform);
-        fish.GetComponent<FishController>().StartFish();            
+        //fish.GetComponent<FishController>().StartFish();            
     }
 
     private void SpawnCrab()

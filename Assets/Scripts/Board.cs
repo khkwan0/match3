@@ -11,12 +11,15 @@ public class Board : MonoBehaviour {
     public static int maxRows = 8;
     public static int maxCols = 8;
 
+    public float tileSwitchLerpTime;
+    public float reshuffleLerpTime;
     public List<GameObject> tiles = new List<GameObject>();
     public GameObject tileMaskPrefab;
     public List<GameObject> powerTilesVertical = new List<GameObject>();
     public List<GameObject> powerTilesHorizontal = new List<GameObject>();
     public List<GameObject> powerTilesCross = new List<GameObject>();
     public List<GameObject> generatorTiles = new List<GameObject>();
+    public List<GameObject> bombs = new List<GameObject>();
     public GameObject rainbowTile;
     public GameObject unknownCrackable;
     public GameObject rabbitPrefab;
@@ -34,6 +37,9 @@ public class Board : MonoBehaviour {
     private GameObject darkMask;
     public static Vector2 tileSize;
     public static Vector2 boardSize;
+
+    [SerializeField]
+    private int timeLeft;
 
     public GameObject tileBackgroundLayerContainerPrefab;
     private GameObject tileBackgroundLayerContainer;
@@ -56,6 +62,7 @@ public class Board : MonoBehaviour {
     private TextMeshProUGUI moves;
     private int numMoves;
     private int maxMoves;
+    private int usedMoves;
     private int numScore;
 
     public int scoreAmt;
@@ -130,6 +137,9 @@ public class Board : MonoBehaviour {
     public float trailLerpTime;
     public float straightLineTrailLerpTime;
     public float growLerpTime;
+
+    private bool showingFX;
+    public float effectsDuration;
 
     private Vector3 localScale;
         
@@ -207,6 +217,7 @@ public class Board : MonoBehaviour {
         finalPointBonus = 100;
         dropCount = 0;
         sparkleCount = 0;
+        showingFX = false;
 
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
 
@@ -216,6 +227,7 @@ public class Board : MonoBehaviour {
         scoreMultiplier = cascadeCount + 1;
 
         numMoves = gameData.levelData[level].numMoves;
+        usedMoves = 0;
         maxMoves = numMoves;
         numScore = 0;
         missionType = gameData.levelData[level].mission.type;
@@ -288,6 +300,30 @@ public class Board : MonoBehaviour {
         StartCoroutine(EnableHint());
     }
 
+    private void StartTimer()
+    {
+        InvokeRepeating("ReduceTime", 0f, 1f);
+    }
+
+    public void SetTimer(int time)
+    {
+        timeLeft = time;
+        if (timeLeft > 0)
+        {
+            StartTimer();
+        }
+    }
+        
+    private void ReduceTime()
+    {
+        timeLeft--;
+        gameController.UpdateTimer(timeLeft);
+        if (timeLeft <= 0)
+        {
+            Debug.Log("Lose");
+            CancelInvoke("ReduceTime");
+        }
+    }
     private void DrawBoard()
     {
         board = new GameObject[maxRows, maxCols];
@@ -315,10 +351,11 @@ public class Board : MonoBehaviour {
                                 backgroundBoard[i, j].GetComponent<TileBackgroundController>().SetTeleIJ(boardSpec[k].telefromrow, boardSpec[k].telefromcol);
                                 GameObject.Instantiate(tileMaskPrefab, GetScreenCoordinates(i + 1, j), Quaternion.identity).name = "tilemask";
                                 GameObject.Instantiate(tileMaskPrefab, GetScreenCoordinates(boardSpec[k].telefromrow - 1, boardSpec[k].telefromcol), Quaternion.identity);
-                                GameObject.Instantiate(teleporterPrefab, GetScreenCoordinates(i + 1, j), Quaternion.identity).name = "tele";
+                                GameObject.Instantiate(teleporterPrefab, GetScreenCoordinates(i + 1, j), Quaternion.identity, tileBackgroundLayerContainer.transform).name = "tele";
                                 Vector3 teleOutPos = GetScreenCoordinates(boardSpec[k].telefromrow - 1, boardSpec[k].telefromcol);
                                 teleOutPos -= new Vector3(0f, -0.5f, 0f);
-                                GameObject.Instantiate(teleporterPrefab, teleOutPos, Quaternion.identity).name = "tele";
+                                GameObject.Instantiate(teleporterPrefab, teleOutPos, Quaternion.identity, tileBackgroundLayerContainer.transform).name = "tele";
+                                
 
                             }
                         }
@@ -492,10 +529,12 @@ public class Board : MonoBehaviour {
                     backgroundBoard[i, j] = GameObject.Instantiate(tileBackground, GetScreenCoordinatesWithZ(i, j, 0.5f), Quaternion.identity, tileBackgroundLayerContainer.transform);
                     backgroundBoard[i, j].name = "bkgd_r" + i + "_c" + j;
                     backgroundBoard[i, j].GetComponent<TileBackgroundController>().SetLocation(i, j);
-                    int idx = Random.Range(0, tiles.Count);
+                    int numTiles = gameData.levelData[level].numTileValues < 5 ? 5 : gameData.levelData[level].numTileValues;
+
+                    int idx = Random.Range(0, numTiles);
                     while (IsContiguousHorizontal(i, j, idx) || IsContiguousVertical(i, j, idx))
                     {
-                        idx = (int)Mathf.FloorToInt(Random.Range(0f, tiles.Count - 1));
+                        idx = Random.Range(0, numTiles);
                     }
                     board[i, j] = GameObject.Instantiate(
                         tiles[idx],
@@ -586,8 +625,11 @@ public class Board : MonoBehaviour {
         {
             for (int j = 0; j < maxCols; j++)
             {
-                board[i, j].SetActive(false);
-                board[i, j].GetComponent<BoxCollider2D>().size = new Vector2(2f, 2f);
+                if (board[i, j])
+                {
+                    board[i, j].SetActive(false);
+                    board[i, j].GetComponent<BoxCollider2D>().size = new Vector2(2f, 2f);
+                }
             }
         }
     }
@@ -630,8 +672,11 @@ public class Board : MonoBehaviour {
             }
             if (helperType == GameController._helperType.Hammer)
             {
-                StartCoroutine(ExecuteHammer(1f, i, j));
-                gameController.GetComponent<GameController>().DeductHelper();
+                if (!board[i, j].GetComponent<TilePiece>().Indestructable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+                {
+                    StartCoroutine(ExecuteHammer(1f, i, j));
+                    gameController.GetComponent<GameController>().DeductHelper();
+                }
             }
             if (helperType == GameController._helperType.Rainbow)
             {
@@ -644,8 +689,11 @@ public class Board : MonoBehaviour {
             }
             if (helperType == GameController._helperType.Bomb)
             {
-                StartCoroutine(ExecuteBomb(1f, i, j));
-                gameController.GetComponent<GameController>().DeductHelper();
+                if (!board[i, j].GetComponent<TilePiece>().Indestructable && !board[i, j].GetComponent<TilePiece>().Destroyed)
+                {
+                    StartCoroutine(ExecuteBomb(1f, i, j));
+                    gameController.GetComponent<GameController>().DeductHelper();
+                }
             }
         }
     }
@@ -668,7 +716,7 @@ public class Board : MonoBehaviour {
             else
             {
                 MarkDestroy(i, j);
-                FinalizeUnmoveable2(true);
+                FinalizeUnmoveable2(true, false);
                 cascadeCount = 0;
                 scoreMultiplier = cascadeCount + 1;
             }
@@ -693,7 +741,7 @@ public class Board : MonoBehaviour {
                 for (int col = j - 1; col < j + 2; col++)
                 {
 
-                    if (row > 0 && col > 0 && row < maxRows && col < maxCols)
+                    if (row >= 0 && col >= 0 && row < maxRows && col < maxCols)
                     {
                         if (!board[row, col].GetComponent<TilePiece>().Indestructable && !board[row, col].GetComponent<TilePiece>().Destroyed)
                         {
@@ -709,7 +757,7 @@ public class Board : MonoBehaviour {
                     }
                 }
             }
-            FinalizeUnmoveable2(true);
+            FinalizeUnmoveable2(true, false);
             cascadeCount = 0;
             scoreMultiplier = cascadeCount + 1;
             Destroy(bomb);
@@ -795,10 +843,12 @@ public class Board : MonoBehaviour {
 
         if (tileType == TilePiece._TileType.Rainbow || switchedTileType == TilePiece._TileType.Rainbow)
         {
+            cascadeCount = 0;
             HandleRainbowMatch(i, j, switchedI, switchedJ);
             matches = true;
         } else
         {
+            cascadeCount = 0;
             SetDestroyEffect();
             matches = CheckIJ(i, j);
             matches |= CheckIJ(switchedI, switchedJ);
@@ -811,11 +861,13 @@ public class Board : MonoBehaviour {
         {
             //FinalizeBoard();
             //Fill();
+            gameController.HandleSwitchMatchEvent();
             CancelInvoke("ShowHint");
-            FinalizeUnmoveable2(true);
+            usedMoves++;
+            FinalizeUnmoveable2(true, true);
             numMoves--;
             UpdateMoves(numMoves);
-            cascadeCount = 0;
+
             scoreMultiplier = cascadeCount + 1;
         } 
         else
@@ -931,9 +983,47 @@ public class Board : MonoBehaviour {
                 lose = true;
             }
         }
+        for (int i = 0; i < maxRows; i++)
+        {
+            for (int j = 0; j < maxCols; j++)
+            {
+                if (board[i, j].GetComponent<TilePiece>().Bomb)
+                {
+                    if (board[i, j].GetComponent<TilePiece>().Bomb && !board[i, j].GetComponent<TilePiece>().Destroyed)
+                    {
+                        board[i, j].GetComponent<TilePiece>().BombHP--;
+                    }
+                    if (board[i, j].GetComponent<TilePiece>().BombHP < 1)
+                    {
+                        lose = true;
+                        StartCoroutine(ShowBombLose(i, j));
+                    }
+                }
+            }
+        }
         return lose;
     }
 
+    IEnumerator ShowBombLose(int i, int j)
+    {
+        showingFX = true;      
+        float startTime = Time.time;
+        Vector3 originalPosition = board[i, j].transform.position;
+        float radius = 0.001f;
+        while ((Time.time - startTime) < effectsDuration)
+        {
+            radius += 0.001f;
+            Vector3 newPostion = originalPosition + Random.insideUnitSphere * radius;
+            newPostion.z = originalPosition.z;
+            board[i, j].transform.position = newPostion;
+            yield return null;
+        }
+        board[i, j].GetComponent<TilePiece>().Destroyed = true;
+        board[i, j].GetComponent<TilePiece>().DisableVisibility();
+        GameObject.Instantiate(TileExplosion, GetScreenCoordinates(i, j), Quaternion.identity, transform);
+        yield return new WaitForSeconds(2f);
+        showingFX = false;
+    }
     private bool CheckIJ(int i, int j)
     {
         int lowestRow, lowestCol;
@@ -1002,6 +1092,7 @@ public class Board : MonoBehaviour {
 
             if (horCount == 4 || vertCount == 4)
             {
+                cascadeCount++;
                 if (horCount == 4)
                 {
                     HandleFourMatch(i, j, lowestCol, true);
@@ -1013,6 +1104,7 @@ public class Board : MonoBehaviour {
             }
             else if (horCount == 3 || vertCount == 3)
             {
+                cascadeCount++;
                 if (horCount == 3)
                 {
                     HandleThreeMatch(i, j, lowestCol, true);
@@ -1142,7 +1234,7 @@ public class Board : MonoBehaviour {
                         PopOverlay(i, col - 1);
                     }
                 }
-                else if (col < maxCols - 1 && col == j + numberOfTilesToCheck - 1)  // check right
+                if (col < maxCols - 1 && col == j + numberOfTilesToCheck - 1)  // check right
                 { 
                     if (board[i, col + 1].GetComponent<TilePiece>().TileType == TilePiece._TileType.Generator)
                     {
@@ -1564,6 +1656,7 @@ public class Board : MonoBehaviour {
                             && !board[i + 1, j].GetComponent<TilePiece>().Indestructable
                             && !board[i + 1, j].GetComponent<TilePiece>().Indestructable)
                         {
+                            cascadeCount++;
                             found = true;
                             MarkDestroy(i, j);
                             MarkDestroy(i, j + 1);
@@ -1595,6 +1688,7 @@ public class Board : MonoBehaviour {
                             && !board[row, j - 1].GetComponent<TilePiece>().Indestructable
                             && !board[row, j - 2].GetComponent<TilePiece>().Indestructable)
                         {
+                            cascadeCount++;
                             found = true;
                             MarkDestroy(i, j);
                             MarkDestroy(i + 1, j);
@@ -1612,6 +1706,7 @@ public class Board : MonoBehaviour {
                             && !board[row, j + 1].GetComponent<TilePiece>().Indestructable
                             && !board[row, j + 2].GetComponent<TilePiece>().Indestructable)
                         {
+                            cascadeCount++;
                             found = true;
                             MarkDestroy(i, j);
                             MarkDestroy(i + 1, j);
@@ -1630,6 +1725,7 @@ public class Board : MonoBehaviour {
                           && !board[row, j - 1].GetComponent<TilePiece>().Indestructable
                           && !board[row, j + 1].GetComponent<TilePiece>().Indestructable)
                         {
+                            cascadeCount++;
                             MarkDestroy(i, j);
                             MarkDestroy(i + 1, j);
                             MarkDestroy(i + 2, j);
@@ -2145,10 +2241,13 @@ public class Board : MonoBehaviour {
         int i, j;
         i = go.GetComponent<TilePiece>().I;
         j = go.GetComponent<TilePiece>().J;
-        while (Time.time - startTime < 2.0f)
+        Vector3 newPosition = GetScreenCoordinates(i, j);
+        Vector3 originalPosition = board[i, j].transform.position;
+        float perc = 0f;
+        while (Time.time - startTime < reshuffleLerpTime)
         {
-            Vector3 newPosition = GetScreenCoordinates(i, j);
-            board[i, j].transform.position = Vector3.Lerp(board[i, j].transform.position, newPosition, Time.time - startTime);
+            perc = (Time.time - startTime) / reshuffleLerpTime;
+            board[i, j].transform.position = Vector3.Lerp(originalPosition, newPosition, perc);
             yield return null;
         }
         reshufflingCount--;
@@ -2177,10 +2276,12 @@ public class Board : MonoBehaviour {
             {
                 if (CheckHorizontal(i, j, out lowest) >= 5)
                 {
+                    cascadeCount++;
                     HandleFiveMatch(i, j, true, lowest);
                     match = true;
                 } else if (CheckVertical(i, j, out lowest) >= 5)
                 {
+                    cascadeCount++;
                     HandleFiveMatch(i, j, false, lowest);
                     match = true;
                 }
@@ -2194,13 +2295,12 @@ public class Board : MonoBehaviour {
                 match |= CheckIJCascade(i, j);
             }
         }
-        if (match)
+        if (match)  // recursive call
         {
-            cascadeCount++;
             scoreMultiplier = cascadeCount + 1;
-            FinalizeUnmoveable2(checkWin);
+            FinalizeUnmoveable2(checkWin, false);
         }
-        else
+        else  // tail of recursive call
         {
 
             bool found = false;
@@ -2210,7 +2310,7 @@ public class Board : MonoBehaviour {
                 {
                     if (board[0, col].GetComponent<TilePiece>().TileType == TilePiece._TileType.DropCount)
                     {
-                        board[0, col].GetComponent<SpriteRenderer>().enabled = false;
+                        board[0, col].GetComponent<TilePiece>().DisableVisibility();
                         board[0, col].GetComponent<TilePiece>().Destroyed = true;
                         found = true;
                         dropCount++;
@@ -2219,7 +2319,7 @@ public class Board : MonoBehaviour {
                 }
                 if (found)
                 {
-                    FinalizeUnmoveable2(checkWin);
+                    FinalizeUnmoveable2(checkWin, false);
                 }
             }
             if (checkWin)
@@ -2248,7 +2348,7 @@ public class Board : MonoBehaviour {
                     else
                     {
                         winLocked = true;
-                        LevelLose();
+                        StartCoroutine(StartLevelLose());
                     }
                 }
                 else
@@ -2258,6 +2358,16 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+    }
+
+    IEnumerator StartLevelLose()
+    {
+        while (showingFX)
+        {
+            yield return null;
+
+        }
+        LevelLose();
     }
 
     private void SpreadVirus()
@@ -2355,11 +2465,15 @@ public class Board : MonoBehaviour {
     IEnumerator SwitchPositionsLerp(int ai, int aj, int bi, int bj, Vector3 newPositionA, Vector3 newPositionB)
     {
         float startTime = Time.time;
-        GameObject temp;        
-        while (Time.time - startTime <= 0.5f)
+        GameObject temp;
+        float perc = 0f;
+        Vector3 originalAPos = board[ai, aj].transform.position;
+        Vector3 originalBPos = board[bi, bj].transform.position;
+        while (Time.time - startTime <= tileSwitchLerpTime)
         {
-            board[bi, bj].transform.position = Vector3.Lerp(board[bi, bj].transform.position, newPositionB, Time.time - startTime);
-            board[ai, aj].transform.position = Vector3.Lerp(board[ai, aj].transform.position, newPositionA, Time.time - startTime);
+            perc = (Time.time - startTime) / tileSwitchLerpTime;
+            board[bi, bj].transform.position = Vector3.Lerp(originalBPos, newPositionB, perc);
+            board[ai, aj].transform.position = Vector3.Lerp(originalAPos, newPositionA, perc);
             yield return null;
         }
 
@@ -2532,7 +2646,7 @@ public class Board : MonoBehaviour {
             board[i, j].GetComponent<TilePiece>().Destroyed = true;
             if (board[i, j].GetComponent<SpriteRenderer>())
             {
-                board[i, j].GetComponent<SpriteRenderer>().enabled = false;
+                board[i, j].GetComponent<TilePiece>().DisableVisibility();
             }
             else if(board[i, j].GetComponent<RainbowTileController>())
             {
@@ -2564,7 +2678,7 @@ public class Board : MonoBehaviour {
                         break;
                     default: break;
                 }
-                gameController.PlayTileDestroySound();
+                gameController.PlayTileDestroySound(cascadeCount);
                 switch (board[i, j].GetComponent<TilePiece>().OriginalTileType)
                 {
                     case TilePiece._TileType.Regular: scoreAmt = this.scoreAmt; break;
@@ -2658,18 +2772,18 @@ public class Board : MonoBehaviour {
         Destroy(go2);
     }
 
-    private void FinalizeUnmoveable2(bool checkWin)
+    private void FinalizeUnmoveable2(bool checkWin, bool bombSpawnAble)
     {
 		didFill = false;  // global
         for (int row = 0; row < maxRows; row++)
         {
             for (int col = 0; col < maxCols; col++)
             {
-                FillFromAbove2(row, col, row, col);
+                FillFromAbove2(row, col, row, col, ref bombSpawnAble);
             }
         }
         StartCoroutine(FillCorner());
-        StartCoroutine(FillFromAboveC());
+        StartCoroutine(FillFromAboveC(bombSpawnAble));
         Cascade(checkWin);
 
     }
@@ -2687,16 +2801,16 @@ public class Board : MonoBehaviour {
 
     }
 
-    private void FinalStop(bool checkWin)
-    {
-        if (CheckLoseCondition())
-        {
-            gameController.PlayLoseSound();
-            ShowLoseScreen();
-        }
-    }
+    //private void FinalStop(bool checkWin)
+    //{
+    //    if (CheckLoseCondition())
+    //    {
+    //        gameController.PlayLoseSound();
+    //        ShowLoseScreen();
+    //    }
+    //}
 
-    IEnumerator FillFromAboveC()
+    IEnumerator FillFromAboveC(bool bombSpawnAble)
     {
         while (falling > 0 || generating > 0)
         {
@@ -2706,19 +2820,19 @@ public class Board : MonoBehaviour {
         {
             for (int col = 0; col < maxCols; col++)
             {
-                FillFromAbove2(row, col, row, col);
+                FillFromAbove2(row, col, row, col, ref bombSpawnAble);
             }
         }
     }
 
-    private GameObject FillFromAbove2(int row, int col, int fromRow, int fromCol)
+    private GameObject FillFromAbove2(int row, int col, int fromRow, int fromCol, ref bool bombSpawnAble)
     {
         if (board[row, col].GetComponent<TilePiece>().Destroyed)
         {
             TileBackgroundController tbc = backgroundBoard[row, col].GetComponent<TileBackgroundController>();
             if (board[row, col].GetComponent<SpriteRenderer>())
             {
-                board[row, col].GetComponent<SpriteRenderer>().enabled = false;
+                board[row, col].GetComponent<TilePiece>().DisableVisibility();
             }
             
             if (row == maxRows - 1 
@@ -2728,7 +2842,7 @@ public class Board : MonoBehaviour {
                 )
             {
                 Destroy(board[fromRow, fromCol]);
-                SpawnTile(fromRow, fromCol);
+                SpawnTile(fromRow, fromCol, ref bombSpawnAble);
                 falling++;
                 StartCoroutine(Fall(fromRow, fromCol, fallLerpTime));
                 didFill = true;
@@ -2746,12 +2860,12 @@ public class Board : MonoBehaviour {
                 StartCoroutine(Fall(fromRow, fromCol, fallLerpTime));
                 didFill = true;
                 StartCoroutine(TeleFall(tbc.TeleI, tbc.TeleJ, fallLerpTime));
-                board[tbc.TeleI, tbc.TeleJ].GetComponent<SpriteRenderer>().enabled = false;
+                board[tbc.TeleI, tbc.TeleJ].GetComponent<TilePiece>().DisableVisibility();
                 board[tbc.TeleI, tbc.TeleJ].GetComponent<TilePiece>().Destroyed = true;
                 int i = tbc.TeleI;
                 while (i < maxRows)
                 {
-                    FillFromAbove2(i, tbc.TeleJ, i, tbc.TeleJ);
+                    FillFromAbove2(i, tbc.TeleJ, i, tbc.TeleJ, ref bombSpawnAble);
                     i++;
                 }
 
@@ -2759,14 +2873,14 @@ public class Board : MonoBehaviour {
             else
             {
                 GameObject go = null;
-                go = FillFromAbove2(row + 1, col, fromRow, fromCol);
+                go = FillFromAbove2(row + 1, col, fromRow, fromCol, ref bombSpawnAble);
                 if (go)
                 {
                     Destroy(board[fromRow, fromCol]);
                     board[fromRow, fromCol] = CloneAndSpawn(row + 1, col, fromRow, fromCol, row + 1, col);
                     if (go.GetComponent<SpriteRenderer>())
                     {
-                        go.GetComponent<SpriteRenderer>().enabled = false;
+                        go.GetComponent<TilePiece>().DisableVisibility();
                     }
                     else if (go.GetComponent<RainbowTileController>())
                     {
@@ -2830,7 +2944,7 @@ public class Board : MonoBehaviour {
                 board[row, col].GetComponent<TilePiece>().Destroyed = true;
                 if (board[row, col].GetComponent<SpriteRenderer>())
                 {
-                    board[row, col].GetComponent<SpriteRenderer>().enabled = false;
+                    board[row, col].GetComponent<TilePiece>().DisableVisibility();
                 }
                 else if (board[row, col].GetComponent<RainbowTileController>())
                 {
@@ -2851,7 +2965,7 @@ public class Board : MonoBehaviour {
                 board[row, col].GetComponent<TilePiece>().Destroyed = true;
                 if (board[row, col].GetComponent<SpriteRenderer>())
                 {
-                    board[row, col].GetComponent<SpriteRenderer>().enabled = false;
+                    board[row, col].GetComponent<TilePiece>().DisableVisibility();
                 }
                 else if (board[row, col].GetComponent<RainbowTileController>())
                 {
@@ -2870,7 +2984,7 @@ public class Board : MonoBehaviour {
                 board[row, col].GetComponent<TilePiece>().Destroyed = true;
                 if (board[row, col].GetComponent<SpriteRenderer>())
                 {
-                    board[row, col].GetComponent<SpriteRenderer>().enabled = false;
+                    board[row, col].GetComponent<TilePiece>().DisableVisibility();
                 }
                 else if (board[row, col].GetComponent<RainbowTileController>())
                 {
@@ -2971,7 +3085,12 @@ public class Board : MonoBehaviour {
             case TilePiece._TileType.DropCount: toSpawn = rabbitPrefab; break;
             default: toSpawn = tiles[board[originalI, originalJ].GetComponent<TilePiece>().Value]; break;
         }
+        if (board[originalI, originalJ].GetComponent<TilePiece>().Bomb)
+        {
+            toSpawn = bombs[board[originalI, originalJ].GetComponent<TilePiece>().Value];
+        }
         tile = GameObject.Instantiate(toSpawn, GetScreenCoordinates(spawnLocI, spawnLocJ), Quaternion.identity);
+        tile.GetComponent<TilePiece>().Bomb = board[originalI, originalJ].GetComponent<TilePiece>().Bomb;    
         tile.GetComponent<TilePiece>().OriginalMoveable = true;
         tile.GetComponent<TilePiece>().Value = board[originalI, originalJ].GetComponent<TilePiece>().Value;
         tile.GetComponent<TilePiece>().OriginalValue = tile.GetComponent<TilePiece>().Value;
@@ -2979,6 +3098,7 @@ public class Board : MonoBehaviour {
         tile.GetComponent<TilePiece>().TileType = board[originalI, originalJ].GetComponent<TilePiece>().TileType;
         tile.GetComponent<TilePiece>().OriginalTileType = tile.GetComponent<TilePiece>().TileType;
         tile.GetComponent<BoxCollider2D>().size = new Vector2(2f, 2f);
+        tile.GetComponent<TilePiece>().BombHP = board[originalI, originalJ].GetComponent<TilePiece>().BombHP;
         return tile;
     }
 
@@ -3004,7 +3124,7 @@ public class Board : MonoBehaviour {
 
     private GameObject SpawnTileFromLocation(int row, int col, int targetRow, int targetCol, int value)
     {
-        Vector3 newPos = GetScreenCoordinatesWithZ(row, col, -1.0f);
+        Vector3 newPos = GetScreenCoordinatesWithZ(row, col, 0f);
         GameObject newTile = GameObject.Instantiate(tiles[value], newPos, Quaternion.identity);
         newTile.name = "Generated";
         newTile.GetComponent<TilePiece>().Value = value;
@@ -3016,9 +3136,9 @@ public class Board : MonoBehaviour {
         return newTile;
     }
 
-    private GameObject SpawnTile(int row, int col)
+    private GameObject SpawnTile(int row, int col, ref bool bombSpawnAble)
     {
-        if (dropCountSpawned < numFall)
+        if (dropCountSpawned < numFall)  // percent chance of spawning a dropcount piece
         {
             float perc = ((float)(maxMoves - (float)numMoves)) / (float)maxMoves;
             float rand = Random.Range(0f, 1f);
@@ -3027,6 +3147,36 @@ public class Board : MonoBehaviour {
                 dropCountSpawned++;
                 return SpawnDropCountTile(row, col);
             }
+        }
+
+
+        //Debug.Log(bombSpawnAble + " " + gameData.levelData[level].bombspawnrate + " " + (usedMoves % gameData.levelData[level].bombspawnrate) + " " + usedMoves);
+        if (gameData.levelData[level].bombspawnrate > 0 && (usedMoves % gameData.levelData[level].bombspawnrate) == 0 && bombSpawnAble)
+        {
+            int idx2 = Random.Range(0, gameData.levelData[level].bombTypes.Count);
+            //Debug.Log(idx2 + " " + gameData.levelData[level].bombTypes.Count);
+            board[row, col] = GameObject.Instantiate(
+                bombs[gameData.levelData[level].bombTypes[idx2]],
+                new Vector3(
+                    col * tileSize.x - boardSize.x / 2.0f + tileSize.x / 2.0f + (boardSize.x - tileSize.x * maxCols) / 2.0f,
+                    maxRows - 1 * tileSize.y,
+                    0.0f),
+                Quaternion.identity
+                );
+            board[row, col].GetComponent<TilePiece>().Value = gameData.levelData[level].bombTypes[idx2];
+            board[row, col].GetComponent<TilePiece>().SetLocation(row, col);
+            board[row, col].GetComponent<TilePiece>().TileType = TilePiece._TileType.Regular;
+            board[row, col].GetComponent<TilePiece>().Moveable = true;
+            board[row, col].GetComponent<TilePiece>().OriginalMoveable = true;
+            board[row, col].GetComponent<TilePiece>().NonBlocking = false;
+            board[row, col].GetComponent<TilePiece>().OriginalTileType = board[row, col].GetComponent<TilePiece>().TileType;
+            board[row, col].GetComponent<TilePiece>().OriginalValue = gameData.levelData[level].bombTypes[idx2];
+            board[row, col].GetComponent<BoxCollider2D>().size = new Vector2(2f, 2f);
+            board[row, col].GetComponent<TilePiece>().Bomb = true;
+            board[row, col].GetComponent<TilePiece>().BombHP = Random.Range(gameData.levelData[level].bombminmoves, gameData.levelData[level].bombmaxmoves);
+            board[row, col].GetComponent<TilePiece>().UpdateBombHPDisplay();
+            bombSpawnAble = false;
+            return board[row, col];
         }
         int idx = Random.Range(0, tiles.Count);
         board[row, col] =
@@ -3211,7 +3361,7 @@ public class Board : MonoBehaviour {
                 }
             }
         }
-        FinalizeUnmoveable2(false);
+        FinalizeUnmoveable2(false, false);
         FinishMoves();
     }
 
@@ -3242,7 +3392,7 @@ public class Board : MonoBehaviour {
         else
         {
             CancelInvoke("RandomExplode");
-            FinalizeUnmoveable2(false);
+            FinalizeUnmoveable2(false, false);
             ShowWinScreen();
         }
     }
@@ -3313,7 +3463,7 @@ public class Board : MonoBehaviour {
         //}
         MarkDestroy(i, j);
         //board[i, j].SetActive(false);
-        board[i, j].GetComponent<SpriteRenderer>().enabled = false;
+        board[i, j].GetComponent<TilePiece>().DisableVisibility(); ;
         IncrementScore(finalPointBonus);
     }
 
@@ -3342,7 +3492,7 @@ public class Board : MonoBehaviour {
             stars = 1;
         }
         gameController.LevelWin(level, numScore, GetEpochTime(), stars);
-        gameController.ShowEndBoard(numMoves, stars);
+        gameController.ShowEndBoard(numScore, stars);
         switch (Random.Range(0, 2))
         {
             case 0: gameController.ShowFireworks(); break;

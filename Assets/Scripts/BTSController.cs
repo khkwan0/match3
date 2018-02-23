@@ -11,19 +11,14 @@ public class BTSController : MonoBehaviour {
 
     private Vector3 moveVelocity;
 
+    public float startDelay, repeatDelay;
     private float distanceTravelled;
 	// Use this for initialization
 	void Start () {
         originalPos = transform.position;
         moveVelocity = speed * Vector3.right;
-        InvokeRepeating("RunBTS", 0f, 25f);
+        InvokeRepeating("RunBTS", startDelay, repeatDelay);
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
-        
 	}
 
     private void RunBTS()

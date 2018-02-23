@@ -7,38 +7,24 @@ using TMPro;
 
 public class StartBoardPanelController : MonoBehaviour {
 
+    public TextMeshProUGUI tmpGUI;
+    public GameObject rewardsPanel;
 
-    //public GameObject StartPanelStartButtonPrefab;
-    //public GameObject StartPanelExitButtonPrefab;
-
-    //private GameObject spsb;
-    //private GameObject speb;
-
-	// Use this for initialization
-	void Start () {
-        //spsb = GameObject.Instantiate(StartPanelStartButtonPrefab, transform);
-        //speb = GameObject.Instantiate(StartPanelExitButtonPrefab, transform);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-
+    public void ShowRewards(List<Rewards> rewards)
+    {
+        rewardsPanel.GetComponent<RewardsPanelController>().SpawnReward(rewards);
+    }
 
     public void SetText(string text)
     {
-        TextMeshProUGUI tmpgui = GameObject.FindGameObjectWithTag("StartPanelText").GetComponent<TextMeshProUGUI>();
-
-        tmpgui.text = text;
+        tmpGUI.text = text;
     }
     
     public void AppendText(string text)
     {
         TextMeshProUGUI tmpgui = GameObject.FindGameObjectWithTag("StartPanelText").GetComponent<TextMeshProUGUI>();
 
-        tmpgui.text = tmpgui.text + text;
+        tmpGUI.text = tmpGUI.text + text;
     }
 
     public void ShowMissionGoals(List<MissionGoals> mg, GameObject board)
@@ -49,7 +35,7 @@ public class StartBoardPanelController : MonoBehaviour {
             if (go)
             {
                 //go.GetComponent<RectTransform>().SetParent(GameObject.FindGameObjectWithTag("StartPanelSpeechCanvas").transform.Find("PanelText"), false);
-                go.transform.position = new Vector3(i * go.GetComponent<SpriteRenderer>().bounds.size.x - GetComponent<SpriteRenderer>().bounds.size.x/3, go.GetComponent<SpriteRenderer>().bounds.size.y/2, -1f);
+                go.transform.position = new Vector3(i * go.GetComponent<SpriteRenderer>().bounds.size.x - GetComponent<SpriteRenderer>().bounds.size.x/3, go.GetComponent<SpriteRenderer>().bounds.size.y/2, -2f);
                 go.GetComponent<Transform>().SetParent(transform, false);
             }
         }

@@ -70,6 +70,23 @@
                   </li>
               </ul>
             </li>
+            <li>Bomb
+              <ul>
+                <li>Spawn 1 bomb every <input id="bombspawnrate" value="0" /> turns</li>
+                <li>Min moves to detonation<input id="bombminmoves" value="0" /></li>
+                <li>Max<input id="bombmaxmoves" value="0" /></li>
+                <li>
+                  <ul>
+                    <li><input type="checkbox" class="bombtype" id="type0" bombtype="0" />Purple</li>
+                    <li><input type="checkbox" class="bombtype" id="type1" bombtype="1" />Blue</li>
+                    <li><input type="checkbox" class="bombtype" id="type2" bombtype="2" />Lime</li>
+                    <li><input type="checkbox" class="bombtype" id="type3" bombtype="3" />Orange</li>
+                    <li><input type="checkbox" class="bombtype" id="type4" bombtype="4" />Red</li>
+                    <li><input type="checkbox" class="bombtype" id="type5" bombtype="5" />Yellow</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
             <li>Helpers:
               <ul>
                 <li><input type="checkbox" class="helper" id="bomb" />Bomb<input id="bomb_amt" value="0"/></li>
@@ -78,7 +95,6 @@
                 <li><input type="checkbox" class="helper" id="vertical" />Vertical<input id="vertical_amt" value="0" /></li>
                 <li><input type="checkbox" class="helper" id="horizontal" />Horizontal<input id="horizontal_amt" value="0" /></li>
               </ul>
-
             </li>
             <li>Mission:
               <ul style="list-style: none">
@@ -100,7 +116,15 @@
                 <ul>
                   <li># of tiles to bring down: <input type="text" name="numfall" id="numfall" placeholder="2" /></li>
                 </ul>
-
+              </ul>
+            </li>
+            <li>Rewards:
+              <ul>
+                <li><input type="checkbox" class="helper_rewards" reward="bomb" id="bomb_reward" />Bomb<input id="bomb_reward_amt" value="0"/></li>
+                <li><input type="checkbox" class="helper_rewards" reward="rainbow" id="rainbow_reward" />Rainbow<input id="rainbow_reward_amt" value="0"/></li>
+                <li><input type="checkbox" class="helper_rewards" reward="hammer" id="hammer_reward" />Hammer<input id="hammer_reward_amt" value="0" /></li>
+                <li><input type="checkbox" class="helper_rewards" reward="vertical" id="vertical_reward" />Vertical<input id="vertical_reward_amt" value="0" /></li>
+                <li><input type="checkbox" class="helper_rewards" reward="horizontal" id="horizontal_reward" />Horizontal<input id="horizontal_reward_amt" value="0" /></li>
               </ul>
             </li>
           </ul>
@@ -159,17 +183,30 @@
         function FillMeta(level) {
           $('#nummoves').val(level.numMoves);
           $('#numtiles').val(level.numTileValues);
-          $('#maxtime').val(level.maxTime);
+          $('#maxtime').val(level.timer);
           $('#tier1fill').val(level.tier1Fill);
           $('#tier2fill').val(level.tier2Fill);
           $('#tier3fill').val(level.tier3Fill);
           $('#maxfillpoints').val(level.maxFillPoints);
-          if (level.helpers.length > 0) {
+          $('#bombspawnrate').val(level.bombspawnrate);
+          $('#bombminmoves').val(level.bombminmoves);
+          $('#bombmaxmoves').val(level.bombmaxmoves);
+          if (typeof(level.bombtypes) != 'undefined' && level.bombtypes.length) {
+            for (var i in level.bombtypes) {
+              $('#type'+ level.bombtypes[i]).prop('checked', true);
+            }
+          }
+          if (typeof(level.helpers) != 'undefined' && level.helpers.length > 0) {
             for (var i in level.helpers) {
-              if (parseInt(level.helpers[i].amount) > 0) {
-                $('#'+level.helpers[i].helpertype).prop('checked', true);
-                $('#'+level.helpers[i].helpertype + '_amt').val(parseInt(level.helpers[i].amount));
-              
+              $('#'+level.helpers[i].helpertype).prop('checked', true);
+              $('#'+level.helpers[i].helpertype + '_amt').val(parseInt(level.helpers[i].amount));
+            }
+          }
+          if (typeof(level.rewards) != 'undefined' && level.rewards.length > 0) {
+            for (var i in level.rewards) {
+              if (parseInt(level.rewards[i].amount) > 0) {
+                $('#'+level.rewards[i].reward + '_reward').prop('checked', true);
+                $('#'+level.rewards[i].reward + '_reward_amt').val(parseInt(level.rewards[i].amount));
               }
             }
           }
@@ -594,7 +631,16 @@
           theBoard.tier1Fill = parseInt($('#tier1fill').val());
           theBoard.tier2Fill = parseInt($('#tier2fill').val());
           theBoard.tier3Fill = parseInt($('#tier3fill').val());
+          theBoard.timer = parseInt($('#maxtime').val());
           theBoard.helpers = [];
+          theBoard.rewards = [];
+          theBoard.bombTypes = [];
+          theBoard.bombspawnrate = parseInt($('#bombspawnrate').val());
+          theBoard.bombminmoves = parseInt($('#bombminmoves').val());
+          theBoard.bombmaxmoves = parseInt($('#bombmaxmoves').val());
+          $('.bombtype:checked').each(function() {
+            theBoard.bombTypes.push(parseInt($(this).attr('bombtype')));
+          })
           $('.helper:checked').each(function() {
             var id = $(this).attr('id');
             var amount = parseInt($('#'+id+'_amt').val());
@@ -604,6 +650,16 @@
             }
             console.log(helper);
             theBoard.helpers.push(helper);
+          })
+          $('.helper_rewards:checked').each(function() {
+            var id = $(this).attr('id');
+            var amount = parseInt($('#'+id+'_amt').val());
+            var rew = $(this).attr('reward');
+            reward = {
+              "reward": rew,
+              "amount": amount
+            }
+            theBoard.rewards.push(reward);
           })
           missionType = parseInt($('input[name=mission]:checked').val());
           theBoard.mission = {

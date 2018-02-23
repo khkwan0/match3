@@ -7,6 +7,7 @@ public class StartBoardController : MonoBehaviour {
     public float lerpTime;
     public Vector3 newPosition = new Vector3(0f, 0f, -1f);
     public Vector3 outPosition = new Vector3(0f, 12f, -1f);
+    public GameObject startPanel;
 
     // Use this for initialization
     void Start () {
@@ -18,6 +19,25 @@ public class StartBoardController : MonoBehaviour {
 	void Update () {
 		
 	}
+    public void SetStartPanelText(string text)
+    {
+        startPanel.GetComponent<StartBoardPanelController>().SetText(text);
+    }
+
+    public void AppendStartPanelText(string text)
+    {
+        startPanel.GetComponent<StartBoardPanelController>().AppendText(text);
+    }
+
+    public void ShowMissionGoals(List<MissionGoals> mg, GameObject board) 
+    {
+        startPanel.GetComponent<StartBoardPanelController>().ShowMissionGoals(mg, board);
+    }
+
+    public void ShowRewards(List<Rewards> rewards)
+    {
+        startPanel.GetComponent<StartBoardPanelController>().ShowRewards(rewards);
+    }
     IEnumerator SlideUp()
     {
         float startTime = Time.time;
@@ -54,7 +74,9 @@ public class StartBoardController : MonoBehaviour {
             float perc = currentLerp / lerpTime;
             transform.position = Vector3.Lerp(transform.position, outPosition, perc);
             yield return 1;
-        }
+        }        
         Destroy(gameObject);
+        Resources.UnloadUnusedAssets();
+
     }
 }

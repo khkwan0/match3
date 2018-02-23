@@ -1,22 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PostPanelController : MonoBehaviour {
 
-    private GameController gc;
-	void Start () {
+    public GameObject gui;
+    public GameObject starsPanel;
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    public void BackToWorld()
+
+    public void SetText(string textString)
     {
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        gc.BackToWorld();
+        if (textString != null && gui)
+        {
+            gui.GetComponent<TextMeshProUGUI>().text = textString;
+        }
     }
+
+
 }

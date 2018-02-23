@@ -30,7 +30,7 @@ public class HelperController : MonoBehaviour {
         tmp = transform.Find("AmountCanvas").gameObject.transform.Find("Amount").GetComponent<TextMeshProUGUI>();
     }
 
-    public void CreateHelper(string helperType_s, int amount, Transform _parent)
+    public void CreateHelper(string helperType_s, int amount, PlayerData playerData, Transform _parent)
     {
         GameObject toSpawn = null;
         switch (helperType_s)
@@ -41,6 +41,18 @@ public class HelperController : MonoBehaviour {
             case "rainbow": toSpawn = RainbowPrefab; helperType = GameController._helperType.Rainbow; break;
             case "bomb": toSpawn = BombPrefab; helperType = GameController._helperType.Bomb; break;
             default: helperType = GameController._helperType.None; break;
+        }
+        if (playerData != null)
+        {
+            switch (helperType_s)
+            {
+                case "hammer": amount += playerData.hammerHelper; break;
+                case "horizontal": amount += playerData.horizontalHelper; break;
+                case "vertical": amount += playerData.verticalHelper; break;
+                case "rainbow": amount += playerData.rainbowHelper; break;
+                case "bomb": amount += playerData.bombHelper; break;
+                default: break;
+            }
         }
         if (toSpawn)
         {
@@ -74,16 +86,16 @@ public class HelperController : MonoBehaviour {
         tmp.text = amount.ToString();
     }
 
-    public void OnMouseDown()
-    {
-        GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        if (gc.CurrentHelper == gameObject)
-        {
-            gc.SetHelper(null);
-        }
-        else if (amount > 0)
-        {
-            gc.SetHelper(gameObject);
-        }
-    }
+    //public void OnMouseDown()
+    //{
+    //    GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+    //    if (gc.CurrentHelper == gameObject)
+    //    {
+    //        gc.SetHelper(null);
+    //    }
+    //    else if (amount > 0)
+    //    {
+    //        gc.SetHelper(gameObject);
+    //    }
+    //}
 }

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using UnityEngine.UI;
+using TMPro;
 
 public class TilePiece : MonoBehaviour {
 
@@ -62,6 +64,13 @@ public class TilePiece : MonoBehaviour {
 
     private GameController gameController;
 
+    [SerializeField]
+    private bool bomb;
+    [SerializeField]
+    private int bombHP;
+
+    public TextMeshProUGUI gui;
+
     private void Awake()
     {
         overlayStack.Add(_OverlayType.None);
@@ -75,6 +84,18 @@ public class TilePiece : MonoBehaviour {
 
     }
 
+    public bool Bomb
+    {
+        get { return bomb; }
+        set { bomb = value; }
+    }
+
+    public int BombHP
+    {
+        get { return bombHP; }
+        set { bombHP = value; UpdateBombHPDisplay(); }
+    }
+    
     public bool Destroyed
     {
         get { return destroyed; }
@@ -221,7 +242,7 @@ public class TilePiece : MonoBehaviour {
         {
             // execute helper
             boardObj.ExecuteHelper(i, j);
-            // finished...
+            //// finished...
             gameController.SetHelper(null);
         }
         else if (boardObj.Locked && boardObj.HelperType == GameController._helperType.None)
@@ -395,6 +416,23 @@ public class TilePiece : MonoBehaviour {
             int value = Random.Range(0, tileSprite.Count - 1);
             gameObject.GetComponent<SpriteRenderer>().sprite = tileSprite[value];
             this.value = value;
+        }
+    }
+
+    public void UpdateBombHPDisplay()
+    {
+        if (bomb)
+        {
+            gui.GetComponent<TextMeshProUGUI>().text = bombHP.ToString();
+        }
+    }
+
+    public void DisableVisibility()
+    {
+        GetComponent<SpriteRenderer>().enabled = false;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
         }
     }
 }

@@ -26,7 +26,7 @@ public class WorldNavController : MonoBehaviour {
         float d = Input.GetAxis("Mouse ScrollWheel");
         if (d != 0f)
         {
-            cam.orthographicSize -= d * orthoZoomSpeed * accelerator;
+            cam.orthographicSize -= d;
             cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, 6, 16f);
         }
 		if (Input.touchCount == 2)
@@ -67,7 +67,7 @@ public class WorldNavController : MonoBehaviour {
 
     IEnumerator EaseCamera()
     {
-        float maxMagnitude = 10.0f;
+        float maxMagnitude = 10f;
         float currentMagnitude;
         dirVector = dirVector.normalized;
         currentMagnitude = magnitude > maxMagnitude ? maxMagnitude : magnitude;
@@ -77,7 +77,7 @@ public class WorldNavController : MonoBehaviour {
             newCameraPos.y = Mathf.Clamp(cam.transform.position.y - dirVector.y  * currentMagnitude / scrollSpeedLimiter, 0f, 50f);
             newCameraPos.z = cam.transform.position.z;
             cam.transform.position = newCameraPos;
-            currentMagnitude -= 0.1f;
+            currentMagnitude -= 0.05f;
             yield return null;
         }
     }

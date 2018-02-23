@@ -11,11 +11,13 @@ public class _787Controller : MonoBehaviour {
     public float speed;
     private Vector3 moveVelocity;
     private float distanceTravelled;
+    public float startDelay;
+    public float repeatDelay;
 
 	void Start () {
         originalPosition = transform.position;
         moveVelocity = speed * Vector3.right;
-        InvokeRepeating("Fly", 2f, 30f);
+        InvokeRepeating("Fly", startDelay, repeatDelay);
 	}	
 
     private void Fly()

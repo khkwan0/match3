@@ -51,6 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5abf5cc81e092943b57f7311f8f2a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileSwitchLerpTime: 0.25
+  reshuffleLerpTime: 1
   tiles:
   - {fileID: 1392849396128456, guid: 8137443edfd1b4a4e81a37ca51b8d5df, type: 2}
   - {fileID: 1299359681565482, guid: cdfe2700a3094461f8e1a7b33a4df068, type: 2}
@@ -88,6 +90,13 @@ MonoBehaviour:
   - {fileID: 1213943118485796, guid: 30fa84c120b6f864da44ecff25c99577, type: 2}
   - {fileID: 1517696488760576, guid: 163406918c1dc154a87b483105744128, type: 2}
   - {fileID: 1234450992414212, guid: 216140e80d286f8498295c002fab2494, type: 2}
+  bombs:
+  - {fileID: 1423138766142846, guid: 16ba825750448184090c001a81bde3d4, type: 2}
+  - {fileID: 1114908623676806, guid: 8c8271592eff4304089c4dea9d21d4c2, type: 2}
+  - {fileID: 1620054945759228, guid: bb9791ffa25bd90419b60e56599e9afe, type: 2}
+  - {fileID: 1045238178292624, guid: 2d9baa6858a79254eaffc4b6d27ec84f, type: 2}
+  - {fileID: 1617699951306932, guid: dd22f85a8c6511a47833c84773ff40f5, type: 2}
+  - {fileID: 1018336028444862, guid: 163fc904a0d2f674ea564f31f12bb904, type: 2}
   rainbowTile: {fileID: 1933788119181066, guid: 943e6e5afbf77b247bf73a2a2f72cbd6,
     type: 2}
   unknownCrackable: {fileID: 1716125127661510, guid: 1fd2f1ebcc565784fa56f9866c336210,
@@ -142,6 +151,7 @@ MonoBehaviour:
   numFall: 0
   helperType: 0
   fallLerpTime: 0.5
-  trailLerpTime: 0.5
-  straightLineTrailLerpTime: 0.5
+  trailLerpTime: 1
+  straightLineTrailLerpTime: 1
   growLerpTime: 2
+  effectsDuration: 5

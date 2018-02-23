@@ -12,4 +12,10 @@ public class PlayerData
     public int sfxOnOff;
     public float musicVolume;
     public float sfxVolume;
+    public int rainbowHelper;
+    public int bombHelper;
+    public int hammerHelper;
+    public int horizontalHelper;
+    public int verticalHelper;
+    public int seenIntro;
 }

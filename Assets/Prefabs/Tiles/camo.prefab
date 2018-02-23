@@ -129,6 +129,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0db84a5f6cd69bc4f963121ca1efa208, type: 3}
   overlayStack: 
   hitPoints: 0
+  bomb: 0
+  bombHP: 0
+  gui: {fileID: 0}
 --- !u!212 &212763278756299468
 SpriteRenderer:
   m_ObjectHideFlags: 1

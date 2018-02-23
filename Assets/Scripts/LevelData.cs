@@ -14,6 +14,12 @@ public class LevelData {
     public int tier2Fill;
     public int tier3Fill;
     public List<Helpers> helpers;
+    public List<Rewards> rewards;
     public MissionData mission;
     public List<BoardSpec> boardSpec;
+    public List<int> bombTypes;
+    public int bombspawnrate;
+    public int bombminmoves;
+    public int bombmaxmoves;
+    public int timer;
 }

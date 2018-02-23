@@ -361,19 +361,23 @@
     <Compile Include="Assets\Scripts\BTSController.cs" />
     <Compile Include="Assets\Scripts\BubbleController.cs" />
     <Compile Include="Assets\Scripts\CloudsController.cs" />
-    <Compile Include="Assets\Scripts\ConfirmPanelController.cs" />
     <Compile Include="Assets\Scripts\CrabController.cs" />
     <Compile Include="Assets\Scripts\CurveController.cs" />
     <Compile Include="Assets\Scripts\DataController.cs" />
     <Compile Include="Assets\Scripts\EdgeCollisionDetection.cs" />
+    <Compile Include="Assets\Scripts\EndBoardPanelController.cs" />
+    <Compile Include="Assets\Scripts\Fading.cs" />
     <Compile Include="Assets\Scripts\FishController.cs" />
     <Compile Include="Assets\Scripts\FloatingScoreController.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\GameData.cs" />
     <Compile Include="Assets\Scripts\GoalCanvas.cs" />
+    <Compile Include="Assets\Scripts\Helper.cs" />
     <Compile Include="Assets\Scripts\HelperCanvasController.cs" />
     <Compile Include="Assets\Scripts\HelperController.cs" />
     <Compile Include="Assets\Scripts\Helpers.cs" />
+    <Compile Include="Assets\Scripts\IntroSceneController.cs" />
+    <Compile Include="Assets\Scripts\IntroSceneSunPlaneController.cs" />
     <Compile Include="Assets\Scripts\IntroScreenController.cs" />
     <Compile Include="Assets\Scripts\KiteController.cs" />
     <Compile Include="Assets\Scripts\KiteTailScript.cs" />
@@ -382,6 +386,7 @@
     <Compile Include="Assets\Scripts\LevelData.cs" />
     <Compile Include="Assets\Scripts\LoiKratohSceneController.cs" />
     <Compile Include="Assets\Scripts\LongboatController.cs" />
+    <Compile Include="Assets\Scripts\LoseCanvasController.cs" />
     <Compile Include="Assets\Scripts\MissionData.cs" />
     <Compile Include="Assets\Scripts\MissionGoals.cs" />
     <Compile Include="Assets\Scripts\MonkeyArmController.cs" />
@@ -389,8 +394,6 @@
     <Compile Include="Assets\Scripts\MusicController.cs" />
     <Compile Include="Assets\Scripts\MusicOnButtonController.cs" />
     <Compile Include="Assets\Scripts\OceanSceneController.cs" />
-    <Compile Include="Assets\Scripts\PauseButtonController.cs" />
-    <Compile Include="Assets\Scripts\PauseMenuController.cs" />
     <Compile Include="Assets\Scripts\PlaneSoundTrigger.cs" />
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\PlayerDataController.cs" />
@@ -398,6 +401,8 @@
     <Compile Include="Assets\Scripts\PostPanelController.cs" />
     <Compile Include="Assets\Scripts\ProgressBarController.cs" />
     <Compile Include="Assets\Scripts\RainbowTileController.cs" />
+    <Compile Include="Assets\Scripts\Rewards.cs" />
+    <Compile Include="Assets\Scripts\RewardsPanelController.cs" />
     <Compile Include="Assets\Scripts\ScoreBarFillController.cs" />
     <Compile Include="Assets\Scripts\SkyLanternController.cs" />
     <Compile Include="Assets\Scripts\SkyStarController.cs" />
@@ -406,6 +411,7 @@
     <Compile Include="Assets\Scripts\SoundController.cs" />
     <Compile Include="Assets\Scripts\SoundOnButtonController.cs" />
     <Compile Include="Assets\Scripts\SplashStarController.cs" />
+    <Compile Include="Assets\Scripts\StarsPanelController.cs" />
     <Compile Include="Assets\Scripts\StartBoardController.cs" />
     <Compile Include="Assets\Scripts\StartBoardPanelController.cs" />
     <Compile Include="Assets\Scripts\StartPanelExitButtonController.cs" />
@@ -419,8 +425,6 @@
     <Compile Include="Assets\Scripts\WaveController.cs" />
     <Compile Include="Assets\Scripts\WorldController.cs" />
     <Compile Include="Assets\Scripts\WorldNavController.cs" />
-    <Compile Include="Assets\SeaPlaneCollider.cs" />
-    <Compile Include="Assets\test.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples\Scripts\Benchmark02.cs" />

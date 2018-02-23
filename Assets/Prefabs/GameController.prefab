@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114444795442680560}
   - component: {fileID: 114813970030786044}
   - component: {fileID: 114005859416278314}
+  - component: {fileID: 82073030989845916}
   m_Layer: 0
   m_Name: GameController
   m_TagString: GameController
@@ -44,6 +45,86 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &82073030989845916
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1839500708764558}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.08
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &114005859416278314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -73,6 +154,12 @@ MonoBehaviour:
     type: 2}
   btsSoundPrefab: {fileID: 1563270700068648, guid: b49676c571e692343bc094a5121e8a9e,
     type: 2}
+  starSoundPrefab: {fileID: 1980816707345106, guid: 9f1d3bfa2aac0904783866d8b45d78fd,
+    type: 2}
+  tadaSoundPrefab: {fileID: 1693038831848870, guid: b9d9fd5e37f163f4c8eed0d7c675012b,
+    type: 2}
+  boingSoundPrefab: {fileID: 1880315313562136, guid: 3b5af417fca82624eb6214ba18f27185,
+    type: 2}
   soundFXOn: 0
 --- !u!114 &114421197755217228
 MonoBehaviour:
@@ -92,32 +179,28 @@ MonoBehaviour:
     type: 2}
   mainCamera: {fileID: 20059895889851912, guid: 5fd4c0fa4fdd431489d113d364f10c62,
     type: 2}
-  pauseButtonPrefab: {fileID: 1330364988206304, guid: b6cf91352d53ce44c90a9ea37e061d15,
-    type: 2}
-  pauseMenuPrefab: {fileID: 1570005743263098, guid: 88543b37125f62f439d33dac6416f8bd,
+  startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
     type: 2}
   boardCanvasPrefab: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f,
     type: 2}
   loseCanvasPrefab: {fileID: 1180781946918924, guid: c478f4cc97cb7c9499993ebc4ff9fe8a,
     type: 2}
-  helperPanelPrefab: {fileID: 1670301722656814, guid: c26fd524ed9a33e43a8e6231de9232df,
-    type: 2}
   currentHelper: {fileID: 0}
-  backgroundPrefabs:
-  - {fileID: 1018132055996958, guid: 8d8b3102494e9284a862ecf4146298e0, type: 2}
-  - {fileID: 1706894944585416, guid: 38696af498bd69b49b2493806cbf3efd, type: 2}
-  - {fileID: 1742756473040386, guid: b5da159bf1b30354a851fa2afd5cfd70, type: 2}
-  - {fileID: 1408818656501838, guid: 02401ae04e6ee7e47b578f824d7a9930, type: 2}
-  - {fileID: 1036305205600618, guid: 6f314604156a7854296f6af9bf9c9765, type: 2}
-  - {fileID: 1190314630939516, guid: 1876576b0b39e6146815cb2303144adb, type: 2}
-  - {fileID: 1543284726875146, guid: 3432eabf1d115a74885e1a84208f4652, type: 2}
-  - {fileID: 1255096673136508, guid: 70ce42b37bd95aa41b85a7a7e78084c1, type: 2}
-  - {fileID: 1394522315743736, guid: a26a4c3500e184746ab0ef164fd3fdf2, type: 2}
+  backgrounds:
+  - LongboatBackground
+  - OceanScene
+  - SoccerballScene
+  - MonkeyTossBananaScene
+  - TempleScene
+  - BeachScene
+  - LoiKratohScene
+  - KiteScene
+  - BangkokScene3D
+  - ChiangMaiScene
   endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
     type: 2}
-  startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
-    type: 2}
   fireworkPrefab: {fileID: 100002, guid: 180149b1a35449044a27b451e816d2de, type: 2}
+  showLoseLerpTime: 2
   pauseMenuEnabled: 1
   paused: 0
 --- !u!114 &114444795442680560
@@ -144,22 +227,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 544042d4b1c186643b628df2d4595732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tracksPrefabs:
-  - {fileID: 1116145881618084, guid: bb9a99c6ebc941646947e9c68994031e, type: 2}
-  - {fileID: 1886443861543672, guid: d1cea67c3c5ba7144bf9f6415c0f85c8, type: 2}
-  - {fileID: 1455269464341828, guid: 7f85352b2f71ca14e930a16ea419f539, type: 2}
-  - {fileID: 1724450035013282, guid: 12b141efe81717542a44c45f021e540a, type: 2}
-  - {fileID: 1623057723217216, guid: 3de34f21d8f1f8c4188ffab95b82db6e, type: 2}
-  - {fileID: 1788923822778354, guid: ae54d27b2543c6247826187e85a417c4, type: 2}
-  - {fileID: 1893892032898982, guid: a7f7d7c0a461f6643a9178c1683fea92, type: 2}
-  - {fileID: 1250913427841940, guid: 6b8ab525c0d6ed34c907e6d3f4114468, type: 2}
-  - {fileID: 1506691250684920, guid: e0facc0db224a5e46928caccf374b2bf, type: 2}
-  - {fileID: 1933994913704574, guid: f427548539c7534428a53821a1880fac, type: 2}
-  - {fileID: 1824124915659568, guid: 9dd640368055b6645bf0677d3b236890, type: 2}
-  - {fileID: 1942498609325178, guid: 43ad0bc1880d78543aff902b2ff28eef, type: 2}
-  - {fileID: 1601758667102534, guid: d0052847bac90684ea2ac2764fe1d154, type: 2}
-  - {fileID: 1464194095631898, guid: 59a9a571f975470469df8584a3e1e9a5, type: 2}
-  - {fileID: 1375503370048720, guid: b8c693438fb5618499c34839fec5710c, type: 2}
+  tracks:
+  - Adventures - A Himitsu (No Copyright Music)
+  - Asia Cruise - Selfish (THBD Remix) _ Chill Royalty Free Music _ No Copyright 2018
+  - Bright_Future
+  - canon_in_d
+  - chinese_garden
+  - chinese_serene
+  - coming_home_from_school
+  - G.U.Z - Thai Attack - Royalty Free Vlog Music
+  - Hyde
+  - minuret_in_g
+  - que_sara_sara
+  - sonata_16_1st_movement
+  - Spring_In_My_Step
+  - Track1
+  - We Are One
   musicOn: 0
 --- !u!114 &114813970030786044
 MonoBehaviour:
@@ -181,3 +264,8 @@ MonoBehaviour:
     sfxOnOff: 0
     musicVolume: 0
     sfxVolume: 0
+    rainbowHelper: 0
+    bombHelper: 0
+    hammerHelper: 0
+    horizontalHelper: 0
+    verticalHelper: 0

@@ -12,14 +12,14 @@ public class HelperCanvasController : MonoBehaviour
 
     private TextMeshProUGUI textMesh;
 
-    public void CreateHelpers(LevelData levelData, Transform _parent)
+    public void CreateHelpers(LevelData levelData, PlayerData playerData, Transform _parent)
     {
         for (int i = 0; i < levelData.helpers.Count; i++)
         {
             //GameObject hpb = GameObject.Instantiate(helperButtonPrefab, new Vector3(i * helperButtonPrefab.GetComponent<RectTransform>().sizeDelta.x, 0f, 0f), Quaternion.identity, transform);
             GameObject hpb = GameObject.Instantiate(helperButtonPrefab, _parent);
-            hpb.transform.position += new Vector3((float)i * 2f, 0f, 0f);
-            hpb.GetComponent<HelperController>().CreateHelper(levelData.helpers[i].helpertype, levelData.helpers[i].amount, hpb.transform);
+            hpb.transform.position += new Vector3((float)i * hpb.GetComponent<SpriteRenderer>().bounds.size.x, 0f, 0f);
+            hpb.GetComponent<HelperController>().CreateHelper(levelData.helpers[i].helpertype, levelData.helpers[i].amount, playerData, hpb.transform);
             helpers.Add(hpb);
         }
     }

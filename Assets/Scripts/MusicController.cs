@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class MusicController : MonoBehaviour {
 
-    public List<GameObject> tracksPrefabs;
-    private GameObject currentTrack;
-
+    public List<string> tracks;
     [SerializeField]
     private bool musicOn;
 
@@ -16,28 +14,52 @@ public class MusicController : MonoBehaviour {
         set { musicOn = value; }
     }
 
-    void Start () {
+    void Awake () {
         musicOn = true;
 		
 	}
 
     public void PlayTrack(int track)
     {
-        currentTrack = GameObject.Instantiate(tracksPrefabs[track]);        
-        currentTrack.GetComponent<AudioSource>().Play();
+        AudioClip clip = (AudioClip)Resources.Load("Music/" + tracks[track]);
+        GetComponent<AudioSource>().clip = clip;
+        GetComponent<AudioSource>().Play();
         if (!musicOn)
         {
-            currentTrack.GetComponent<AudioSource>().Pause();
+            GetComponent<AudioSource>().Pause();
         }
     }
 
     public void PlayRandomTrack()
     {
-        currentTrack = GameObject.Instantiate(tracksPrefabs[Random.Range(0, tracksPrefabs.Count)]);
-        currentTrack.GetComponent<AudioSource>().Play();
+        AudioClip clip = (AudioClip)Resources.Load("Music/" + tracks[Random.Range(0, tracks.Count)]);
+        GetComponent<AudioSource>().clip = clip;
+        GetComponent<AudioSource>().Play();
         if (!musicOn)
         {
-            currentTrack.GetComponent<AudioSource>().Pause();
+            GetComponent<AudioSource>().Pause();
+        }
+    }
+
+    public void PlayCreep()
+    {
+        AudioClip creep = (AudioClip)Resources.Load("Music/creep");
+        GetComponent<AudioSource>().clip = creep;
+        GetComponent<AudioSource>().Play();
+        if (!musicOn)
+        {
+            GetComponent<AudioSource>().Pause();
+        }
+    }
+
+    public void PlaySpring()
+    {
+        AudioClip clip = (AudioClip)Resources.Load("Music/Spring_In_My_Step");
+        GetComponent<AudioSource>().clip = clip;
+        GetComponent<AudioSource>().Play();
+        if (!musicOn)
+        {
+            GetComponent<AudioSource>().Pause();
         }
     }
 
@@ -46,15 +68,15 @@ public class MusicController : MonoBehaviour {
         if (musicOn)
         {
             musicOn = false;
-            if (currentTrack)
+            if (GetComponent<AudioSource>())
             {
-                currentTrack.GetComponent<AudioSource>().Pause();
+                GetComponent<AudioSource>().Pause();
             }
         }
         else
         {
             musicOn = true;
-            currentTrack.GetComponent<AudioSource>().UnPause();
+            GetComponent<AudioSource>().UnPause();
         }
         SetMusicButtonState(musicOn);
     }

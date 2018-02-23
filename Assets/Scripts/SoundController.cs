@@ -22,6 +22,12 @@ public class SoundController : MonoBehaviour {
     private GameObject kickSound;
     public GameObject btsSoundPrefab;
     private GameObject btsSound;
+    public GameObject starSoundPrefab;
+    private GameObject starSound;
+    public GameObject tadaSoundPrefab;
+    private GameObject tadaSound;
+    public GameObject boingSoundPrefab;
+    private GameObject boingSound;
 
     [SerializeField]
     private bool soundFXOn;
@@ -32,7 +38,7 @@ public class SoundController : MonoBehaviour {
         set { soundFXOn = value; }
     }
 
-    public void Start()
+    public void Awake()
     {
         soundFXOn = true;
     }
@@ -46,12 +52,14 @@ public class SoundController : MonoBehaviour {
         DoPlay(winSound.GetComponent<AudioSource>());
     }
 
-    public void PlayTileDestroySound()
+    public void PlayTileDestroySound(int cascadeCount)
     {
         if (!tileDestroySound)
         {
             tileDestroySound = GameObject.Instantiate(tileDestroySoundPrefab);
         }
+        Debug.Log(tileDestroySound.GetComponent<AudioSource>().pitch);
+        tileDestroySound.GetComponent<AudioSource>().pitch = 0.8f + (cascadeCount * 0.1f);
         DoPlay(tileDestroySound.GetComponent<AudioSource>());
     }
 
@@ -73,6 +81,14 @@ public class SoundController : MonoBehaviour {
         DoPlay(kickSound.GetComponent<AudioSource>());
     }
 
+    public void PlayBoing()
+    {
+        if (!boingSound)
+        {
+            boingSound = GameObject.Instantiate(boingSoundPrefab);
+        }
+        DoPlay(boingSound.GetComponent<AudioSource>());
+    }
     public void PlayBTSSound()
     {
         if (!btsSound) 
@@ -98,6 +114,15 @@ public class SoundController : MonoBehaviour {
             swishDown = GameObject.Instantiate(swishDownPrefab);
         }
         DoPlay(swishDown.GetComponent<AudioSource>());
+    }
+
+    public void PlayStarSound()
+    {
+        if (!starSound)
+        {
+            starSound = GameObject.Instantiate(starSoundPrefab);
+        }
+        DoPlay(starSound.GetComponent<AudioSource>());
     }
 
     public void PlayWooHoo()

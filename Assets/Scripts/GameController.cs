@@ -13,22 +13,23 @@ public class GameController : MonoBehaviour {
     public Camera mainCamera;
     private SoundController soundController;
     private MusicController musicController;
-    public GameObject pauseButtonPrefab;
-    private GameObject pauseButton;
-    public GameObject pauseMenuPrefab;
-    private GameObject pauseMenu;
+    //public GameObject startBoardPanelPrefab;
+    //public GameObject pauseButtonPrefab;
+    //private GameObject pauseButton;
+    //public GameObject pauseMenuPrefab;
+    //private GameObject pauseMenu;
     public GameObject boardCanvasPrefab;
     private GameObject boardCanvas;
-    public GameObject loseCanvasPrefab;
+    //public GameObject loseCanvasPrefab;
     private GameObject loseCanvas;
-    public GameObject helperPanelPrefab;
-    private GameObject helperPanel;
+
     [SerializeField]
-    private GameObject currentHelper;
+    private Helper currentHelper;
     private BoardCanvasController bcc;
 
-    public List<GameObject> backgroundPrefabs = new List<GameObject>();
+    //public List<GameObject> backgroundPrefabs = new List<GameObject>();
     private GameObject background;
+    public List<string> backgrounds;
 
     private Camera cam;
     private GameObject board;
@@ -42,12 +43,14 @@ public class GameController : MonoBehaviour {
     private _state gameState;
 
     public GameObject endBoardPanelPrefab;
-    public GameObject startBoardPanelPrefab;
+    //public GameObject startBoardPanelPrefab;
     private GameObject ebp;
     private Vector2 boardSize;
     private GameObject lanternPrefab;
 
     public GameObject fireworkPrefab;
+
+    public float showLoseLerpTime;
 
     [SerializeField]
     private bool pauseMenuEnabled;
@@ -55,20 +58,60 @@ public class GameController : MonoBehaviour {
     private bool paused;
 
     public enum _helperType { None, Hammer, Vertical, Horizontal, Rainbow, Bomb };
+
+    public delegate void DelegateHandleSceneEvent();
+    DelegateHandleSceneEvent sceneHandler;
+
     public static GameController GetGameController()
     {
         return GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
-    public GameObject CurrentHelper
+    public int PlayerSeenIntro()
     {
-        get { return currentHelper; }
+        return playerDataController.playerData.seenIntro;
+    }
+
+    public void SetPlayerSeenIntro(int seen)
+    {
+        playerDataController.playerData.seenIntro = 1;
+        playerDataController.SavePlayerData();
+    }
+
+    public void SetHelper(GameObject helper)
+    {
+        if (helper)
+        {
+            board.GetComponent<Board>().HelperType = helper.GetComponent<Helper>().HelperType;
+            currentHelper = helper.GetComponent<Helper>();
+        }
+        else
+        {
+            currentHelper = null;
+            board.GetComponent<Board>().HelperType = _helperType.None;
+            bcc.GetComponent<BoardCanvasController>().HandlePostHelper();
+        }
+    }
+
+    public void DeductHelper()
+    {
+        currentHelper.Amount--;
+        playerDataController.DeductHelper(currentHelper.HelperType);
+
+    }
+
+    public void UpdateTimer(int timeLeft)
+    {
+        bcc.UpdateTimer(timeLeft);
     }
 
 	void Awake () {
-        Application.targetFrameRate = 60;
-        QualitySettings.vSyncCount = 0;
+        //Application.targetFrameRate = 30;
+        Screen.SetResolution(1080, 1920, true);
+        //Application.targetFrameRate = 60;
+        //QualitySettings.vSyncCount = 0;
         cam = Camera.Instantiate(mainCamera);
+
         playerDataController = transform.GetComponent<PlayerDataController>();
         playerDataController.LoadPlayerData();
         dataController = transform.GetComponent<DataController>();
@@ -79,7 +122,23 @@ public class GameController : MonoBehaviour {
         soundController = GetComponent<SoundController>();
         musicController = GetComponent<MusicController>();
         pauseMenuEnabled = true;
-        paused = false;       
+        paused = false;      
+        if (playerDataController.playerData.sfxOnOff == 1)
+        {
+            soundController.SoundFXOn = true;
+        } 
+        else
+        {
+            soundController.SoundFXOn = false;
+        }
+        if (playerDataController.playerData.musicOnOff == 1)
+        {
+            musicController.MusicOn = true;
+        }
+        else
+        {
+            musicController.MusicOn = false;
+        }
     }
 
     private void OnEnable()
@@ -89,8 +148,13 @@ public class GameController : MonoBehaviour {
 
     public void Start()
     {
-        ShowStartButton();
-        lanternPrefab = Resources.Load("Sprites/sky_lantern") as GameObject;
+        cam.GetComponent<Camera>().orthographic = false;
+        cam.GetComponent<Camera>().fieldOfView = 100;
+        cam.transform.position = new Vector3(0f, 0f, -19f);
+        //ShowStartButton();
+        GetComponent<Fading>().FadeIn();
+
+
     }
 
     public bool PauseMenuEnabled
@@ -105,16 +169,16 @@ public class GameController : MonoBehaviour {
         set { currentLevel = value; }
     }
 
-    private void ShowStartButton()
-    {
-        StartCoroutine(PauseForSplash());
-    }
+    //private void ShowStartButton()
+    //{
+    //    StartCoroutine(PauseForSplash());
+    //}
 
-    IEnumerator PauseForSplash()
-    {
-        yield return new WaitForSeconds(5f);
-        GameObject.FindGameObjectWithTag("SplashCanvas").GetComponent<Canvas>().enabled = true;
-    }
+    //IEnumerator PauseForSplash()
+    //{
+    //    yield return new WaitForSeconds(5f);
+    //    GameObject.FindGameObjectWithTag("SplashCanvas").GetComponent<Canvas>().enabled = true;
+    //}
 
     private void LevelPostStart()
     {
@@ -129,6 +193,10 @@ public class GameController : MonoBehaviour {
 
     public void LevelWin(int level, int score, int timestamp, int stars)
     {
+        if (dataController.gameData.levelData[currentLevel].rewards != null && dataController.gameData.levelData[currentLevel].rewards.Count > 0)
+        {
+            playerDataController.AddRewards(dataController.gameData.levelData[currentLevel].rewards);
+        }
         playerDataController.PlayerSaveWin(level, score, timestamp, stars);
         //BackToWorld();
     }
@@ -162,14 +230,14 @@ public class GameController : MonoBehaviour {
         LoadLevel(currentLevel);
     }
 
-    public void ShowPauseButton()
-    {
-        if (!pauseButton)
-        {
-            pauseButton = GameObject.Instantiate(pauseButtonPrefab);
-        }
-        pauseButton.SetActive(true);
-    }
+    //public void ShowPauseButton()
+    //{
+    //    if (!pauseButton)
+    //    {
+    //        pauseButton = GameObject.Instantiate(pauseButtonPrefab);
+    //    }
+    //    pauseButton.SetActive(true);
+    //}
 
     public void IntroOnClick()
     {
@@ -207,7 +275,9 @@ public class GameController : MonoBehaviour {
             gameState = _state.board;
             StartBoard();
             LevelPostStart();
-            background = GameObject.Instantiate(backgroundPrefabs[currentLevel % backgroundPrefabs.Count]);
+            sceneHandler = null;
+            //background = GameObject.Instantiate(backgroundPrefabs[currentLevel % backgroundPrefabs.Count]);
+            background = GameObject.Instantiate((GameObject)Resources.Load("Backgrounds/" + backgrounds[currentLevel % backgrounds.Count]));
         }
         if (scene.name == "World")
         {
@@ -223,6 +293,11 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    public void RegisterHandler(DelegateHandleSceneEvent toRegister)
+    {
+        sceneHandler = toRegister;
+    }
+
     public void BackToWorld()
     {       
         GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
@@ -231,8 +306,16 @@ public class GameController : MonoBehaviour {
             pauseMenuEnabled = true;
             gc.CancelInvoke();
             gc.StopAllCoroutines();
+            gc.GetComponent<AudioSource>().Stop();
+            Resources.UnloadUnusedAssets();
             SceneManager.LoadScene(1);
             gc.gameState = _state.world;
+            if (!cam)
+            {
+                cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+            }
+            cam.GetComponent<Camera>().orthographic = true;
+            cam.GetComponent<Camera>().orthographicSize = 6;         
         }
     }
 
@@ -275,8 +358,39 @@ public class GameController : MonoBehaviour {
 
     public void ShowLose()
     {
-        loseCanvas = GameObject.Instantiate(loseCanvasPrefab);
+        loseCanvas = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/UI/LoseCanvas"));
+        loseCanvas.GetComponent<RectTransform>().position = new Vector3(0f, 20f, 0f);
         board.GetComponent<Board>().HideTiles();
+        StartCoroutine(DropFromAbove(loseCanvas, showLoseLerpTime, new Vector3(0f, 0f, 0f)));
+    }
+
+    IEnumerator DropFromAbove(GameObject go, float lerpTime, Vector3 newPosition)
+    {
+        float startTime = Time.time;
+        float perc = 0;
+        Vector3 originalPosition;
+        if (go.GetComponent<RectTransform>())
+        {
+            originalPosition = go.transform.GetComponent<RectTransform>().position;
+        }
+        else
+        {
+            originalPosition = go.transform.position;
+        }
+        while((Time.time - startTime) < lerpTime)
+        {
+            perc = (Time.time - startTime) / lerpTime;
+            if (go.GetComponent<RectTransform>())
+            {
+                go.GetComponent<RectTransform>().position = Vector3.Lerp(originalPosition, newPosition, perc);
+            }
+            else
+            {
+                go.transform.position = Vector3.Lerp(originalPosition, newPosition, perc);
+            }
+            yield return null;
+        }
+
     }
 
     public void WinButtonGoBackToWorld()
@@ -284,14 +398,19 @@ public class GameController : MonoBehaviour {
         BackToWorld();
     }
 
+    public void PlayBoing()
+    {
+        soundController.PlayBoing();
+    }
+
     public void PlayWinSound()
     {
         soundController.PlayWinSound();
     }
 
-    public void PlayTileDestroySound()
+    public void PlayTileDestroySound(int cascadeCount)
     {
-        soundController.PlayTileDestroySound();
+        soundController.PlayTileDestroySound(cascadeCount);
     }
 
     public void PlayKickSound() 
@@ -314,6 +433,15 @@ public class GameController : MonoBehaviour {
         soundController.PlayWooHoo();
     }
     
+    public void PlaySpringInMyStep()
+    {
+        musicController.PlaySpring();
+    }
+
+    public void PlayCreep()
+    {
+        musicController.PlayCreep();
+    }
     public void PlayLoseSound()
     {
         soundController.PlayLose();
@@ -324,6 +452,11 @@ public class GameController : MonoBehaviour {
         soundController.PlaySwishUp();
     }
 
+    public void PlayStarSound()
+    {
+        soundController.PlayStarSound();
+    }
+
     public void PlaySwishDown()
     {
         soundController.PlaySwishDown();
@@ -331,6 +464,7 @@ public class GameController : MonoBehaviour {
     public void ToggleSoundButton()
     {
         soundController.ToggleSoundButton();
+        playerDataController.EnableSFX(soundController.SoundFXOn);
     }
 
     public void UpdateSoundButton()
@@ -346,6 +480,15 @@ public class GameController : MonoBehaviour {
     public void ToggleMusicButton()
     {
         musicController.ToggleMusicButton();
+        playerDataController.EnableMusic(musicController.MusicOn);
+    }
+
+    public void HandleSwitchMatchEvent()
+    {
+        if (sceneHandler != null)
+        {
+            sceneHandler();
+        }
     }
 
     public void ShowStartBoard()
@@ -356,21 +499,23 @@ public class GameController : MonoBehaviour {
             bcc = boardCanvas.GetComponent<BoardCanvasController>();
         }
         soundController.PlaySwishUp();
-        GameObject sbp = GameObject.Instantiate(startBoardPanelPrefab);
-        StartBoardPanelController sbpc = GameObject.FindGameObjectWithTag("StartPanel").GetComponent<StartBoardPanelController>();
-        sbpc.SetText("");
+        GameObject sbp = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/UI/StartBoardPanel"));
+
+        Debug.Log(sbp);
+        StartBoardController sbc = sbp.GetComponent<StartBoardController>();
+        sbc.SetStartPanelText("");
         if (dataController.gameData.levelData[currentLevel].mission.type == 0)
         {
-            sbpc.AppendText("\nGet " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].score + " in " + dataController.gameData.levelData[currentLevel].numMoves + " moves.\nGood Luck!");
+            sbc.AppendStartPanelText("\nGet " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].score + " in " + dataController.gameData.levelData[currentLevel].numMoves + " moves.\nGood Luck!");
         }
         if (dataController.gameData.levelData[currentLevel].mission.type == 1)
         {
-            sbpc.AppendText("\nMatch the following pieces: \n");
-            sbpc.ShowMissionGoals(dataController.gameData.levelData[currentLevel].mission.missionGoals, board);
+            sbc.AppendStartPanelText("\nMatch the following pieces: \n");
+            sbc.ShowMissionGoals(dataController.gameData.levelData[currentLevel].mission.missionGoals, board);
         }
         if (dataController.gameData.levelData[currentLevel].mission.type == 2)
         {
-            sbpc.AppendText("\nBring " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].numfall + " to the bottom");
+            sbc.AppendStartPanelText("\nBring " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].numfall + " to the bottom");
             if (!bcc)
             {
                 bcc = GameObject.FindGameObjectWithTag("BoardCanvasController").GetComponent<BoardCanvasController>();
@@ -378,6 +523,10 @@ public class GameController : MonoBehaviour {
             bcc.ShowDropCountPanel();
             bcc.SetDropCountText("0 / " + dataController.gameData.levelData[currentLevel].mission.missionGoals[0].numfall);
 
+        }
+        if (dataController.gameData.levelData[currentLevel].rewards.Count > 0)
+        {
+            sbc.ShowRewards(dataController.gameData.levelData[currentLevel].rewards);
         }
         board.GetComponent<Board>().Locked = true;
     }
@@ -391,21 +540,29 @@ public class GameController : MonoBehaviour {
             gc.PlaySwishDown();
             GameObject.FindGameObjectWithTag("StartBoardPanel").GetComponent<StartBoardController>().Disappear();
             gc.board.GetComponent<Board>().Locked = false;
-            gc.ShowPauseButton();
+            //gc.ShowPauseButton();
             bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
-            helperPanel = GameObject.Instantiate(helperPanelPrefab);
-            helperPanel.GetComponent<HelperCanvasController>().CreateHelpers(gc.dataController.gameData.levelData[currentLevel], helperPanel.transform);
+            //helperPanel = GameObject.Instantiate(helperPanelPrefab);
+            //helperPanel.GetComponent<HelperCanvasController>().CreateHelpers(gc.dataController.gameData.levelData[gc.CurrentLevel], gc.GetPlayerData(), helperPanel.transform);
+            bcc.ShowHelpers(gc.dataController.gameData.levelData[gc.currentLevel], gc.GetPlayerData());
+            gc.board.GetComponent<Board>().SetTimer(gc.dataController.gameData.levelData[currentLevel].timer);
         }
     }
 
     public void ShowEndBoard(int score, int stars)
     {
         ebp = GameObject.Instantiate(endBoardPanelPrefab);
+        ebp.GetComponent<EndBoardPanelController>().SetText(score + " points!");
+        ebp.GetComponent<EndBoardPanelController>().SetStars(stars);
         board.GetComponent<Board>().HideTiles();
     }
 
     public void ShowSkyLanterns()
     {
+        if (!lanternPrefab)
+        {
+            lanternPrefab = Resources.Load("Sprites/sky_lantern") as GameObject;
+        }
         InvokeRepeating("SpawnLantern", 0.5f, 1f);
     }
 
@@ -460,39 +617,13 @@ public class GameController : MonoBehaviour {
         firework.transform.position = newPos;
     }
 
-    public void ShowPauseMenu()
-    {
-        if (pauseMenuEnabled)
-        {
-            if (pauseMenu)
-            {
-                ClosePauseMenu();
-            }
-            else
-            {
-                pauseMenu = GameObject.Instantiate(pauseMenuPrefab, new Vector3(-10.0f, 0f, -2f), Quaternion.identity);
-                soundController.PlaySwishUp();               
-            }
-        }
-    }
-
-    public void ClosePauseMenu()
-    {
-        if (pauseMenu)
-        {
-            soundController.PlaySwishDown();
-            pauseMenu.GetComponent<PauseMenuController>().Close(true);
-            paused = false;
-        }
-    }
-
-    public void DestroyPauseMenu()
-    {
-        if (pauseMenu)
-        {
-            Destroy(pauseMenu);
-        }
-    }
+    //public void DestroyPauseMenu()
+    //{
+    //    if (pauseMenu)
+    //    {
+    //        Destroy(pauseMenu);
+    //    }
+    //}
     
     public void PauseGame()
     {
@@ -539,42 +670,6 @@ public class GameController : MonoBehaviour {
         return dataController.gameData.levelData[currentLevel];
     }
 
-    public void SetHelper(GameObject helper)
-    {
-        if (helper)
-        {
-            currentHelper = helper;
-            _helperType helperType = helper.GetComponent<HelperController>().HelperType;
-            board.GetComponent<Board>().HelperType = helperType;
-            Darken();
-            helperPanel = GameObject.FindGameObjectWithTag("HelperPanel");
-            if (helperPanel)
-            {
-                helperPanel.GetComponent<HelperCanvasController>().MaskOtherHelpers(helper);
-            }
-        }
-        else
-        {
-            currentHelper = null;
-            board.GetComponent<Board>().HelperType = _helperType.None;
-            Undarken();
-            helperPanel = GameObject.FindGameObjectWithTag("HelperPanel");
-            if (helperPanel)
-            {
-                helperPanel.GetComponent<HelperCanvasController>().ShowAllHelpers();
-            }
-        }
-    }
-
-    public void DeductHelper()
-    {
-        if (currentHelper)
-        {
-            currentHelper.GetComponent<HelperController>().Decrement();
-        }
-        currentHelper = null;
-    }
-
     public void Darken()
     {
         board.GetComponent<Board>().Darken();
@@ -584,4 +679,14 @@ public class GameController : MonoBehaviour {
     {
         board.GetComponent<Board>().Undarken();
     }
+
+    public void HideEndBoardPanel()
+    {
+        GameObject go = GameObject.FindGameObjectWithTag("EndBoardPanel");
+        if (go) {
+            go.SetActive(false);
+        }
+    }
+
+
 }

@@ -25,11 +25,15 @@ public class FishController : MonoBehaviour {
     float randomAmplitude;
     float depth;
 
+    void Start()
+    {
+        StartFish();
+    }
 	public void StartFish ()
     {
         ChooseStartDirection();
         ChooseStartSpeed();
-        depth = UnityEngine.Random.Range(-4f, 1f);
+        depth = UnityEngine.Random.Range(-2.5f, 0.5f);
         anim = GetComponent<Animator>();
         SetDirection();
         SetAnimation();
@@ -42,7 +46,7 @@ public class FishController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        transform.position += new Vector3(0f,Mathf.Sin(Time.time + randomOffset)*randomAmplitude, 0f);        
+        transform.position += new Vector3(0f,randomAmplitude * Mathf.Sin(Time.time + randomOffset), 0f);        
     }
 
     public void Turn()

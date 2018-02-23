@@ -8,12 +8,11 @@ public class ProgressBarController : MonoBehaviour {
     public float radius = 100f;
     private int prevScore;
     public GameObject effectPrefab;
-    public GameObject starSoundPrefab;
+    private GameController gc;
 
-    private GameObject starSound;
     void Start() {
         prevScore = 0;
-        starSound = GameObject.Instantiate(starSoundPrefab);
+        gc = GameController.GetGameController();
     }
 
     // Update is called once per frame
@@ -48,15 +47,15 @@ public class ProgressBarController : MonoBehaviour {
 
     public void CheckStarFill(int tier1, int tier2, int tier3, int numScore)
     {
-        if (numScore > tier1 && prevScore < tier1)
+        if (numScore >= tier1 && prevScore < tier1)
         {
             ShowStar(1);
         }
-        if (numScore > tier2 && prevScore < tier2)
+        if (numScore >= tier2 && prevScore < tier2)
         {
             ShowStar(2);
         }
-        if (numScore > tier3 && prevScore < tier3)
+        if (numScore >= tier3 && prevScore < tier3)
         {
             ShowStar(3);
         }
@@ -67,9 +66,9 @@ public class ProgressBarController : MonoBehaviour {
     {
         switch(starIdx)
         {
-            case 1: star1.transform.Find("StarInner").gameObject.SetActive(true); Destroy(GameObject.Instantiate(effectPrefab, star1.transform), 5f); starSound.GetComponent<AudioSource>().Play(); break;
-            case 2: star2.transform.Find("StarInner").gameObject.SetActive(true); Destroy(GameObject.Instantiate(effectPrefab, star2.transform), 5f); starSound.GetComponent<AudioSource>().Play();  break;
-            case 3: star3.transform.Find("StarInner").gameObject.SetActive(true); Destroy(GameObject.Instantiate(effectPrefab, star3.transform), 5f); starSound.GetComponent<AudioSource>().Play();  break;
+            case 1: star1.transform.Find("StarInner").gameObject.SetActive(true); Destroy(GameObject.Instantiate(effectPrefab, star1.transform), 5f); gc.PlayStarSound(); break;
+            case 2: star2.transform.Find("StarInner").gameObject.SetActive(true); Destroy(GameObject.Instantiate(effectPrefab, star2.transform), 5f); gc.PlayStarSound();  break;
+            case 3: star3.transform.Find("StarInner").gameObject.SetActive(true); Destroy(GameObject.Instantiate(effectPrefab, star3.transform), 5f); gc.PlayStarSound();  break;
             default:break;
 
         }
