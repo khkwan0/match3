@@ -241,14 +241,17 @@ public class TilePiece : MonoBehaviour {
         if (boardObj.HelperType != GameController._helperType.None)
         {
             // execute helper
-            boardObj.ExecuteHelper(i, j);
-            //// finished...
-            gameController.SetHelper(null);
+            if (gameController.HelperEnabled)
+            {
+                boardObj.ExecuteHelper(i, j);
+                //// finished...
+                gameController.SetHelper(null);
+            }
         }
         else if (boardObj.Locked && boardObj.HelperType == GameController._helperType.None)
-            {
-                StartCoroutine(SpinWait());
-            }
+        {
+            StartCoroutine(SpinWait());
+        }
         else
         {
             if (targetI >= 0 && targetJ >= 0)
@@ -380,7 +383,10 @@ public class TilePiece : MonoBehaviour {
 
     public void ShowHint()
     {
-        StartCoroutine(StandOut());
+        if (!gameController.Paused)
+        {
+            StartCoroutine(StandOut());
+        }
     }
 
     IEnumerator StandOut()

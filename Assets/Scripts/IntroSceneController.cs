@@ -106,6 +106,6 @@ public class IntroSceneController : MonoBehaviour {
 
     private void HandleStart()
     {
-        GameController.GetGameController().BackToWorld();
+        GameController.GetGameController().IntermediateScreen();
     }
 }

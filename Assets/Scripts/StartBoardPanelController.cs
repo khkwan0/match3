@@ -35,7 +35,7 @@ public class StartBoardPanelController : MonoBehaviour {
             if (go)
             {
                 //go.GetComponent<RectTransform>().SetParent(GameObject.FindGameObjectWithTag("StartPanelSpeechCanvas").transform.Find("PanelText"), false);
-                go.transform.position = new Vector3(i * go.GetComponent<SpriteRenderer>().bounds.size.x - GetComponent<SpriteRenderer>().bounds.size.x/3, go.GetComponent<SpriteRenderer>().bounds.size.y/2, -2f);
+                go.transform.position = new Vector3(i * go.GetComponent<SpriteRenderer>().bounds.size.x, go.GetComponent<SpriteRenderer>().bounds.size.y/2, -2f);
                 go.GetComponent<Transform>().SetParent(transform, false);
             }
         }
@@ -61,7 +61,7 @@ public class StartBoardPanelController : MonoBehaviour {
             GameObject missionImage = new GameObject(theSprite.name);
             missionImage.AddComponent<SpriteRenderer>();
             missionImage.GetComponent<SpriteRenderer>().sprite = theSprite;
-
+            missionImage.transform.localScale = 0.117f *  Vector3.one;
             //GameObject missionText = new GameObject(theSprite.name + "_text", typeof(RectTransform));
             //missionText.AddComponent<CanvasScaler>();
             //missionText.GetComponent<RectTransform>().SetParent(missionImage.transform, false);

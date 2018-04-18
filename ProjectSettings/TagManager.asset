@@ -25,6 +25,7 @@ TagManager:
   - RewardsPanel
   - BombDisplay
   - Fire
+  - fish
   layers:
   - Default
   - TransparentFX
@@ -35,9 +36,9 @@ TagManager:
   - 
   - 
   - seaplane
-  - 
-  - 
-  - 
+  - fish
+  - OnlyRaycast
+  - TukTuk
   - 
   - 
   - 

@@ -234,7 +234,7 @@
         1,
         3
       ],
-      "timer": 125
+      "timer": 120
     },
     {
       "_id": "5a39edcd91279d6a17afdf51",
@@ -1014,6 +1014,174 @@
         }
       ],
       "helpers": []
+    },
+    {
+      "_id": "5aa58dfc7bcf4101306c761c",
+      "level": 9,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [],
+      "timer": null,
+      "helpers": [],
+      "rewards": [],
+      "bombTypes": [],
+      "bombspawnrate": null,
+      "bombminmoves": null,
+      "bombmaxmoves": null
+    },
+    {
+      "_id": "5aa58e147bcf4101306c761d",
+      "level": 10,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [],
+      "timer": null,
+      "helpers": [],
+      "rewards": [],
+      "bombTypes": [],
+      "bombspawnrate": null,
+      "bombminmoves": null,
+      "bombmaxmoves": null
+    },
+    {
+      "_id": "5aa58e187bcf4101306c761e",
+      "level": 11,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [],
+      "timer": null,
+      "helpers": [],
+      "rewards": [],
+      "bombTypes": [],
+      "bombspawnrate": null,
+      "bombminmoves": null,
+      "bombmaxmoves": null
+    },
+    {
+      "_id": "5aa58e1c7bcf4101306c761f",
+      "level": 12,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [],
+      "timer": null,
+      "helpers": [],
+      "rewards": [],
+      "bombTypes": [],
+      "bombspawnrate": null,
+      "bombminmoves": null,
+      "bombmaxmoves": null
+    },
+    {
+      "_id": "5aa58e1f7bcf4101306c7620",
+      "level": 13,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [],
+      "timer": null,
+      "helpers": [],
+      "rewards": [],
+      "bombTypes": [],
+      "bombspawnrate": null,
+      "bombminmoves": null,
+      "bombmaxmoves": null
+    },
+    {
+      "_id": "5aa58e227bcf4101306c7621",
+      "level": 14,
+      "rows": 8,
+      "cols": 8,
+      "numTileValues": 5,
+      "numMoves": 50,
+      "maxFillPoints": 4000,
+      "tier1Fill": 1000,
+      "tier2Fill": 2000,
+      "tier3Fill": 3000,
+      "mission": {
+        "type": 0,
+        "missionGoals": [
+          {
+            "score": 2000
+          }
+        ]
+      },
+      "boardSpec": [],
+      "timer": null,
+      "helpers": [],
+      "rewards": [],
+      "bombTypes": [],
+      "bombspawnrate": null,
+      "bombminmoves": null,
+      "bombmaxmoves": null
     }
   ]
 }

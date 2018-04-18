@@ -160,6 +160,17 @@ MonoBehaviour:
     type: 2}
   boingSoundPrefab: {fileID: 1880315313562136, guid: 3b5af417fca82624eb6214ba18f27185,
     type: 2}
+  chooseLevelSoundPrefab: {fileID: 1192989620113860, guid: 1d48e8e0ecd605647a7c09f28af6b85a,
+    type: 2}
+  rainSoundPrefab: {fileID: 1174457286415688, guid: 9c722d32906f9dd43ac2bb96985f3fcc,
+    type: 2}
+  windSoundPrefab: {fileID: 0}
+  thunderSounds:
+  - {fileID: 8300000, guid: 5f19fca6d3e35374d8fb1fc9729f1252, type: 3}
+  - {fileID: 8300000, guid: a6766374ca957484a835ba97f2e0db08, type: 3}
+  - {fileID: 8300000, guid: 453cd3cf8695aea4a94d7e115117bcbd, type: 3}
+  - {fileID: 8300000, guid: 31b25cd317b4fa347be09af291948c5e, type: 3}
+  thunderSoundPrefab: {fileID: 0}
   soundFXOn: 0
 --- !u!114 &114421197755217228
 MonoBehaviour:
@@ -179,11 +190,7 @@ MonoBehaviour:
     type: 2}
   mainCamera: {fileID: 20059895889851912, guid: 5fd4c0fa4fdd431489d113d364f10c62,
     type: 2}
-  startBoardPanelPrefab: {fileID: 1531332532268850, guid: dc1a6882e358c7c49b70d0ab1daa1d29,
-    type: 2}
   boardCanvasPrefab: {fileID: 1733148223392258, guid: 7540f3b53bdec044e8d64c43ddf04a2f,
-    type: 2}
-  loseCanvasPrefab: {fileID: 1180781946918924, guid: c478f4cc97cb7c9499993ebc4ff9fe8a,
     type: 2}
   currentHelper: {fileID: 0}
   backgrounds:
@@ -197,12 +204,19 @@ MonoBehaviour:
   - KiteScene
   - BangkokScene3D
   - ChiangMaiScene
+  - VolleyBallScene
+  - FishermanScene
+  - BirdScene
+  - RainScene
+  - MotobikeScene
+  - ThaiWomanSoccerBallScene
   endBoardPanelPrefab: {fileID: 1531332532268850, guid: 90640b88ea3da044d8b370a5906bae99,
     type: 2}
   fireworkPrefab: {fileID: 100002, guid: 180149b1a35449044a27b451e816d2de, type: 2}
   showLoseLerpTime: 2
   pauseMenuEnabled: 1
   paused: 0
+  helperEnabled: 0
 --- !u!114 &114444795442680560
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -269,3 +283,4 @@ MonoBehaviour:
     hammerHelper: 0
     horizontalHelper: 0
     verticalHelper: 0
+    seenIntro: 0

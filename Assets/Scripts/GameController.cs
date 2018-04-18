@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#if UNITY_IPHONE
+using UnityEngine.SocialPlatforms.GameCenter;
+#endif
 
 public class GameController : MonoBehaviour {
 
@@ -57,6 +60,10 @@ public class GameController : MonoBehaviour {
     [SerializeField]
     private bool paused;
 
+    private int levelClicked = -1;
+
+    [SerializeField]
+    private bool helperEnabled;
     public enum _helperType { None, Hammer, Vertical, Horizontal, Rainbow, Bomb };
 
     public delegate void DelegateHandleSceneEvent();
@@ -67,6 +74,37 @@ public class GameController : MonoBehaviour {
         return GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
+    public bool SoundFXStatus
+    {
+        get { return soundController.SoundFXOn; }
+    }
+
+    public bool MusicStatus
+    {
+        get { return musicController.MusicOn; }
+    }
+
+    public int LevelClicked
+    {
+        get { return levelClicked; }
+        set { levelClicked = value; }
+    }
+
+    public int PlayerLastLevel
+    {
+        get { return playerDataController.playerData.lastLevel; }
+    }
+
+    public bool Paused
+    {
+        get { return paused; }
+    }
+
+    public bool HelperEnabled
+    {
+        get { return helperEnabled; }
+        set { helperEnabled = false; }
+    }
     public int PlayerSeenIntro()
     {
         return playerDataController.playerData.seenIntro;
@@ -114,6 +152,7 @@ public class GameController : MonoBehaviour {
 
         playerDataController = transform.GetComponent<PlayerDataController>();
         playerDataController.LoadPlayerData();
+        Debug.Log(playerDataController.playerData.lastLevel);
         dataController = transform.GetComponent<DataController>();
         dataController.LoadGameData();
         gameState = _state.intro;
@@ -122,7 +161,8 @@ public class GameController : MonoBehaviour {
         soundController = GetComponent<SoundController>();
         musicController = GetComponent<MusicController>();
         pauseMenuEnabled = true;
-        paused = false;      
+        paused = false;
+        helperEnabled = true;
         if (playerDataController.playerData.sfxOnOff == 1)
         {
             soundController.SoundFXOn = true;
@@ -155,6 +195,25 @@ public class GameController : MonoBehaviour {
         GetComponent<Fading>().FadeIn();
 
 
+    }
+
+    private void Update()
+    {
+        /*
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log("Name = " + hit.collider.name);
+                Debug.Log("Tag = " + hit.collider.tag);
+                Debug.Log("Hit Point = " + hit.point);
+                Debug.Log("Object position = " + hit.collider.gameObject.transform.position);
+                Debug.Log("--------------");
+            }
+        }
+        */
     }
 
     public bool PauseMenuEnabled
@@ -259,13 +318,27 @@ public class GameController : MonoBehaviour {
     {
         currentLevel = level;
 
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
         if (!cam)
         {
             cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         }
-        cam.transform.position = new Vector3(0.0f, 0.0f, cam.transform.position.z);
+        cam.orthographic = true;
+        cam.transform.position = new Vector3(0.0f, 0.0f, -10f);
+        cam.transform.rotation = Quaternion.Euler(Vector3.zero);
         cam.orthographicSize = 6.0f;
+    }
+
+    public void PlayMusic(int track)
+    {
+        if (track < 0)
+        {
+            musicController.PlayRandomTrack();
+        }
+        else
+        {
+            musicController.PlayTrack(track);
+        }
     }
 
     private void OnLevelFinishLoading(Scene scene, LoadSceneMode mode) 
@@ -298,6 +371,36 @@ public class GameController : MonoBehaviour {
         sceneHandler = toRegister;
     }
 
+    public void IntermediateScreen()
+    {
+        SocialLogin();
+    }
+
+    public void SocialLogin()
+    {        
+        Debug.Log(Social.Active);
+#if UNITY_IPHONE
+        Social.localUser.Authenticate(ProcessAuthentication);
+#else
+        BackToWorld();
+#endif
+    }
+
+    void ProcessAuthentication(bool success)
+    {
+        if (success)
+        {
+            Debug.Log("authenticated");
+            Debug.Log(Social.localUser.id);
+                
+        }
+        else
+        {
+            Debug.Log("failed");
+        }
+        BackToWorld();
+    }
+
     public void BackToWorld()
     {       
         GameController gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
@@ -308,14 +411,24 @@ public class GameController : MonoBehaviour {
             gc.StopAllCoroutines();
             gc.GetComponent<AudioSource>().Stop();
             Resources.UnloadUnusedAssets();
-            SceneManager.LoadScene(1);
+
             gc.gameState = _state.world;
             if (!cam)
             {
                 cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             }
-            cam.GetComponent<Camera>().orthographic = true;
-            cam.GetComponent<Camera>().orthographicSize = 6;         
+            //cam.GetComponent<Camera>().orthographic = true;
+            //cam.GetComponent<Camera>().orthographicSize = 6;         
+            cam.transform.position = new Vector3(5.7f, 38.6f, -22.2f);
+            cam.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
+            cam.GetComponent<Camera>().fieldOfView = 60f;
+            cam.GetComponent<Camera>().depth = -1f;
+            cam.GetComponent<Camera>().farClipPlane = 150;
+            cam.GetComponent<Camera>().nearClipPlane = 0.3f;
+            cam.GetComponent<Camera>().orthographic = false;
+
+
+            SceneManager.LoadScene(1);
         }
     }
 
@@ -408,6 +521,21 @@ public class GameController : MonoBehaviour {
         soundController.PlayWinSound();
     }
 
+    public void PlayWindSound()
+    {
+        soundController.PlayWinSound();
+    }
+
+    public void PlayThunderSound()
+    {
+        soundController.PlayThunderRandom();
+    }
+
+    public void PlayRainSound()
+    {
+        soundController.PlayRainSound();
+    }
+
     public void PlayTileDestroySound(int cascadeCount)
     {
         soundController.PlayTileDestroySound(cascadeCount);
@@ -461,6 +589,12 @@ public class GameController : MonoBehaviour {
     {
         soundController.PlaySwishDown();
     }
+
+    public void PlayChooseLevel()
+    {
+        soundController.PlayChooseLevel();
+    }
+
     public void ToggleSoundButton()
     {
         soundController.ToggleSoundButton();
@@ -557,6 +691,16 @@ public class GameController : MonoBehaviour {
         board.GetComponent<Board>().HideTiles();
     }
 
+    public void HideMainBoard()
+    {
+        board.GetComponent<Board>().HideBoard();
+    }
+
+    public void ShowMainBoard()
+    {
+        board.GetComponent<Board>().ShowBoard();
+    }
+
     public void ShowSkyLanterns()
     {
         if (!lanternPrefab)
@@ -627,12 +771,20 @@ public class GameController : MonoBehaviour {
     
     public void PauseGame()
     {
+        board.GetComponent<Board>().TimerPaused = true;
         paused = true;
+        board.GetComponent<Board>().Locked = true;
+        HideMainBoard();
+        helperEnabled = false;
     }
 
     public void ResumeGame()
     {
         paused = false;
+        board.GetComponent<Board>().TimerPaused = false;
+        board.GetComponent<Board>().Locked = false;
+        ShowMainBoard();
+        helperEnabled = true;
     }
 
     public void LockBoard()
@@ -668,6 +820,11 @@ public class GameController : MonoBehaviour {
     public LevelData GetLevelData()
     {
         return dataController.gameData.levelData[currentLevel];
+    }
+
+    public LevelData GetLevelData(int level)
+    {
+        return dataController.gameData.levelData[level];
     }
 
     public void Darken()

@@ -152,9 +152,9 @@ GameObject:
   - component: {fileID: 114217993045518924}
   - component: {fileID: 136648267004424288}
   - component: {fileID: 54447783310748516}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FishSkinnyOrange
-  m_TagString: Untagged
+  m_TagString: fish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -442,6 +442,9 @@ MonoBehaviour:
   speed: 0
   directionVector: {x: 0, y: 0, z: 0}
   velocityMagnitude: 0
+  maxAmplitude: 0.001
+  randomAmplitude: 0
+  riseAmount: 0
 --- !u!114 &114323898318889268
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -460,7 +463,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1901877460118240}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 1.2
   m_Height: 7.36

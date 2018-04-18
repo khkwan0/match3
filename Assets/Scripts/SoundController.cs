@@ -28,6 +28,15 @@ public class SoundController : MonoBehaviour {
     private GameObject tadaSound;
     public GameObject boingSoundPrefab;
     private GameObject boingSound;
+    public GameObject chooseLevelSoundPrefab;
+    private GameObject chooseLevelSound;
+    public GameObject rainSoundPrefab;
+    private GameObject rainSound;
+    public GameObject windSoundPrefab;
+    private GameObject windSound;
+    public List<AudioClip> thunderSounds;
+    public GameObject thunderSoundPrefab;
+    private GameObject thunderSound;
 
     [SerializeField]
     private bool soundFXOn;
@@ -58,9 +67,45 @@ public class SoundController : MonoBehaviour {
         {
             tileDestroySound = GameObject.Instantiate(tileDestroySoundPrefab);
         }
-        Debug.Log(tileDestroySound.GetComponent<AudioSource>().pitch);
         tileDestroySound.GetComponent<AudioSource>().pitch = 0.8f + (cascadeCount * 0.1f);
         DoPlay(tileDestroySound.GetComponent<AudioSource>());
+    }
+
+    public void PlayChooseLevel()
+    {
+        if (!chooseLevelSound)
+        {
+            chooseLevelSound = GameObject.Instantiate(chooseLevelSoundPrefab);
+        }
+        DoPlay(chooseLevelSound.GetComponent<AudioSource>());
+    }
+
+    public void PlayRainSound()
+    {
+        if (!rainSound)
+        {
+            rainSound = GameObject.Instantiate(rainSoundPrefab);
+        }
+        DoPlay(rainSound.GetComponent<AudioSource>());
+    }
+
+    public void PlayThunderRandom()
+    {
+        if (!thunderSound)
+        {
+            thunderSound = GameObject.Instantiate(thunderSoundPrefab);
+        }
+        thunderSound.GetComponent<AudioSource>().clip = thunderSounds[Random.Range(0, thunderSounds.Count)];
+        DoPlay(thunderSound.GetComponent<AudioSource>());
+    }
+
+    public void PlayWind()
+    {
+        if (!windSound)
+        {
+            windSound = GameObject.Instantiate(windSoundPrefab);
+        }
+        DoPlay(windSound.GetComponent<AudioSource>());
     }
 
     public void PlayGreat()
@@ -167,16 +212,20 @@ public class SoundController : MonoBehaviour {
 
     public void SetSoundButtonOff(bool on)
     {
-        BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
-        if (on)
+        GameObject bc = GameObject.FindGameObjectWithTag("BoardCanvas");
+        if (bc)
         {
-            bcc.transform.Find("SoundOn").gameObject.SetActive(true);
-            bcc.transform.Find("SoundOff").gameObject.SetActive(false);
-        }
-        else
-        {
-            bcc.transform.Find("SoundOn").gameObject.SetActive(false);
-            bcc.transform.Find("SoundOff").gameObject.SetActive(true);
+            BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
+            if (on)
+            {
+                bcc.transform.Find("SoundOn").gameObject.SetActive(true);
+                bcc.transform.Find("SoundOff").gameObject.SetActive(false);
+            }
+            else
+            {
+                bcc.transform.Find("SoundOn").gameObject.SetActive(false);
+                bcc.transform.Find("SoundOff").gameObject.SetActive(true);
+            }
         }
     }
 }

@@ -38,6 +38,8 @@ public class Board : MonoBehaviour {
     public static Vector2 tileSize;
     public static Vector2 boardSize;
 
+    private GameObject theBoard;
+
     [SerializeField]
     private int timeLeft;
 
@@ -142,6 +144,9 @@ public class Board : MonoBehaviour {
     public float effectsDuration;
 
     private Vector3 localScale;
+
+    [SerializeField]
+    private bool timerPaused;
         
     public void SetBoardSize(Vector2 _size)
     {
@@ -218,6 +223,9 @@ public class Board : MonoBehaviour {
         dropCount = 0;
         sparkleCount = 0;
         showingFX = false;
+        timerPaused = false;
+
+        theBoard = new GameObject("DaBoard");
 
         tileSize = new Vector2(tiles[0].GetComponent<Renderer>().bounds.size.x, tiles[0].GetComponent<Renderer>().bounds.size.y);
 
@@ -300,6 +308,12 @@ public class Board : MonoBehaviour {
         StartCoroutine(EnableHint());
     }
 
+    public bool TimerPaused
+    {
+        get { return timerPaused; }
+        set { timerPaused = value; }
+    }
+
     private void StartTimer()
     {
         InvokeRepeating("ReduceTime", 0f, 1f);
@@ -316,7 +330,10 @@ public class Board : MonoBehaviour {
         
     private void ReduceTime()
     {
-        timeLeft--;
+        if (!timerPaused)
+        {
+            timeLeft--;
+        }
         gameController.UpdateTimer(timeLeft);
         if (timeLeft <= 0)
         {
@@ -324,11 +341,22 @@ public class Board : MonoBehaviour {
             CancelInvoke("ReduceTime");
         }
     }
+
+    public void HideBoard()
+    {
+        theBoard.SetActive(false);
+    }
+
+    public void ShowBoard()
+    {
+        theBoard.SetActive(true);
+    }
+
     private void DrawBoard()
     {
         board = new GameObject[maxRows, maxCols];
         backgroundBoard = new GameObject[maxRows, maxCols];
-        tileBackgroundLayerContainer = GameObject.Instantiate(tileBackgroundLayerContainerPrefab);
+        tileBackgroundLayerContainer = GameObject.Instantiate(tileBackgroundLayerContainerPrefab, theBoard.transform);
         for (int i = 0; i < maxRows; i++)
         {
             for (int j = 0; j < maxCols; j++)
@@ -395,7 +423,8 @@ public class Board : MonoBehaviour {
                                 board[i, j] = GameObject.Instantiate(
                                     prefab,
                                     GetScreenCoordinates(i, j),
-                                    Quaternion.identity
+                                    Quaternion.identity,
+                                    theBoard.transform
                                 );
                             }
                             if (boardSpec[k].tiletype == "unknowncrackable")
@@ -460,6 +489,7 @@ public class Board : MonoBehaviour {
                                     GetScreenCoordinates(i, j),
                                     Quaternion.identity
                                 );
+                            board[i, j].transform.SetParent(theBoard.transform);
                             board[i, j].AddComponent<BoxCollider2D>();
                             board[i, j].GetComponent<TilePiece>().Value = -1;
                             board[i, j].GetComponent<TilePiece>().SetLocation(i, j);
@@ -539,7 +569,8 @@ public class Board : MonoBehaviour {
                     board[i, j] = GameObject.Instantiate(
                         tiles[idx],
                         GetScreenCoordinates(i, j),
-                        Quaternion.identity
+                        Quaternion.identity,
+                        theBoard.transform
                     );
                     board[i, j].SetActive(false);
                     board[i, j].GetComponent<TilePiece>().Value = idx;
@@ -3335,6 +3366,7 @@ public class Board : MonoBehaviour {
     public void LevelWin()
     {
         CancelInvoke("ShowHint");
+        CancelInvoke("ReduceTime");
 
         FinishWin();
     }

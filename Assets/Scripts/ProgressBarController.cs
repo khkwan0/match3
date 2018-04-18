@@ -5,7 +5,7 @@ using UnityEngine;
 public class ProgressBarController : MonoBehaviour {
     // Use this for initialization
     private GameObject star1, star2, star3;
-    public float radius = 100f;
+    public float radius;
     private int prevScore;
     public GameObject effectPrefab;
     private GameController gc;
@@ -28,11 +28,11 @@ public class ProgressBarController : MonoBehaviour {
         float perc;
 
         perc = GetPerc(tier1, maxFill);
-        star1.transform.localPosition = new Vector3(Mathf.Cos(perc) * radius, Mathf.Sin(perc) * radius, 0f);
+        star1.transform.localPosition += new Vector3(Mathf.Cos(perc) * radius, Mathf.Sin(perc) * radius, 0f);
         perc = GetPerc(tier2, maxFill);
-        star2.transform.localPosition = new Vector3(Mathf.Cos(perc) * radius, Mathf.Sin(perc) * radius, 0f);
+        star2.transform.localPosition += new Vector3(Mathf.Cos(perc) * radius, Mathf.Sin(perc) * radius, 0f);
         perc = GetPerc(tier3, maxFill);
-        star3.transform.localPosition = new Vector3(Mathf.Cos(perc) * radius, Mathf.Sin(perc) * radius, 0f);
+        star3.transform.localPosition += new Vector3(Mathf.Cos(perc) * radius, Mathf.Sin(perc) * radius, 0f);
 
 
     }

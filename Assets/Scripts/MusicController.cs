@@ -83,16 +83,23 @@ public class MusicController : MonoBehaviour {
 
     public void SetMusicButtonState(bool on)
     {
-        BoardCanvasController bcc = GameObject.FindGameObjectWithTag("BoardCanvas").GetComponent<BoardCanvasController>();
-        if (on)
+        GameObject bc = GameObject.FindGameObjectWithTag("BoardCanvas");
+        if (bc)
         {
-            bcc.transform.Find("MusicOn").gameObject.SetActive(true);
-            bcc.transform.Find("MusicOff").gameObject.SetActive(false);
-        }
-        else
-        {
-            bcc.transform.Find("MusicOn").gameObject.SetActive(false);
-            bcc.transform.Find("MusicOff").gameObject.SetActive(true);
+            BoardCanvasController bcc = bc.GetComponent<BoardCanvasController>();
+            if (bcc)
+            {
+                if (on)
+                {
+                    bcc.transform.Find("MusicOn").gameObject.SetActive(true);
+                    bcc.transform.Find("MusicOff").gameObject.SetActive(false);
+                }
+                else
+                {
+                    bcc.transform.Find("MusicOn").gameObject.SetActive(false);
+                    bcc.transform.Find("MusicOff").gameObject.SetActive(true);
+                }
+            }
         }
     }
 }

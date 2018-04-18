@@ -22,13 +22,51 @@ public class FishController : MonoBehaviour {
     [SerializeField]
     private float velocityMagnitude;
     float randomOffset;
-    float randomAmplitude;
+    [Range(0f, 0.001f)]
+    public float maxAmplitude;
+    [SerializeField]
+    private float randomAmplitude;
     float depth;
+    private bool canRise;
+    [Range(0f, 0.2f)]
+    public float riseAmount;
+
+    private bool outOfWater;
+
+    public bool OutOfWater
+    {
+        get { return outOfWater; }
+        set { outOfWater = value; }
+    }
+
+    public bool CanRise
+    {
+        get { return canRise; }
+        set { canRise = value; }
+    }
+
+    public float Amplitude
+    {
+        get { return randomAmplitude; }
+        set { randomAmplitude = value; }
+    }
+
+    private void Awake()
+    {
+        canRise = false;
+        outOfWater = false;
+    }
 
     void Start()
     {
         StartFish();
     }
+
+    public void Rise()
+    {
+        transform.position += new Vector3(0f, riseAmount, 0f);
+    }
+
 	public void StartFish ()
     {
         ChooseStartDirection();
@@ -39,7 +77,7 @@ public class FishController : MonoBehaviour {
         SetAnimation();
         GetComponent<Rigidbody>().velocity = directionVector * velocityMagnitude;
         randomOffset = UnityEngine.Random.Range(0f, 1f);
-        randomAmplitude = UnityEngine.Random.Range(0f, 0.01f);
+        randomAmplitude = UnityEngine.Random.Range(0f, maxAmplitude);
         transform.position += new Vector3(UnityEngine.Random.Range(-2f, 2f), depth, 0f);
 	}
 	

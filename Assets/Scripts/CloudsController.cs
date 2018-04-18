@@ -24,7 +24,7 @@ public class CloudsController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         displacement = moveVelocity;
-        distance += cloudSpeed;        
+        distance += Mathf.Abs(cloudSpeed);
         transform.position += displacement;
         if (distance > maxDistance)
         {

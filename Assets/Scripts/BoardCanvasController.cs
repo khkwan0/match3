@@ -18,7 +18,6 @@ public class BoardCanvasController : MonoBehaviour
     public GameObject pauseButton;
     public TextMeshProUGUI timerPanel;
 
-    public Button resumeButton;
     public Button leaveButton;
     public Button confirmNoButton;    
 
@@ -29,12 +28,15 @@ public class BoardCanvasController : MonoBehaviour
 
     public float helperLeftOffsetX;
 
-    Vector3 pauseMenuOriginalPos;
-    Vector3 confirmMenuOriginalPos;
+    Vector2 pauseMenuOriginalPos;
+    Vector2 confirmMenuOriginalPos;
 
     private bool chosenHelper;
 
     private float screenScaleWidth;
+
+    private bool pauseButtonEnabled;
+
     public bool ChosenHepler
     {
         get { return chosenHelper; }
@@ -49,16 +51,17 @@ public class BoardCanvasController : MonoBehaviour
         GetComponent<Canvas>().planeDistance = 3f;
         pauseMenuShown = false;
         confirmMenuShown = false;
+        pauseButtonEnabled = true;
+        GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
     }
 
     private void Start()
     {
         GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        resumeButton.GetComponent<Button>().onClick.AddListener(ResumeGame);
         leaveButton.GetComponent<Button>().onClick.AddListener(ShowConfirmMenu);
         confirmNoButton.GetComponent<Button>().onClick.AddListener(HideConfirmMenu);
-        pauseMenuOriginalPos = pauseMenu.transform.position;
-        confirmMenuOriginalPos = confirmPanel.transform.position;
+        pauseMenuOriginalPos = pauseMenu.GetComponent<RectTransform>().anchoredPosition;
+        confirmMenuOriginalPos = confirmPanel.GetComponent<RectTransform>().anchoredPosition;
         chosenHelper = false;
 
         if (Screen.currentResolution.width < 1536)
@@ -170,49 +173,66 @@ public class BoardCanvasController : MonoBehaviour
         GameController.GetGameController().PlaySwishDown();
         HidePauseMenu();
     }
+
     public void ShowPauseMenu()
     {
-        GameController.GetGameController().PlaySwishUp();
-        StartCoroutine(DoMoveMenu(pauseMenu, pauseMenuOriginalPos, new Vector3(0f, 0f, 0f), showPauseMenuLerpTime));
-        pauseMenuShown = true;
+        if (pauseButtonEnabled)
+        {
+            GameController.GetGameController().PlaySwishUp();
+            StartCoroutine(DoMoveMenu(pauseMenu, pauseMenuOriginalPos, new Vector2(0f, pauseMenuOriginalPos.y), showPauseMenuLerpTime));
+            pauseMenuShown = true;
+            pauseButtonEnabled = false;
+            GameController.GetGameController().PauseGame();
+        }
     }
 
     public void HidePauseMenu()
-    {
-
-        StartCoroutine(DoMoveMenu(pauseMenu, pauseMenu.transform.position, new Vector3(0, -20f, 0f), showPauseMenuLerpTime));
+    {        
+        StartCoroutine(DoMoveMenu(pauseMenu, pauseMenu.GetComponent<RectTransform>().anchoredPosition, pauseMenuOriginalPos, showPauseMenuLerpTime));
         pauseMenuShown = false;
+        if (!confirmMenuShown)
+        {
+            pauseButtonEnabled = true;
+            GameController.GetGameController().ResumeGame();
+        }
     }
 
-    IEnumerator DoMoveMenu(GameObject go, Vector3 src, Vector3 dst, float lerpTIme)
+    IEnumerator DoMoveMenu(GameObject go, Vector2 src, Vector2 dst, float lerpTIme)
     {
         float startTime = Time.time;
         float perc;
-        Vector3 originalPos = src;
-        go.transform.position = src;
-        Vector3 newPos = dst;
+        Vector2 originalPos = src;
+        go.GetComponent<RectTransform>().anchoredPosition = src;
+        Vector2 newPos = dst;
+        //Debug.Log(originalPos);
+        //Debug.Log(newPos);
         while ((Time.time - startTime) <= showPauseMenuLerpTime)
         {
             perc = (Time.time - startTime) / showPauseMenuLerpTime;
-            go.GetComponent<RectTransform>().position = Vector3.Lerp(originalPos, newPos, perc);
+            go.GetComponent<RectTransform>().anchoredPosition = Vector2.Lerp(originalPos, newPos, perc);
             yield return null;
         }
-        go.GetComponent<RectTransform>().position = dst;
+
+        go.GetComponent<RectTransform>().anchoredPosition = dst;
+        Debug.Log(go.transform.position);
     }
 
     public void ShowConfirmMenu()
     {
+        confirmMenuShown = true;
         HidePauseMenu();
         GameController.GetGameController().PlaySwishUp();
-        StartCoroutine(DoMoveMenu(confirmPanel, confirmMenuOriginalPos, new Vector3(0f, 0f, 0f), showPauseMenuLerpTime));
-        confirmMenuShown = true;
+        StartCoroutine(DoMoveMenu(confirmPanel, confirmMenuOriginalPos, new Vector2(0f, confirmMenuOriginalPos.y), showPauseMenuLerpTime));
+
     }
 
     public void HideConfirmMenu()
     {
         GameController.GetGameController().PlaySwishDown();
-        StartCoroutine(DoMoveMenu(confirmPanel, confirmPanel.transform.position, new Vector3(0, -20f, 0f), showPauseMenuLerpTime));
+        StartCoroutine(DoMoveMenu(confirmPanel, confirmPanel.GetComponent<RectTransform>().anchoredPosition, confirmMenuOriginalPos, showPauseMenuLerpTime));
         confirmMenuShown = false;
+        pauseButtonEnabled = true;
+        GameController.GetGameController().ResumeGame();
     }
 
     public void ShowHelpers(LevelData levelData, PlayerData playerData)
@@ -258,7 +278,7 @@ public class BoardCanvasController : MonoBehaviour
 
     private void HandleHelperClick(Button target)
     {
-        if (target.GetComponent<Helper>().Amount > 0)
+        if (target.GetComponent<Helper>().Amount > 0 && GameController.GetGameController().HelperEnabled)
         {   
             for (int i = 0; i < helperPanel.transform.childCount; i++) {
                 if (helperPanel.transform.GetChild(i).gameObject != target.gameObject)
